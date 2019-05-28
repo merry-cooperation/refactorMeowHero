@@ -5,11 +5,11 @@ import sys
 from pygame.locals import *
 
 # constants
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 1200
+WINDOW_WIDTH = 1000
+WINDOW_HEIGHT = 800
 
 # colors
-TEXT_COLOR = (255, 255, 255)
+TEXT_COLOR = (255, 0, 0)  # red
 BACKGROUND_COLOR = (50, 100, 120)  # TODO: картинку на бэкграунд
 
 FPS = 40
@@ -20,7 +20,7 @@ BADDIE_MAX_SIZE = 40
 BADDIE_MIN_SPEED = 1
 BADDIE_MAX_SPEED = 8
 ADD_NEW_BADDIE_RATE = 6
-PLAYER_MOVE_RATE = 5
+PLAYER_MOVE_RATE = 12
 
 
 def terminate():
@@ -165,6 +165,11 @@ def game_loop():
             # Draw the player's rectangle
             window_surface.blit(player_image, player_rect)
 
+            background_image = pygame.image.load("../drawable/backgrounds/background1.jpg")
+            background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
+
+            window_surface.blit(background_image, [0, 0])
+
             # Draw each baddie
             for b in baddies:
                 window_surface.blit(b['surface'], b['rect'])
@@ -199,6 +204,12 @@ if __name__ == "__main__":
     pygame.init()
     main_clock = pygame.time.Clock()
     window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+
+    background_image = pygame.image.load("../drawable/backgrounds/main_menu.jpg")
+    background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
+
+    window_surface.blit(background_image, [0, 0])
+
     pygame.display.set_caption('Meow Hero')
     pygame.mouse.set_visible(False)
 
@@ -211,6 +222,9 @@ if __name__ == "__main__":
 
     # set up images
     player_image = pygame.image.load('../drawable/cat_hero.png')
+    # TODO: scale by window size
+    player_image = pygame.transform.scale(player_image, (100, 100))
+
     player_rect = player_image.get_rect()
     enemy_image = pygame.image.load('../drawable/dog_enemy.png')
 
