@@ -1,5 +1,7 @@
+import logging
 import random
 import pygame
+import socket
 import sys
 
 from pygame.locals import *
@@ -51,6 +53,27 @@ def draw_text(text, font, surface, x, y):
     text_rect = text_object.get_rect()
     text_rect.topleft = (x, y)
     surface.blit(text_object, text_rect)
+
+
+def open_server_protocol(host, port):
+    logger = logging.getLogger("Fucking Client")
+    logger.setLevel(logging.INFO)
+
+    fh = logging.FileHandler("client_info.log")
+
+    # pretty formatting
+    formatter = logging.Formatter('%(levelname)s - %(asctime)s - %(message)s')
+    fh.setFormatter(formatter)
+
+    # add handler to logger object
+    logger.addHandler(fh)
+    sock = socket.socket()
+    sock.connect((host, port))
+    sock.send('Hello, world!'.encode())
+
+    data = sock.recv(1024)
+    print(data.decode())
+    sock.close()
 
 
 def game_loop():
@@ -162,13 +185,13 @@ def game_loop():
             draw_text('Score: %s' % (score), font, window_surface, 10, 0)
             draw_text('Top Score: %s' % (top_score), font, window_surface, 10, 40)
 
-            # Draw the player's rectangle
-            window_surface.blit(player_image, player_rect)
-
             background_image = pygame.image.load("../drawable/backgrounds/background1.jpg")
             background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
             window_surface.blit(background_image, [0, 0])
+
+            # Draw the player's rectangle
+            window_surface.blit(player_image, player_rect)
 
             # Draw each baddie
             for b in baddies:
@@ -235,5 +258,8 @@ if __name__ == "__main__":
 
     # TODO: здесь отрисовать меню
 
-    wait_for_player_to_press_key()
-    game_loop()
+    if True:
+        wait_for_player_to_press_key()
+        game_loop()
+    else:
+        open_server_protocol("localhost", 9027)
