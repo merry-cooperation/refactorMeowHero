@@ -15,8 +15,8 @@ PORT = 9027
 sock = socket.socket()
 
 # constants
-WINDOW_WIDTH = 500
-WINDOW_HEIGHT = 400
+WINDOW_WIDTH = 400
+WINDOW_HEIGHT = 300
 
 # colors
 TEXT_COLOR = (255, 0, 0)  # red
@@ -89,10 +89,6 @@ logger.info('Connection first from %s on %s' % (address1[0], address1[1]))
 # conn2, address2 = sock.accept()
 # logger.info('Connection second from %s on %s' % (address2[0], address2[1]))
 
-#
-# test part goes here
-#
-
 # set up pygame, the window, and the mouse cursor
 pygame.init()
 main_clock = pygame.time.Clock()
@@ -116,7 +112,6 @@ pygame.mixer.music.load('../sound/main_theme.mp3')
 
 # set up images
 player_image = pygame.image.load('../drawable/cat_hero.png')
-# TODO: scale by window size
 player_image = pygame.transform.scale(player_image, (int(WINDOW_HEIGHT/12), int(WINDOW_WIDTH/12)))
 
 player_rect = player_image.get_rect()
@@ -134,7 +129,6 @@ player_rect.topleft = (WINDOW_WIDTH / 2, WINDOW_HEIGHT - 50)
 move_left = move_right = move_up = move_down = False
 reverse_cheat = slow_cheat = False
 baddie_add_counter = 0
-# pygame.mixer.music.play(-1, 0.0)
 
 top_score = 0
 while True:

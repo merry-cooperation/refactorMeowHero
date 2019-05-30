@@ -231,8 +231,38 @@ def draw_text(text, font, surface, x, y):
     surface.blit(text_object, text_rect)
 
 
-def levels_menu():
-    pass
+# TODO: отрисовать нормально :D
+# TODO: кнопка "назад"
+def levels_menu(window_surface):
+    font = pygame.font.SysFont(None, 48)  # remove it pls
+
+    background_image = pygame.image.load("../drawable/backgrounds/main_menu.jpg")
+    background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
+
+    window_surface.blit(background_image, [0, 0])
+
+    image = pygame.image.load('../drawable/buttons/red_button.png')
+    image = pygame.transform.scale(image, (int(WINDOW_WIDTH / 20), int(WINDOW_HEIGHT / 20)))
+
+    buttons = list()
+
+    for i in range(12):
+        button = objects.Button(image, i*WINDOW_WIDTH / 12, WINDOW_HEIGHT / 4,
+                                       WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, str(i))
+        buttons.append(button)
+
+    for button in buttons:
+        button.draw(window_surface)
+
+    pygame.display.update()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos  # gets mouse position
+                for button in buttons:
+                    if button.is_over(mouse_pos):
+                        game_loop(window_surface, font)
 
 
 def main_menu(window_surface):     # show the "Main menu" screen
@@ -259,10 +289,10 @@ def main_menu(window_surface):     # show the "Main menu" screen
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos  # gets mouse position
                 if button_single.is_over(mouse_pos):
-                    game_loop(window_surface, font)
+                    levels_menu(window_surface)
                 elif button_two.is_over(mouse_pos):
                     client.open_tcp_protocol("localhost", 9027, window_surface)
-                    init_window(True)
+                    init_window()
 
                     button_single.draw(window_surface)
                     button_two.draw(window_surface)
