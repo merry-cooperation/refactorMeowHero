@@ -1,14 +1,22 @@
 import random
+import re
 import pygame
+import screeninfo
 import socket
 import sys
 
 from modules import objects, client
 from pygame.locals import *
 
-# constants
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 600
+# taking screen W and H
+for m in screeninfo.get_monitors():
+    print(str(m))
+    pattern = "\d*x\d*"
+    WINDOW_WIDTH, WINDOW_HEIGHT = list(map(int, re.findall(pattern, str(m))[0].split('x')))
+
+# constants, if need hardcoded
+# WINDOW_WIDTH = 800
+# WINDOW_HEIGHT = 600
 
 # colors
 TEXT_COLOR = (255, 0, 0)  # red
