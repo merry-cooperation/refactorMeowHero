@@ -15,8 +15,8 @@ PORT = 9027
 sock = socket.socket()
 
 # constants
-WINDOW_WIDTH = 400
-WINDOW_HEIGHT = 300
+WINDOW_WIDTH = 500
+WINDOW_HEIGHT = 400
 
 # colors
 TEXT_COLOR = (255, 0, 0)  # red
@@ -36,7 +36,7 @@ PLAYER_MOVE_RATE = 12
 def terminate():
     pygame.quit()
     sock.close()
-    sys.exit()
+    sys.exit(0)
 
 
 def wait_for_player_to_press_key():

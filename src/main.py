@@ -1,12 +1,9 @@
-import base64
-import json
-import logging
 import random
 import pygame
 import socket
 import sys
 
-from modules import objects
+from modules import objects, client
 from pygame.locals import *
 
 # constants
@@ -32,8 +29,6 @@ sock = socket.socket()
 
 def terminate():
     pygame.quit()
-    sock.send("Connection closed".encode())
-    sock.close()
     sys.exit()
 
 
@@ -53,72 +48,6 @@ def player_has_hit_baddie(player, baddies):
         if player.colliderect(b['rect']):
             return True
     return False
-
-
-def open_tcp_protocol(host, port, window_surface, font):
-    logger = logging.getLogger("Fucking Client")
-    logger.setLevel(logging.INFO)
-
-    fh = logging.FileHandler("client_info.log")
-
-    # pretty formatting
-    formatter = logging.Formatter('%(levelname)s - %(asctime)s - %(message)s')
-    fh.setFormatter(formatter)
-
-    # add handler to logger object
-    logger.addHandler(fh)
-
-    sock.connect((host, port))
-
-    # TODO: add logs
-    # TODO: refactor this part
-    # TODO: add normal protocol
-    while True:
-        while True:  # the game loop runs while the game part is playing
-            events = []
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    events.append((event.type, None))
-                    terminate()
-
-                if event.type == KEYDOWN:
-                    events.append((event.type, event.key))
-
-                if event.type == KEYUP:
-                    events.append((event.type, event.key))
-
-            print(events)
-            json_string = json.dumps(events)
-            sock.sendall(json_string.encode())
-
-            data = sock.recv(32000)
-
-            if data:
-                image_data = base64.b64decode(data)
-
-                with open('temp_background.jpg', 'wb') as f:
-                    f.write(image_data)
-
-                # Draw background
-                background_image1 = pygame.image.load('temp_background.jpg')
-                background_image1 = pygame.transform.scale(background_image1, (WINDOW_WIDTH, WINDOW_HEIGHT))
-
-                window_surface.blit(background_image1, [0, 0])
-
-            pygame.display.update()
-
-            # main_clock.tick(10)
-
-        # Stop the game and show the "Game Over" screen.
-        pygame.mixer.music.stop()
-        game_over_sound.play()
-
-        draw_text('GAME OVER', font, window_surface, (WINDOW_WIDTH / 3), (WINDOW_HEIGHT / 3))
-        draw_text('Press a key to play again.', font, window_surface, (WINDOW_WIDTH / 3) - 80, (WINDOW_HEIGHT / 3) + 50)
-        pygame.display.update()
-        wait_for_player_to_press_key()
-
-        game_over_sound.stop()
 
 
 def game_loop(window_surface, font):
@@ -302,6 +231,10 @@ def draw_text(text, font, surface, x, y):
     surface.blit(text_object, text_rect)
 
 
+def levels_menu():
+    pass
+
+
 def main_menu(window_surface):     # show the "Main menu" screen
     font = pygame.font.SysFont(None, 48)  # remove it pls
 
@@ -328,7 +261,15 @@ def main_menu(window_surface):     # show the "Main menu" screen
                 if button_single.is_over(mouse_pos):
                     game_loop(window_surface, font)
                 elif button_two.is_over(mouse_pos):
-                    open_tcp_protocol("localhost", 9027, window_surface, font)
+                    client.open_tcp_protocol("localhost", 9027, window_surface)
+                    init_window(True)
+
+                    button_single.draw(window_surface)
+                    button_two.draw(window_surface)
+                    button_quit.draw(window_surface)
+
+                    pygame.display.update()
+                    break
                 elif button_quit.is_over(mouse_pos):
                     sys.exit(0)
 
