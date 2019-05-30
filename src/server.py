@@ -15,8 +15,8 @@ PORT = 9027
 sock = socket.socket()
 
 # constants
-WINDOW_WIDTH = 500
-WINDOW_HEIGHT = 500
+WINDOW_WIDTH = 400
+WINDOW_HEIGHT = 300
 
 # colors
 TEXT_COLOR = (255, 0, 0)  # red
@@ -76,7 +76,6 @@ fh.setFormatter(formatter)
 # add handler to logger object
 logger.addHandler(fh)
 
-
 sock.bind((HOST, PORT))
 sock.listen(100)
 
@@ -118,7 +117,7 @@ pygame.mixer.music.load('../sound/main_theme.mp3')
 # set up images
 player_image = pygame.image.load('../drawable/cat_hero.png')
 # TODO: scale by window size
-player_image = pygame.transform.scale(player_image, (100, 100))
+player_image = pygame.transform.scale(player_image, (int(WINDOW_HEIGHT/12), int(WINDOW_WIDTH/12)))
 
 player_rect = player_image.get_rect()
 enemy_image = pygame.image.load('../drawable/dog_enemy.png')
@@ -268,6 +267,6 @@ while True:
 
     conn1.send(encoded_string)
 
-    main_clock.tick(30)
+    main_clock.tick(24)
 
 logger.info('Connection from %s on %s closed' % (address1[0], address1[1]))

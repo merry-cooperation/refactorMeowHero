@@ -6,11 +6,12 @@ import pygame
 import socket
 import sys
 
+from modules import objects
 from pygame.locals import *
 
 # constants
-WINDOW_WIDTH = 500
-WINDOW_HEIGHT = 500
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 600
 
 # colors
 TEXT_COLOR = (255, 0, 0)  # red
@@ -54,7 +55,7 @@ def player_has_hit_baddie(player, baddies):
     return False
 
 
-def open_tcp_protocol(host, port):
+def open_tcp_protocol(host, port, window_surface, font):
     logger = logging.getLogger("Fucking Client")
     logger.setLevel(logging.INFO)
 
@@ -91,7 +92,6 @@ def open_tcp_protocol(host, port):
             sock.sendall(json_string.encode())
 
             data = sock.recv(32000)
-            # print(data)
 
             if data:
                 image_data = base64.b64decode(data)
@@ -134,6 +134,8 @@ def game_loop(window_surface, font):
 
     enemy_image = pygame.image.load('../drawable/dog_enemy.png')
     pygame.mouse.set_visible(False)
+
+    wait_for_player_to_press_key()
 
     top_score = 0
     while True:
@@ -300,31 +302,41 @@ def draw_text(text, font, surface, x, y):
     surface.blit(text_object, text_rect)
 
 
-def draw_start_screen(window_surface, font):     # show the "Start" screen
-    draw_text('Meow Hero', font, window_surface, (WINDOW_WIDTH / 3), (WINDOW_HEIGHT / 3))
-    draw_text('Press any key to start ^_^', font, window_surface, (WINDOW_WIDTH / 3) - 30, (WINDOW_HEIGHT / 3) + 50)
+def main_menu(window_surface):     # show the "Main menu" screen
+    font = pygame.font.SysFont(None, 48)  # remove it pls
+
+    image = pygame.image.load('../drawable/buttons/red_button.png')
+    image = pygame.transform.scale(image, (int(WINDOW_WIDTH/3), int(WINDOW_HEIGHT/8)))
+
+    button_single = objects.Button(image, WINDOW_WIDTH/2, WINDOW_HEIGHT/4,
+                                   WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "1 Player")
+    button_two = objects.Button(image, WINDOW_WIDTH/2, WINDOW_HEIGHT/2,
+                                WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "2 Players")
+    button_quit = objects.Button(image, WINDOW_WIDTH/2, 3*WINDOW_HEIGHT/4,
+                                 WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "Quit")
+
+    button_single.draw(window_surface)
+    button_two.draw(window_surface)
+    button_quit.draw(window_surface)
+
     pygame.display.update()
 
-
-def draw_main_menu():
-    pass
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos  # gets mouse position
+                if button_single.is_over(mouse_pos):
+                    game_loop(window_surface, font)
+                elif button_two.is_over(mouse_pos):
+                    open_tcp_protocol("localhost", 9027, window_surface, font)
+                elif button_quit.is_over(mouse_pos):
+                    sys.exit(0)
 
 
 def main():
     window = init_window(True)
-    font = pygame.font.SysFont(None, 48)
-    draw_start_screen(window, font)
-    draw_main_menu()
-
-    single_player = True
-
-    if single_player:
-        wait_for_player_to_press_key()
-        game_loop(window, font)
-    else:
-        open_tcp_protocol("localhost", 9027)
+    main_menu(window)
 
 
 if __name__ == "__main__":
     main()
-
