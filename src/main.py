@@ -6,7 +6,6 @@ import pygame
 import socket
 import sys
 
-
 from pygame.locals import *
 
 # constants
@@ -55,13 +54,6 @@ def player_has_hit_baddie(player, baddies):
     return False
 
 
-def draw_text(text, font, surface, x, y):
-    text_object = font.render(text, 1, TEXT_COLOR)
-    text_rect = text_object.get_rect()
-    text_rect.topleft = (x, y)
-    surface.blit(text_object, text_rect)
-
-
 def open_tcp_protocol(host, port):
     logger = logging.getLogger("Fucking Client")
     logger.setLevel(logging.INFO)
@@ -77,9 +69,9 @@ def open_tcp_protocol(host, port):
 
     sock.connect((host, port))
 
-    #
-    # test part goes here
-    #
+    # TODO: add logs
+    # TODO: refactor this part
+    # TODO: add normal protocol
     while True:
         while True:  # the game loop runs while the game part is playing
             events = []
@@ -127,12 +119,22 @@ def open_tcp_protocol(host, port):
         wait_for_player_to_press_key()
 
         game_over_sound.stop()
-    #
-    # end of test part
-    #
 
 
-def game_loop():
+def game_loop(window_surface, font):
+    main_clock = pygame.time.Clock()
+
+    game_over_sound = pygame.mixer.Sound('../sound/game_over.wav')
+    pygame.mixer.music.load('../sound/main_theme.mp3')
+
+    # set up images
+    player_image = pygame.image.load('../drawable/cat_hero.png')
+    player_image = pygame.transform.scale(player_image, (int(WINDOW_HEIGHT/12), int(WINDOW_WIDTH/12)))
+    player_rect = player_image.get_rect()
+
+    enemy_image = pygame.image.load('../drawable/dog_enemy.png')
+    pygame.mouse.set_visible(False)
+
     top_score = 0
     while True:
         # set up the start of the game
@@ -273,15 +275,13 @@ def game_loop():
         game_over_sound.stop()
 
 
-if __name__ == "__main__":
-    # initiation
-    # TODO: если инициализаций будет много, то их надо будет разбить на мелкие функции
-
-    # set up pygame, the window, and the mouse cursor
+def init_window(full_screen=False):  # set up pygame, the window, and the mouse cursor
     pygame.init()
-    main_clock = pygame.time.Clock()
-    window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.FULLSCREEN)
-    # window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+
+    if full_screen:
+        window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.FULLSCREEN)
+    else:
+        window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
     background_image = pygame.image.load("../drawable/backgrounds/main_menu.jpg")
     background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -289,32 +289,42 @@ if __name__ == "__main__":
     window_surface.blit(background_image, [0, 0])
 
     pygame.display.set_caption('Meow Hero')
-    pygame.mouse.set_visible(False)
 
-    # set up fonts
-    font = pygame.font.SysFont(None, 48)
+    return window_surface
 
-    # set up sounds
-    game_over_sound = pygame.mixer.Sound('../sound/game_over.wav')
-    pygame.mixer.music.load('../sound/main_theme.mp3')
 
-    # set up images
-    player_image = pygame.image.load('../drawable/cat_hero.png')
-    # TODO: scale by window size
-    player_image = pygame.transform.scale(player_image, (100, 100))
+def draw_text(text, font, surface, x, y):
+    text_object = font.render(text, 1, TEXT_COLOR)
+    text_rect = text_object.get_rect()
+    text_rect.topleft = (x, y)
+    surface.blit(text_object, text_rect)
 
-    player_rect = player_image.get_rect()
-    enemy_image = pygame.image.load('../drawable/dog_enemy.png')
 
-    # show the "Start" screen
+def draw_start_screen(window_surface, font):     # show the "Start" screen
     draw_text('Meow Hero', font, window_surface, (WINDOW_WIDTH / 3), (WINDOW_HEIGHT / 3))
     draw_text('Press any key to start ^_^', font, window_surface, (WINDOW_WIDTH / 3) - 30, (WINDOW_HEIGHT / 3) + 50)
     pygame.display.update()
 
-    # TODO: здесь отрисовать меню
 
-    if False:
+def draw_main_menu():
+    pass
+
+
+def main():
+    window = init_window(True)
+    font = pygame.font.SysFont(None, 48)
+    draw_start_screen(window, font)
+    draw_main_menu()
+
+    single_player = True
+
+    if single_player:
         wait_for_player_to_press_key()
-        game_loop()
+        game_loop(window, font)
     else:
         open_tcp_protocol("localhost", 9027)
+
+
+if __name__ == "__main__":
+    main()
+
