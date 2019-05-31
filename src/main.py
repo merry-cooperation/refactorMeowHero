@@ -1,3 +1,4 @@
+import random
 import re
 import pygame
 import screeninfo
@@ -23,7 +24,9 @@ background_image_in_game = pygame.transform.scale(background_image_in_game, (WIN
 # colors
 COLOR_WHITE = (255, 255, 255)  # white
 
-FPS = 40
+# magic
+FPS = 60
+ENEMY_MAX_COUNT = 40
 
 
 def terminate():
@@ -69,7 +72,7 @@ def game_loop(window_surface):
     health_points = heroes.Health(health_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
 
     bullets = []
-    enemy = []
+    enemies = []
 
     wait_for_player_to_press_key()
 
@@ -135,6 +138,27 @@ def game_loop(window_surface):
             if move_down and meow_hero.rect.bottom < WINDOW_HEIGHT:
                 meow_hero.move(0, 1)
 
+            # spawn dogs
+            if len(enemies) < ENEMY_MAX_COUNT:
+                dice = random.random()
+                if dice < 0.1:
+                    enemy = heroes.DogEnemy(enemy_image, WINDOW_WIDTH/24, WINDOW_HEIGHT/24)
+                    enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
+                    enemies.append(enemy)
+
+            # hitting dogs
+            for enemy in enemies:
+                for bullet in bullets:
+                    if enemy.rect.colliderect(bullet.rect):
+                        enemy.life -= 1
+                        bullet.life -= 1
+
+            # hitting hero:
+            for enemy in enemies:
+                if meow_hero.rect.colliderect(enemy.rect):
+                    meow_hero.life -= 1
+                    enemies.remove(enemy)
+
             # draw background
             window_surface.blit(background_image_in_game, [0, 0])
 
@@ -149,12 +173,23 @@ def game_loop(window_surface):
             # draw hero
             meow_hero.draw(window_surface)
 
+            # draw enemies
+            for enemy in enemies:
+                enemy.move()
+                if enemy.rect.top > WINDOW_HEIGHT or enemy.life <= 0:
+                    enemies.remove(enemy)
+                enemy.draw(window_surface)
+
             # move and draw hero bullets
             for bullet in bullets:
                 bullet.move()
-                if bullet.rect.top > WINDOW_HEIGHT:
+                if bullet.rect.top > WINDOW_HEIGHT or bullet.life <= 0:
                     bullets.remove(bullet)
                 bullet.draw(window_surface)
+
+            # check for ending:
+            if meow_hero.life <= 0:
+                running = False
 
             pygame.display.update()
 

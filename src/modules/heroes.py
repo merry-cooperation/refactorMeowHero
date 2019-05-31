@@ -1,4 +1,5 @@
 import pygame
+import random
 
 
 class MeowHero(pygame.sprite.Sprite):
@@ -48,6 +49,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image_surface.get_rect()
 
         self.speed = 20
+        self.life = 1
 
     def move(self):
         self.rect.move_ip(0, self.speed*(-1))  # another direction
@@ -65,10 +67,11 @@ class DogEnemy(pygame.sprite.Sprite):
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
-        self.speed = 10
+        self.speed = random.randint(3, 20)
+        self.life = 1
 
     def move(self):
-        self.rect.move_ip(0, self.speed)  # another direction
+        self.rect.move_ip(0, self.speed)
 
     def draw(self, window):
         window.blit(self.image_surface, self.rect)
