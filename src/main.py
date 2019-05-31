@@ -7,7 +7,7 @@ from modules import objects, client
 from pygame.locals import *
 
 # constants
-WINDOW_WIDTH = 800
+WINDOW_WIDTH = 950
 WINDOW_HEIGHT = 600
 
 # colors
@@ -214,7 +214,7 @@ def init_window(full_screen=False):  # set up pygame, the window, and the mouse 
     else:
         window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    background_image = pygame.image.load("../drawable/backgrounds/main_menu.jpg")
+    background_image = pygame.image.load("../drawable/backgrounds/main_menu3.jpg")
     background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
     window_surface.blit(background_image, [0, 0])
@@ -261,7 +261,7 @@ def main_menu(window_surface):     # show the "Main menu" screen
                 if button_single.is_over(mouse_pos):
                     game_loop(window_surface, font)
                 elif button_two.is_over(mouse_pos):
-                    client.open_tcp_protocol("localhost", 9027, window_surface)
+                    client.open_tcp_protocol("192.168.0.102", 9027, window_surface)
                     init_window(True)
 
                     button_single.draw(window_surface)
