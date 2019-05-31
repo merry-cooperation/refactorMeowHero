@@ -67,9 +67,15 @@ def game_loop(window_surface):
 
     # set up images
     player_image = pygame.image.load('../drawable/sprites/cat_hero/cat_hero.png')
+    health_image = pygame.image.load('../drawable/other/health.png')
+    bullet_image = pygame.image.load('../drawable/weapons/bullet1.png')
 
-    # TODO: this guy
     meow_hero = heroes.MeowHero(player_image, WINDOW_WIDTH/12, WINDOW_HEIGHT/12)
+    meow_hero.rect.move_ip(int(WINDOW_WIDTH/2), 7*int(WINDOW_HEIGHT/8))
+
+    health_points = heroes.Health(health_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
+
+    bullets = []
     # TODO: init enemy
 
     wait_for_player_to_press_key()
@@ -87,12 +93,15 @@ def game_loop(window_surface):
             # event handling
             for event in pygame.event.get():
                 if event.type == QUIT:
+                    # TODO: open quit menu
                     terminate()
 
                 if event.type == KEYDOWN:
                     if event.key == K_SPACE:
-                        # TODO: generate bullet here
-                        pass
+                        # Todo: add sound
+                        bullet = heroes.Bullet(bullet_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
+                        bullet.rect.move_ip(meow_hero.rect.left, meow_hero.rect.top)
+                        bullets.append(bullet)
                     if event.key == K_LEFT or event.key == ord('a'):
                         move_right = False
                         move_left = True
@@ -119,23 +128,34 @@ def game_loop(window_surface):
                         move_down = False
 
             # Move the player around.
-            # if move_left and player_rect.left > 0:
-            #     player_rect.move_ip(-1 * PLAYER_MOVE_RATE, 0)
-            # if move_right and player_rect.right < WINDOW_WIDTH:
-            #     player_rect.move_ip(PLAYER_MOVE_RATE, 0)
-            # if move_up and player_rect.top > 0:
-            #     player_rect.move_ip(0, -1 * PLAYER_MOVE_RATE)
-            # if move_down and player_rect.bottom < WINDOW_HEIGHT:
-            #     player_rect.move_ip(0, PLAYER_MOVE_RATE)
+            if move_left and meow_hero.rect.left > 0:
+                meow_hero.move(-1, 0)
+            if move_right and meow_hero.rect.right < WINDOW_WIDTH:
+                meow_hero.move(1, 0)
+            if move_up and meow_hero.rect.top > 0:
+                meow_hero.move(0, -1)
+            if move_down and meow_hero.rect.bottom < WINDOW_HEIGHT:
+                meow_hero.move(0, 1)
 
             # Draw background
             window_surface.blit(background_image_in_game, [0, 0])
+
+            # Draw health points
+            health_points.draw(window_surface, meow_hero.life)
 
             # Draw the score and top score.
             draw_text('Score: %s' % (score), window_surface, 10, 0)
             draw_text('Top Score: %s' % (top_score), window_surface, 10, 40)
 
-            # TODO: draw objects
+            # Draw hero
+            meow_hero.draw(window_surface)
+
+            # Move and draw hero bullets
+            for bullet in bullets:
+                bullet.move()
+                if bullet.rect.top > WINDOW_HEIGHT:
+                    bullets.remove(bullet)
+                bullet.draw(window_surface)
 
             pygame.display.update()
 
