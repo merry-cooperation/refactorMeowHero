@@ -1,11 +1,9 @@
-import random
 import re
 import pygame
 import screeninfo
-import socket
 import sys
 
-from modules import objects, client
+from modules import objects, client, heroes
 from pygame.locals import *
 
 # taking screen W and H
@@ -18,11 +16,12 @@ for m in screeninfo.get_monitors():
 # WINDOW_WIDTH = 800
 # WINDOW_HEIGHT = 600
 
-# colors
-TEXT_COLOR = (255, 0, 0)  # red
-BACKGROUND_COLOR = (50, 100, 120)
+# constant BG
+background_image_in_game = pygame.image.load("../drawable/backgrounds/background1.jpg")
+background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
-FPS = 40
+# colors
+COLOR_WHITE = (255, 255, 255)  # white
 
 # magic
 BADDIE_MIN_SIZE = 10
@@ -31,8 +30,7 @@ BADDIE_MIN_SPEED = 1
 BADDIE_MAX_SPEED = 8
 ADD_NEW_BADDIE_RATE = 6
 PLAYER_MOVE_RATE = 12
-
-sock = socket.socket()
+FPS = 40
 
 
 def terminate():
@@ -40,6 +38,7 @@ def terminate():
     sys.exit()
 
 
+# TODO: it's pretty dumb
 def wait_for_player_to_press_key():
     while True:
         for event in pygame.event.get():
@@ -51,6 +50,7 @@ def wait_for_player_to_press_key():
                 return
 
 
+# TODO: remove this guy
 def player_has_hit_baddie(player, baddies):
     for b in baddies:
         if player.colliderect(b['rect']):
@@ -58,45 +58,41 @@ def player_has_hit_baddie(player, baddies):
     return False
 
 
-def game_loop(window_surface, font):
+def game_loop(window_surface):
     main_clock = pygame.time.Clock()
+    pygame.mouse.set_visible(False)
 
     game_over_sound = pygame.mixer.Sound('../sound/game_over.wav')
     pygame.mixer.music.load('../sound/main_theme.mp3')
 
     # set up images
-    player_image = pygame.image.load('../drawable/cat_hero.png')
-    player_image = pygame.transform.scale(player_image, (int(WINDOW_HEIGHT/12), int(WINDOW_WIDTH/12)))
-    player_rect = player_image.get_rect()
+    player_image = pygame.image.load('../drawable/sprites/cat_hero/cat_hero.png')
 
-    enemy_image = pygame.image.load('../drawable/dog_enemy.png')
-    pygame.mouse.set_visible(False)
+    # TODO: this guy
+    meow_hero = heroes.MeowHero(player_image, WINDOW_WIDTH/12, WINDOW_HEIGHT/12)
+    # TODO: init enemy
 
     wait_for_player_to_press_key()
 
     top_score = 0
     while True:
-        # set up the start of the game
-        baddies = []
         score = 0
-        player_rect.topleft = (WINDOW_WIDTH / 2, WINDOW_HEIGHT - 50)
+
         move_left = move_right = move_up = move_down = False
-        reverse_cheat = slow_cheat = False
-        baddie_add_counter = 0
         pygame.mixer.music.play(-1, 0.0)
 
         while True:  # the game loop runs while the game part is playing
             score += 1  # increase score
 
+            # event handling
             for event in pygame.event.get():
                 if event.type == QUIT:
                     terminate()
 
                 if event.type == KEYDOWN:
-                    if event.key == ord('z'):
-                        reverse_cheat = True
-                    if event.key == ord('x'):
-                        slow_cheat = True
+                    if event.key == K_SPACE:
+                        # TODO: generate bullet here
+                        pass
                     if event.key == K_LEFT or event.key == ord('a'):
                         move_right = False
                         move_left = True
@@ -111,15 +107,8 @@ def game_loop(window_surface, font):
                         move_down = True
 
                 if event.type == KEYUP:
-                    if event.key == ord('z'):
-                        reverse_cheat = False
-                        score = 0
-                    if event.key == ord('x'):
-                        slow_cheat = False
-                        score = 0
                     if event.key == K_ESCAPE:
                         terminate()
-
                     if event.key == K_LEFT or event.key == ord('a'):
                         move_left = False
                     if event.key == K_RIGHT or event.key == ord('d'):
@@ -129,85 +118,36 @@ def game_loop(window_surface, font):
                     if event.key == K_DOWN or event.key == ord('s'):
                         move_down = False
 
-                if event.type == MOUSEMOTION:
-                    # If the mouse moves, move the player where the cursor is.
-                    player_rect.move_ip(event.pos[0] - player_rect.centerx, event.pos[1] - player_rect.centery)
-
-            # Add new baddies at the top of the screen, if needed.
-            if not reverse_cheat and not slow_cheat:
-                baddie_add_counter += 1
-            if baddie_add_counter == ADD_NEW_BADDIE_RATE:
-                baddie_add_counter = 0
-                baddie_size = random.randint(BADDIE_MIN_SIZE, BADDIE_MAX_SIZE)
-                new_baddie = {
-                    'rect': pygame.Rect(random.randint(0, WINDOW_WIDTH - baddie_size), 0 - baddie_size, baddie_size,
-                                        baddie_size),
-                    'speed': random.randint(BADDIE_MIN_SPEED, BADDIE_MAX_SPEED),
-                    'surface': pygame.transform.scale(enemy_image, (baddie_size, baddie_size)),
-                    }
-
-                baddies.append(new_baddie)
-
             # Move the player around.
-            if move_left and player_rect.left > 0:
-                player_rect.move_ip(-1 * PLAYER_MOVE_RATE, 0)
-            if move_right and player_rect.right < WINDOW_WIDTH:
-                player_rect.move_ip(PLAYER_MOVE_RATE, 0)
-            if move_up and player_rect.top > 0:
-                player_rect.move_ip(0, -1 * PLAYER_MOVE_RATE)
-            if move_down and player_rect.bottom < WINDOW_HEIGHT:
-                player_rect.move_ip(0, PLAYER_MOVE_RATE)
-
-            # Move the mouse cursor to match the player.
-            pygame.mouse.set_pos(player_rect.centerx, player_rect.centery)
-
-            # Move the baddies down.
-            for b in baddies:
-                if not reverse_cheat and not slow_cheat:
-                    b['rect'].move_ip(0, b['speed'])
-                elif reverse_cheat:
-                    b['rect'].move_ip(0, -5)
-                elif slow_cheat:
-                    b['rect'].move_ip(0, 1)
-
-            # Delete baddies that have fallen past the bottom.
-            for b in baddies[:]:
-                if b['rect'].top > WINDOW_HEIGHT:
-                    baddies.remove(b)
+            # if move_left and player_rect.left > 0:
+            #     player_rect.move_ip(-1 * PLAYER_MOVE_RATE, 0)
+            # if move_right and player_rect.right < WINDOW_WIDTH:
+            #     player_rect.move_ip(PLAYER_MOVE_RATE, 0)
+            # if move_up and player_rect.top > 0:
+            #     player_rect.move_ip(0, -1 * PLAYER_MOVE_RATE)
+            # if move_down and player_rect.bottom < WINDOW_HEIGHT:
+            #     player_rect.move_ip(0, PLAYER_MOVE_RATE)
 
             # Draw background
-            background_image = pygame.image.load("../drawable/backgrounds/background1.jpg")
-            background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
-
-            window_surface.blit(background_image, [0, 0])
+            window_surface.blit(background_image_in_game, [0, 0])
 
             # Draw the score and top score.
-            draw_text('Score: %s' % (score), font, window_surface, 10, 0)
-            draw_text('Top Score: %s' % (top_score), font, window_surface, 10, 40)
+            draw_text('Score: %s' % (score), window_surface, 10, 0)
+            draw_text('Top Score: %s' % (top_score), window_surface, 10, 40)
 
-            # Draw the player's rectangle
-            window_surface.blit(player_image, player_rect)
-
-            # Draw each baddie
-            for b in baddies:
-                window_surface.blit(b['surface'], b['rect'])
+            # TODO: draw objects
 
             pygame.display.update()
 
-            # Check if any of the baddies have hit the player.
-            if player_has_hit_baddie(player_rect, baddies):
-                if score > top_score:
-                    top_score = score  # set new top score
-                break
-
             main_clock.tick(FPS)
 
+        # TODO: return player to main menu
         # Stop the game and show the "Game Over" screen.
         pygame.mixer.music.stop()
         game_over_sound.play()
 
-        draw_text('GAME OVER', font, window_surface, (WINDOW_WIDTH / 3), (WINDOW_HEIGHT / 3))
-        draw_text('Press a key to play again.', font, window_surface, (WINDOW_WIDTH / 3) - 80, (WINDOW_HEIGHT / 3) + 50)
+        draw_text('GAME OVER', window_surface, (WINDOW_WIDTH / 3), (WINDOW_HEIGHT / 3))
+        draw_text('Press a key to play again.', window_surface, (WINDOW_WIDTH / 3) - 80, (WINDOW_HEIGHT / 3) + 50)
         pygame.display.update()
         wait_for_player_to_press_key()
 
@@ -222,18 +162,19 @@ def init_window(full_screen=False):  # set up pygame, the window, and the mouse 
     else:
         window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    background_image = pygame.image.load("../drawable/backgrounds/main_menu.jpg")
-    background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
+    background_image_main = pygame.image.load("../drawable/backgrounds/main_menu4.jpg")
+    background_image_main = pygame.transform.scale(background_image_main, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    window_surface.blit(background_image, [0, 0])
+    window_surface.blit(background_image_main, [0, 0])
 
     pygame.display.set_caption('Meow Hero')
 
     return window_surface
 
 
-def draw_text(text, font, surface, x, y):
-    text_object = font.render(text, 1, TEXT_COLOR)
+def draw_text(text, surface, x, y):
+    font = pygame.font.SysFont(None, 60)
+    text_object = font.render(text, 1, COLOR_WHITE)
     text_rect = text_object.get_rect()
     text_rect.topleft = (x, y)
     surface.blit(text_object, text_rect)
@@ -241,13 +182,12 @@ def draw_text(text, font, surface, x, y):
 
 # TODO: отрисовать нормально :D
 # TODO: кнопка "назад"
+# TODO: lock levels
 def levels_menu(window_surface):
-    font = pygame.font.SysFont(None, 48)  # remove it pls
+    background_image_levels = pygame.transform.scale(pygame.image.load("../drawable/backgrounds/main_menu4.jpg"),
+                                                     (WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    background_image = pygame.image.load("../drawable/backgrounds/main_menu.jpg")
-    background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
-
-    window_surface.blit(background_image, [0, 0])
+    window_surface.blit(background_image_levels, [0, 0])
 
     image = pygame.image.load('../drawable/buttons/red_button.png')
     image = pygame.transform.scale(image, (int(WINDOW_WIDTH / 20), int(WINDOW_HEIGHT / 20)))
@@ -256,7 +196,7 @@ def levels_menu(window_surface):
 
     for i in range(12):
         button = objects.Button(image, i*WINDOW_WIDTH / 12, WINDOW_HEIGHT / 4,
-                                       WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, str(i))
+                                WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, str(i))
         buttons.append(button)
 
     for button in buttons:
@@ -270,12 +210,17 @@ def levels_menu(window_surface):
                 mouse_pos = event.pos  # gets mouse position
                 for button in buttons:
                     if button.is_over(mouse_pos):
-                        game_loop(window_surface, font)
+                        # TODO: draw story here
+                        # TODO: send level as param
+                        game_loop(window_surface)
+                        # TODO: draw story here, if victory
+                        # TODO: unlock new level
 
 
+# TODO: кнопка статистики
+# TODO: смена имени игрока
+# TODO: смена скина
 def main_menu(window_surface):     # show the "Main menu" screen
-    font = pygame.font.SysFont(None, 48)  # remove it pls
-
     image = pygame.image.load('../drawable/buttons/red_button.png')
     image = pygame.transform.scale(image, (int(WINDOW_WIDTH/3), int(WINDOW_HEIGHT/8)))
 
@@ -299,15 +244,17 @@ def main_menu(window_surface):     # show the "Main menu" screen
                 if button_single.is_over(mouse_pos):
                     levels_menu(window_surface)
                 elif button_two.is_over(mouse_pos):
-                    client.open_tcp_protocol("localhost", 9027, window_surface)
-                    init_window()
-
-                    button_single.draw(window_surface)
-                    button_two.draw(window_surface)
-                    button_quit.draw(window_surface)
-
-                    pygame.display.update()
-                    break
+                    pass
+                    # TODO: press F
+                    # client.open_tcp_protocol("localhost", 9027, window_surface)
+                    # init_window()
+                    #
+                    # button_single.draw(window_surface)
+                    # button_two.draw(window_surface)
+                    # button_quit.draw(window_surface)
+                    #
+                    # pygame.display.update()
+                    # break
                 elif button_quit.is_over(mouse_pos):
                     sys.exit(0)
 
