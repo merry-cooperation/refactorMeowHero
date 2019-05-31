@@ -57,4 +57,18 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class DogEnemy(pygame.sprite.Sprite):
-    pass
+    def __init__(self, image, width, height):
+        super().__init__()
+
+        self.w = int(width)
+        self.h = int(height)
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
+        self.speed = 10
+
+    def move(self):
+        self.rect.move_ip(0, self.speed)  # another direction
+
+    def draw(self, window):
+        window.blit(self.image_surface, self.rect)

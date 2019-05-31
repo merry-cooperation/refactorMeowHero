@@ -23,13 +23,6 @@ background_image_in_game = pygame.transform.scale(background_image_in_game, (WIN
 # colors
 COLOR_WHITE = (255, 255, 255)  # white
 
-# magic
-BADDIE_MIN_SIZE = 10
-BADDIE_MAX_SIZE = 40
-BADDIE_MIN_SPEED = 1
-BADDIE_MAX_SPEED = 8
-ADD_NEW_BADDIE_RATE = 6
-PLAYER_MOVE_RATE = 12
 FPS = 40
 
 
@@ -50,25 +43,25 @@ def wait_for_player_to_press_key():
                 return
 
 
-# TODO: remove this guy
-def player_has_hit_baddie(player, baddies):
-    for b in baddies:
-        if player.colliderect(b['rect']):
-            return True
-    return False
-
-
 def game_loop(window_surface):
     main_clock = pygame.time.Clock()
     pygame.mouse.set_visible(False)
+    pygame.time.set_timer(pygame.USEREVENT, 1000)
 
     game_over_sound = pygame.mixer.Sound('../sound/game_over.wav')
     pygame.mixer.music.load('../sound/main_theme.mp3')
 
     # set up images
     player_image = pygame.image.load('../drawable/sprites/cat_hero/cat_hero.png')
+    enemy_image = pygame.image.load('../drawable/sprites/enemy/dog_enemy.png')
     health_image = pygame.image.load('../drawable/other/health.png')
     bullet_image = pygame.image.load('../drawable/weapons/bullet1.png')
+
+    # set up text
+    font = pygame.font.SysFont(None, 60)
+    score_text = objects.TextView(font, COLOR_WHITE, 10, 0)
+    top_score_text = objects.TextView(font, COLOR_WHITE, 10, 40)
+    timer_text = objects.TextView(font, COLOR_WHITE, 10*WINDOW_WIDTH/12, 10)
 
     meow_hero = heroes.MeowHero(player_image, WINDOW_WIDTH/12, WINDOW_HEIGHT/12)
     meow_hero.rect.move_ip(int(WINDOW_WIDTH/2), 7*int(WINDOW_HEIGHT/8))
@@ -76,10 +69,11 @@ def game_loop(window_surface):
     health_points = heroes.Health(health_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
 
     bullets = []
-    # TODO: init enemy
+    enemy = []
 
     wait_for_player_to_press_key()
 
+    main_timer = 100
     top_score = 0
     while True:
         score = 0
@@ -87,7 +81,8 @@ def game_loop(window_surface):
         move_left = move_right = move_up = move_down = False
         pygame.mixer.music.play(-1, 0.0)
 
-        while True:  # the game loop runs while the game part is playing
+        running = True
+        while running:  # the game loop runs while the game part is playing
             score += 1  # increase score
 
             # event handling
@@ -96,9 +91,12 @@ def game_loop(window_surface):
                     # TODO: open quit menu
                     terminate()
 
+                if event.type == pygame.USEREVENT:
+                    main_timer -= 1
+
                 if event.type == KEYDOWN:
                     if event.key == K_SPACE:
-                        # Todo: add sound
+                        # TODO: add sound
                         bullet = heroes.Bullet(bullet_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
                         bullet.rect.move_ip(meow_hero.rect.left, meow_hero.rect.top)
                         bullets.append(bullet)
@@ -127,7 +125,7 @@ def game_loop(window_surface):
                     if event.key == K_DOWN or event.key == ord('s'):
                         move_down = False
 
-            # Move the player around.
+            # move the player around
             if move_left and meow_hero.rect.left > 0:
                 meow_hero.move(-1, 0)
             if move_right and meow_hero.rect.right < WINDOW_WIDTH:
@@ -137,20 +135,21 @@ def game_loop(window_surface):
             if move_down and meow_hero.rect.bottom < WINDOW_HEIGHT:
                 meow_hero.move(0, 1)
 
-            # Draw background
+            # draw background
             window_surface.blit(background_image_in_game, [0, 0])
 
-            # Draw health points
+            # draw health points
             health_points.draw(window_surface, meow_hero.life)
 
-            # Draw the score and top score.
-            draw_text('Score: %s' % (score), window_surface, 10, 0)
-            draw_text('Top Score: %s' % (top_score), window_surface, 10, 40)
+            # draw text
+            score_text.draw(window_surface, 'Score: %s' % (score), )
+            top_score_text.draw(window_surface, 'Top Score: %s' % (top_score))
+            timer_text.draw(window_surface, "Time "+ str(main_timer).rjust(3) if main_timer > 0 else 'boom!')
 
-            # Draw hero
+            # draw hero
             meow_hero.draw(window_surface)
 
-            # Move and draw hero bullets
+            # move and draw hero bullets
             for bullet in bullets:
                 bullet.move()
                 if bullet.rect.top > WINDOW_HEIGHT:
@@ -166,8 +165,7 @@ def game_loop(window_surface):
         pygame.mixer.music.stop()
         game_over_sound.play()
 
-        draw_text('GAME OVER', window_surface, (WINDOW_WIDTH / 3), (WINDOW_HEIGHT / 3))
-        draw_text('Press a key to play again.', window_surface, (WINDOW_WIDTH / 3) - 80, (WINDOW_HEIGHT / 3) + 50)
+        # TODO: check if game is over
         pygame.display.update()
         wait_for_player_to_press_key()
 
@@ -190,14 +188,6 @@ def init_window(full_screen=False):  # set up pygame, the window, and the mouse 
     pygame.display.set_caption('Meow Hero')
 
     return window_surface
-
-
-def draw_text(text, surface, x, y):
-    font = pygame.font.SysFont(None, 60)
-    text_object = font.render(text, 1, COLOR_WHITE)
-    text_rect = text_object.get_rect()
-    text_rect.topleft = (x, y)
-    surface.blit(text_object, text_rect)
 
 
 # TODO: отрисовать нормально :D

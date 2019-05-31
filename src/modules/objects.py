@@ -28,13 +28,26 @@ class Button:
         return False
 
 
+class TextView:
+    def __init__(self, font, color, x, y):
+        self.font = font
+        self.color = color
+        self.x = int(x)
+        self.y = int(y)
+
+    def draw(self, window, text):
+        text_object = self.font.render(text, 1, self.color)
+        text_rect = text_object.get_rect()
+        text_rect.topleft = (self.x, self.y)
+        window.blit(text_object, text_rect)
+
+
 class InputBox:
     pass
 
 
 # module testing
 def main():
-
     WINDOW_WIDTH = 800
     WINDOW_HEIGHT = 600
 
@@ -77,5 +90,29 @@ def main():
     sys.exit
 
 
+def timer_test():
+    pygame.init()
+    screen = pygame.display.set_mode((128, 128))
+    clock = pygame.time.Clock()
+
+    counter, text = 10, '10'.rjust(3)
+    pygame.time.set_timer(pygame.USEREVENT, 1000)
+    font = pygame.font.SysFont('Consolas', 30)
+
+    while True:
+        for e in pygame.event.get():
+            if e.type == pygame.USEREVENT:
+                counter -= 1
+                text = str(counter).rjust(3) if counter > 0 else 'boom!'
+            if e.type == pygame.QUIT: break
+        else:
+            screen.fill((255, 255, 255))
+            screen.blit(font.render(text, True, (0, 0, 0)), (32, 48))
+            pygame.display.flip()
+            clock.tick(60)
+            continue
+        break
+
+
 if __name__ == '__main__':
-    main()
+    timer_test()
