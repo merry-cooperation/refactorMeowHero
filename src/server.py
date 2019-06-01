@@ -7,12 +7,10 @@ import sys
 
 HOST = '0.0.0.0'
 PORT = 9027
-sock = socket.socket()
 
 
 def terminate():
     pygame.quit()
-    sock.close()
     sys.exit(0)
 
 
@@ -29,25 +27,25 @@ def test():
     # add handler to logger object
     logger.addHandler(fh)
 
+    sock = socket.socket()
+
     sock.bind((HOST, PORT))
-    sock.listen(2)
+    sock.listen(100)
 
     print("Serving on ", PORT)
     logger.info('Start serving on %s' % (PORT))
 
-    conn1, address1 = sock.accept()
-    logger.info('Connection first from %s on %s' % (address1[0], address1[1]))
-
     while True:
-        try:
-            data = conn1.recv(1024).decode()
-        except Exception:
-            break
+        conn, address = sock.accept()
+        logger.info('Connection first from %s on %s' % (address[0], address[1]))
+        data = conn.recv(1024).decode()
+        conn.send(data.encode())
         print(data)
-        logger.info("Income data: ", data)
+        logger.info("Income data: %s" % (data))
 
-    conn1.close()
-    logger.info('Connection from %s on %s closed' % (address1[0], address1[1]))
+    # logger.info('Connection from %s on %s closed' % (address[0], address[1]))
+
+    sock.close()
 
 
 if __name__ == "__main__":
