@@ -47,8 +47,9 @@ def wait_for_player_to_press_key():
 
 
 def game_loop(window_surface):
-    main_clock = pygame.time.Clock()
     pygame.mouse.set_visible(False)
+
+    main_clock = pygame.time.Clock()
     pygame.time.set_timer(pygame.USEREVENT, 1000)
 
     game_over_sound = pygame.mixer.Sound('../sound/game_over.wav')
@@ -78,133 +79,131 @@ def game_loop(window_surface):
 
     main_timer = 100
     top_score = 0
-    while True:
-        score = 0
+    score = 0
 
-        move_left = move_right = move_up = move_down = False
-        pygame.mixer.music.play(-1, 0.0)
+    move_left = move_right = move_up = move_down = False
+    pygame.mixer.music.play(-1, 0.0)
 
-        running = True
-        while running:  # the game loop runs while the game part is playing
-            score += 1  # increase score
+    running = True
+    while running:  # the game loop runs while the game part is playing
+        score += 1  # increase score
 
-            # event handling
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    # TODO: open quit menu
+        # event handling
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                # TODO: open quit menu
+                terminate()
+
+            if event.type == pygame.USEREVENT:
+                main_timer -= 1
+
+            if event.type == KEYDOWN:
+                if event.key == K_SPACE:
+                    # TODO: add sound
+                    bullet = heroes.Bullet(bullet_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
+                    bullet.rect.move_ip(meow_hero.rect.left, meow_hero.rect.top)
+                    bullets.append(bullet)
+                if event.key == K_LEFT or event.key == ord('a'):
+                    move_right = False
+                    move_left = True
+                if event.key == K_RIGHT or event.key == ord('d'):
+                    move_left = False
+                    move_right = True
+                if event.key == K_UP or event.key == ord('w'):
+                    move_down = False
+                    move_up = True
+                if event.key == K_DOWN or event.key == ord('s'):
+                    move_up = False
+                    move_down = True
+
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
                     terminate()
+                if event.key == K_LEFT or event.key == ord('a'):
+                    move_left = False
+                if event.key == K_RIGHT or event.key == ord('d'):
+                    move_right = False
+                if event.key == K_UP or event.key == ord('w'):
+                    move_up = False
+                if event.key == K_DOWN or event.key == ord('s'):
+                    move_down = False
 
-                if event.type == pygame.USEREVENT:
-                    main_timer -= 1
+        # move the player around
+        if move_left and meow_hero.rect.left > 0:
+            meow_hero.move(-1, 0)
+        if move_right and meow_hero.rect.right < WINDOW_WIDTH:
+            meow_hero.move(1, 0)
+        if move_up and meow_hero.rect.top > 0:
+            meow_hero.move(0, -1)
+        if move_down and meow_hero.rect.bottom < WINDOW_HEIGHT:
+            meow_hero.move(0, 1)
 
-                if event.type == KEYDOWN:
-                    if event.key == K_SPACE:
-                        # TODO: add sound
-                        bullet = heroes.Bullet(bullet_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
-                        bullet.rect.move_ip(meow_hero.rect.left, meow_hero.rect.top)
-                        bullets.append(bullet)
-                    if event.key == K_LEFT or event.key == ord('a'):
-                        move_right = False
-                        move_left = True
-                    if event.key == K_RIGHT or event.key == ord('d'):
-                        move_left = False
-                        move_right = True
-                    if event.key == K_UP or event.key == ord('w'):
-                        move_down = False
-                        move_up = True
-                    if event.key == K_DOWN or event.key == ord('s'):
-                        move_up = False
-                        move_down = True
+        # spawn dogs
+        if len(enemies) < ENEMY_MAX_COUNT:
+            dice = random.random()
+            if dice < 0.1:
+                enemy = heroes.DogEnemy(enemy_image, WINDOW_WIDTH/24, WINDOW_HEIGHT/24)
+                enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
+                enemies.append(enemy)
 
-                if event.type == KEYUP:
-                    if event.key == K_ESCAPE:
-                        terminate()
-                    if event.key == K_LEFT or event.key == ord('a'):
-                        move_left = False
-                    if event.key == K_RIGHT or event.key == ord('d'):
-                        move_right = False
-                    if event.key == K_UP or event.key == ord('w'):
-                        move_up = False
-                    if event.key == K_DOWN or event.key == ord('s'):
-                        move_down = False
-
-            # move the player around
-            if move_left and meow_hero.rect.left > 0:
-                meow_hero.move(-1, 0)
-            if move_right and meow_hero.rect.right < WINDOW_WIDTH:
-                meow_hero.move(1, 0)
-            if move_up and meow_hero.rect.top > 0:
-                meow_hero.move(0, -1)
-            if move_down and meow_hero.rect.bottom < WINDOW_HEIGHT:
-                meow_hero.move(0, 1)
-
-            # spawn dogs
-            if len(enemies) < ENEMY_MAX_COUNT:
-                dice = random.random()
-                if dice < 0.1:
-                    enemy = heroes.DogEnemy(enemy_image, WINDOW_WIDTH/24, WINDOW_HEIGHT/24)
-                    enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
-                    enemies.append(enemy)
-
-            # hitting dogs
-            for enemy in enemies:
-                for bullet in bullets:
-                    if enemy.rect.colliderect(bullet.rect):
-                        enemy.life -= 1
-                        bullet.life -= 1
-
-            # hitting hero:
-            for enemy in enemies:
-                if meow_hero.rect.colliderect(enemy.rect):
-                    meow_hero.life -= 1
-                    enemies.remove(enemy)
-
-            # draw background
-            window_surface.blit(background_image_in_game, [0, 0])
-
-            # draw health points
-            health_points.draw(window_surface, meow_hero.life)
-
-            # draw text
-            score_text.draw(window_surface, 'Score: %s' % (score), )
-            top_score_text.draw(window_surface, 'Top Score: %s' % (top_score))
-            timer_text.draw(window_surface, "Time "+ str(main_timer).rjust(3) if main_timer > 0 else 'boom!')
-
-            # draw hero
-            meow_hero.draw(window_surface)
-
-            # draw enemies
-            for enemy in enemies:
-                enemy.move()
-                if enemy.rect.top > WINDOW_HEIGHT or enemy.life <= 0:
-                    enemies.remove(enemy)
-                enemy.draw(window_surface)
-
-            # move and draw hero bullets
+        # hitting dogs
+        for enemy in enemies:
             for bullet in bullets:
-                bullet.move()
-                if bullet.rect.top > WINDOW_HEIGHT or bullet.life <= 0:
-                    bullets.remove(bullet)
-                bullet.draw(window_surface)
+                if enemy.rect.colliderect(bullet.rect):
+                    enemy.life -= 1
+                    bullet.life -= 1
 
-            # check for ending:
-            if meow_hero.life <= 0:
-                running = False
+        # hitting hero:
+        for enemy in enemies:
+            if meow_hero.rect.colliderect(enemy.rect):
+                meow_hero.life -= 1
+                enemies.remove(enemy)
 
-            pygame.display.update()
+        # draw background
+        window_surface.blit(background_image_in_game, [0, 0])
 
-            main_clock.tick(FPS)
+        # draw health points
+        health_points.draw(window_surface, meow_hero.life)
 
-        # TODO: return player to main menu
-        # Stop the game and show the "Game Over" screen.
-        pygame.mixer.music.stop()
-        game_over_sound.play()
+        # draw text
+        score_text.draw(window_surface, 'Score: %s' % (score), )
+        top_score_text.draw(window_surface, 'Top Score: %s' % (top_score))
+        timer_text.draw(window_surface, "Time "+ str(main_timer).rjust(3) if main_timer > 0 else 'boom!')
 
-        # TODO: check if game is over
+        # draw hero
+        meow_hero.draw(window_surface)
+
+        # draw enemies
+        for enemy in enemies:
+            enemy.move()
+            if enemy.rect.top > WINDOW_HEIGHT or enemy.life <= 0:
+                enemies.remove(enemy)
+            enemy.draw(window_surface)
+
+        # move and draw hero bullets
+        for bullet in bullets:
+            bullet.move()
+            if bullet.rect.top > WINDOW_HEIGHT or bullet.life <= 0:
+                bullets.remove(bullet)
+            bullet.draw(window_surface)
+
+        # check for ending:
+        if meow_hero.life <= 0:
+            running = False
+
         pygame.display.update()
-        wait_for_player_to_press_key()
 
-        game_over_sound.stop()
+        main_clock.tick(FPS)
+
+    pygame.mixer.music.stop()
+    game_over_sound.play()
+
+    # TODO: check if game is over
+    pygame.display.update()
+    wait_for_player_to_press_key()
+
+    game_over_sound.stop()
+    pygame.mouse.set_visible(True)
 
 
 def init_window(full_screen=False):  # set up pygame, the window, and the mouse cursor
@@ -258,6 +257,7 @@ def levels_menu(window_surface):
                         # TODO: draw story here
                         # TODO: send level as param
                         game_loop(window_surface)
+                        return
                         # TODO: draw story here, if victory
                         # TODO: unlock new level
 
@@ -284,10 +284,14 @@ def main_menu(window_surface):     # show the "Main menu" screen
 
     while True:
         for event in pygame.event.get():
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    terminate()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos  # gets mouse position
                 if button_single.is_over(mouse_pos):
                     levels_menu(window_surface)
+                    return
                 elif button_two.is_over(mouse_pos):
                     pass
                     # TODO: press F
@@ -305,8 +309,9 @@ def main_menu(window_surface):     # show the "Main menu" screen
 
 
 def main():
-    window = init_window(True)
-    main_menu(window)
+    while True:
+        window = init_window(True)
+        main_menu(window)
 
 
 if __name__ == "__main__":
