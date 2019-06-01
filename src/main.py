@@ -4,7 +4,7 @@ import pygame
 import screeninfo
 import sys
 
-from modules import objects, client, heroes
+from modules import interface, client, objects
 from pygame.locals import *
 
 # taking screen W and H
@@ -63,17 +63,18 @@ def game_loop(window_surface):
 
     # set up text
     font = pygame.font.SysFont(None, 60)
-    score_text = objects.TextView(font, COLOR_WHITE, 10, 0)
-    top_score_text = objects.TextView(font, COLOR_WHITE, 10, 40)
-    timer_text = objects.TextView(font, COLOR_WHITE, 10*WINDOW_WIDTH/12, 10)
+    score_text = interface.TextView(font, COLOR_WHITE, 10, 0)
+    top_score_text = interface.TextView(font, COLOR_WHITE, 10, 40)
+    timer_text = interface.TextView(font, COLOR_WHITE, 10*WINDOW_WIDTH/12, 10)
 
-    meow_hero = heroes.MeowHero(player_image, WINDOW_WIDTH/12, WINDOW_HEIGHT/12)
+    meow_hero = objects.MeowHero(player_image, WINDOW_WIDTH/12, WINDOW_HEIGHT/12)
     meow_hero.rect.move_ip(int(WINDOW_WIDTH/2), 7*int(WINDOW_HEIGHT/8))
 
-    health_points = heroes.Health(health_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
+    health_points = objects.Health(health_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
 
     bullets = []
     enemies = []
+    bonuses = []
 
     wait_for_player_to_press_key()
 
@@ -100,7 +101,7 @@ def game_loop(window_surface):
             if event.type == KEYDOWN:
                 if event.key == K_SPACE:
                     # TODO: add sound
-                    bullet = heroes.Bullet(bullet_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
+                    bullet = objects.Bullet(bullet_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
                     bullet.rect.move_ip(meow_hero.rect.left, meow_hero.rect.top)
                     bullets.append(bullet)
                 if event.key == K_LEFT or event.key == ord('a'):
@@ -138,11 +139,20 @@ def game_loop(window_surface):
         if move_down and meow_hero.rect.bottom < WINDOW_HEIGHT:
             meow_hero.move(0, 1)
 
+        # spawn bonuses by time
+        if main_timer % 10 == 0 and len(bonuses) == 0:
+            bonus = objects.Bonus("Life", WINDOW_WIDTH/24, WINDOW_HEIGHT/24)
+            bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
+            bonuses.append(bonus)
+            bonus = objects.Bonus("Coin", WINDOW_WIDTH / 24, WINDOW_HEIGHT / 24)
+            bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
+            bonuses.append(bonus)
+
         # spawn dogs
         if len(enemies) < ENEMY_MAX_COUNT:
             dice = random.random()
             if dice < 0.1:
-                enemy = heroes.DogEnemy(enemy_image, WINDOW_WIDTH/24, WINDOW_HEIGHT/24)
+                enemy = objects.DogEnemy(enemy_image, WINDOW_WIDTH/18, WINDOW_HEIGHT/18)
                 enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
                 enemies.append(enemy)
 
@@ -159,6 +169,15 @@ def game_loop(window_surface):
                 meow_hero.life -= 1
                 enemies.remove(enemy)
 
+        # collecting bonuses:
+        for bonus in bonuses:
+            if meow_hero.rect.colliderect(bonus.rect):
+                if bonus.bonus_type == "Life":
+                    meow_hero.life += 1
+                elif bonus.bonus_type == "Coin":
+                    score += 1000
+                bonuses.remove(bonus)
+
         # draw background
         window_surface.blit(background_image_in_game, [0, 0])
 
@@ -172,6 +191,10 @@ def game_loop(window_surface):
 
         # draw hero
         meow_hero.draw(window_surface)
+
+        # draw bonuses
+        for bonus in bonuses:
+            bonus.draw(window_surface)
 
         # draw enemies
         for enemy in enemies:
@@ -239,7 +262,7 @@ def levels_menu(window_surface):
     buttons = list()
 
     for i in range(12):
-        button = objects.Button(image, i*WINDOW_WIDTH / 12, WINDOW_HEIGHT / 4,
+        button = interface.Button(image, i*WINDOW_WIDTH / 12, WINDOW_HEIGHT / 4,
                                 WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, str(i))
         buttons.append(button)
 
@@ -269,11 +292,11 @@ def main_menu(window_surface):     # show the "Main menu" screen
     image = pygame.image.load('../drawable/buttons/red_button.png')
     image = pygame.transform.scale(image, (int(WINDOW_WIDTH/3), int(WINDOW_HEIGHT/8)))
 
-    button_single = objects.Button(image, WINDOW_WIDTH/2, WINDOW_HEIGHT/4,
+    button_single = interface.Button(image, WINDOW_WIDTH/2, WINDOW_HEIGHT/4,
                                    WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "1 Player")
-    button_two = objects.Button(image, WINDOW_WIDTH/2, WINDOW_HEIGHT/2,
+    button_two = interface.Button(image, WINDOW_WIDTH/2, WINDOW_HEIGHT/2,
                                 WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "2 Players")
-    button_quit = objects.Button(image, WINDOW_WIDTH/2, 3*WINDOW_HEIGHT/4,
+    button_quit = interface.Button(image, WINDOW_WIDTH/2, 3*WINDOW_HEIGHT/4,
                                  WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "Quit")
 
     button_single.draw(window_surface)

@@ -1,118 +1,98 @@
 import pygame
+import random
 
 
-class Button:
-    def __init__(self, image, x, y, w, h, text='Hello'):
-        # TODO: send image path, not image
-        self.image = image
-        self.x = int(x)
-        self.y = int(y)
-        self.w = int(w)
-        self.h = int(h)
-        self.text = text
+class MeowHero(pygame.sprite.Sprite):
+    # This class represents a Cat Hero. It derives from the "Sprite" class in PyGame.
+    def __init__(self, image, width, height):
+        super().__init__()
 
-    def draw(self, window, outline=None):
-        if outline:
-            pygame.draw.rect(window, outline, (self.x-2, self.y-2, self.w+4, self.h+4), 0)
+        # getting rect
+        self.w = int(width)
+        self.h = int(height)
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
 
-        window.blit(self.image, [int(self.x), int(self.y)])
+        # getting attributes
+        self.life = 9
+        self.weapon_power = 1
+        self.move_rate = 12
 
-        font = pygame.font.SysFont(None, 42)
-        text = font.render(self.text, 1, (0, 0, 0))
-        window.blit(text, (self.x+(self.w/2-text.get_width()/2), self.y+(self.h/2-text.get_height()/2)))
+    def draw(self, window):
+        window.blit(self.image_surface, self.rect)
 
-    def is_over(self, pos):  # pos is the mouse position or a tuple of (x,y) coordinates
-        if pos[0] > self.x and pos[0] < self.x + self.w:
-            if pos[1] > self.y and pos[1] < self.y + self.h:
-                return True
-        return False
+    def move(self, x_d, y_d):
+        self.rect.move_ip(x_d*self.move_rate, y_d*self.move_rate)
 
 
-class TextView:
-    def __init__(self, font, color, x, y):
-        self.font = font
-        self.color = color
-        self.x = int(x)
-        self.y = int(y)
+class Health(pygame.sprite.Sprite):
+    def __init__(self, image, width, height):
+        super().__init__()
 
-    def draw(self, window, text):
-        text_object = self.font.render(text, 1, self.color)
-        text_rect = text_object.get_rect()
-        text_rect.topleft = (self.x, self.y)
-        window.blit(text_object, text_rect)
+        self.w = int(width)
+        self.h = int(height)
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
 
-
-class InputBox:
-    pass
+    def draw(self, window, count):
+        for i in range(count):
+            window.blit(self.image_surface, [0+i*self.w, 80])
 
 
-# module testing
-def main():
-    WINDOW_WIDTH = 800
-    WINDOW_HEIGHT = 600
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, image, width, height):
+        super().__init__()
 
-    pygame.init()
-    clock = pygame.time.Clock()
-    fps = 60
-    size = [1000, 600]
-    bg = [255, 255, 255]
-    window_surface = pygame.display.set_mode(size)
+        self.w = int(width)
+        self.h = int(height)
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
 
-    screen = pygame.display.set_mode(size)
+        self.speed = 20
+        self.life = 1
 
-    image = pygame.image.load('../../drawable/buttons/red_button.png')
-    image = pygame.transform.scale(image, (int(WINDOW_WIDTH/3), int(WINDOW_HEIGHT/8)))
+    def move(self):
+        self.rect.move_ip(0, self.speed*(-1))  # another direction
 
-    button = Button(image, 50, 100, 50, 100, "tesst")
-
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return False
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = event.pos  # gets mouse position
-
-                # checks if mouse position is over the button
-
-                if button.is_over(mouse_pos):
-                    # prints current location of mouse
-                    print('button was pressed at {0}'.format(mouse_pos))
-
-        screen.fill(bg)
-
-        button.draw(window_surface)
-
-        pygame.display.update()
-        clock.tick(fps)
-
-    pygame.quit()
-    sys.exit
+    def draw(self, window):
+        window.blit(self.image_surface, self.rect)
 
 
-def timer_test():
-    pygame.init()
-    screen = pygame.display.set_mode((128, 128))
-    clock = pygame.time.Clock()
+class DogEnemy(pygame.sprite.Sprite):
+    def __init__(self, image, width, height):
+        super().__init__()
 
-    counter, text = 10, '10'.rjust(3)
-    pygame.time.set_timer(pygame.USEREVENT, 1000)
-    font = pygame.font.SysFont('Consolas', 30)
+        self.w = int(width)
+        self.h = int(height)
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
 
-    while True:
-        for e in pygame.event.get():
-            if e.type == pygame.USEREVENT:
-                counter -= 1
-                text = str(counter).rjust(3) if counter > 0 else 'boom!'
-            if e.type == pygame.QUIT: break
-        else:
-            screen.fill((255, 255, 255))
-            screen.blit(font.render(text, True, (0, 0, 0)), (32, 48))
-            pygame.display.flip()
-            clock.tick(60)
-            continue
-        break
+        self.speed = random.randint(3, 20)
+        self.life = 1
+
+    def move(self):
+        self.rect.move_ip(0, self.speed)
+
+    def draw(self, window):
+        window.blit(self.image_surface, self.rect)
 
 
-if __name__ == '__main__':
-    timer_test()
+class Bonus(pygame.sprite.Sprite):
+    def __init__(self, bonus_type, width, height):
+        super().__init__()
+
+        self.w = int(width)
+        self.h = int(height)
+        self.bonus_type = bonus_type
+        # switching bonus type
+        if self.bonus_type == "Life":
+            image = pygame.image.load('../drawable/other/health.png')
+        elif self.bonus_type == "Coin":
+            image = pygame.image.load('../drawable/other/coin.png')
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
+        # TODO: add lifetime
+
+    def draw(self, window):
+        window.blit(self.image_surface, self.rect)
