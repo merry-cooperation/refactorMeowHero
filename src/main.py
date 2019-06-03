@@ -46,7 +46,7 @@ def wait_for_player_to_press_key():
                 return
 
 
-def game_loop(window_surface):
+def game_loop(window_surface, level_number):
     pygame.mouse.set_visible(False)
 
     main_clock = pygame.time.Clock()
@@ -55,22 +55,16 @@ def game_loop(window_surface):
     game_over_sound = pygame.mixer.Sound('../sound/game_over.wav')
     pygame.mixer.music.load('../sound/main_theme.mp3')
 
-    # set up images
-    player_image = pygame.image.load('../drawable/sprites/cat_hero/cat_hero.png')
-    enemy_image = pygame.image.load('../drawable/sprites/enemy/dog_enemy.png')
-    health_image = pygame.image.load('../drawable/other/health.png')
-    bullet_image = pygame.image.load('../drawable/weapons/bullet1.png')
-
     # set up text
     font = pygame.font.SysFont(None, 60)
     score_text = interface.TextView(font, COLOR_WHITE, 10, 0)
     top_score_text = interface.TextView(font, COLOR_WHITE, 10, 40)
     timer_text = interface.TextView(font, COLOR_WHITE, 10*WINDOW_WIDTH/12, 10)
 
-    meow_hero = objects.MeowHero(player_image, WINDOW_WIDTH/12, WINDOW_HEIGHT/12)
+    meow_hero = objects.MeowHero(1, WINDOW_WIDTH/12, WINDOW_HEIGHT/12)
     meow_hero.rect.move_ip(int(WINDOW_WIDTH/2), 7*int(WINDOW_HEIGHT/8))
 
-    health_points = objects.Health(health_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
+    health_points = objects.Health(1, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
 
     bullets = []
     enemies = []
@@ -78,7 +72,7 @@ def game_loop(window_surface):
 
     wait_for_player_to_press_key()
 
-    main_timer = 100
+    main_timer = 10*level_number + 40
     top_score = 0
     score = 0
 
@@ -86,6 +80,7 @@ def game_loop(window_surface):
     pygame.mixer.music.play(-1, 0.0)
 
     running = True
+    victory = True
     while running:  # the game loop runs while the game part is playing
         score += 1  # increase score
 
@@ -97,11 +92,14 @@ def game_loop(window_surface):
 
             if event.type == pygame.USEREVENT:
                 main_timer -= 1
+                # victory condition
+                if main_timer <= 0:
+                    running = False
 
             if event.type == KEYDOWN:
                 if event.key == K_SPACE:
                     # TODO: add sound
-                    bullet = objects.Bullet(bullet_image, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
+                    bullet = objects.Bullet(1, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
                     bullet.rect.move_ip(meow_hero.rect.left, meow_hero.rect.top)
                     bullets.append(bullet)
                 if event.key == K_LEFT or event.key == ord('a'):
@@ -148,15 +146,16 @@ def game_loop(window_surface):
             bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
             bonuses.append(bonus)
 
-        # spawn dogs
+        # spawn enemy
         if len(enemies) < ENEMY_MAX_COUNT:
             dice = random.random()
             if dice < 0.1:
-                enemy = objects.DogEnemy(enemy_image, WINDOW_WIDTH/18, WINDOW_HEIGHT/18)
+                # TODO: spawn randomly by level_number
+                enemy = objects.DogEnemy(1, WINDOW_WIDTH/18, WINDOW_HEIGHT/18)
                 enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
                 enemies.append(enemy)
 
-        # hitting dogs
+        # hitting enemy
         for enemy in enemies:
             for bullet in bullets:
                 if enemy.rect.colliderect(bullet.rect):
@@ -187,7 +186,7 @@ def game_loop(window_surface):
         # draw text
         score_text.draw(window_surface, 'Score: %s' % (score), )
         top_score_text.draw(window_surface, 'Top Score: %s' % (top_score))
-        timer_text.draw(window_surface, "Time "+ str(main_timer).rjust(3) if main_timer > 0 else 'boom!')
+        timer_text.draw(window_surface, "Time "+ str(main_timer).rjust(3) if main_timer > 0 else 'NICE, NIGGA')
 
         # draw hero
         meow_hero.draw(window_surface)
@@ -201,6 +200,7 @@ def game_loop(window_surface):
             enemy.move()
             if enemy.rect.top > WINDOW_HEIGHT or enemy.life <= 0:
                 enemies.remove(enemy)
+                score += 100 * enemy.level
             enemy.draw(window_surface)
 
         # move and draw hero bullets
@@ -213,13 +213,18 @@ def game_loop(window_surface):
         # check for ending:
         if meow_hero.life <= 0:
             running = False
+            victory = False
 
         pygame.display.update()
 
         main_clock.tick(FPS)
 
-    pygame.mixer.music.stop()
-    game_over_sound.play()
+    if victory:
+        # TODO: do something
+        pass
+    else:
+        pygame.mixer.music.stop()
+        game_over_sound.play()
 
     # TODO: check if game is over
     pygame.display.update()
@@ -263,7 +268,7 @@ def levels_menu(window_surface):
 
     for i in range(12):
         button = interface.Button(image, i*WINDOW_WIDTH / 12, WINDOW_HEIGHT / 4,
-                                WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, str(i))
+                                WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, str(i+1))
         buttons.append(button)
 
     for button in buttons:
@@ -279,7 +284,7 @@ def levels_menu(window_surface):
                     if button.is_over(mouse_pos):
                         # TODO: draw story here
                         # TODO: send level as param
-                        game_loop(window_surface)
+                        game_loop(window_surface, int(button.text))
                         return
                         # TODO: draw story here, if victory
                         # TODO: unlock new level

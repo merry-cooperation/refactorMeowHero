@@ -2,14 +2,16 @@ import pygame
 import random
 
 
+# TODO: move_rate by screen params please
 class MeowHero(pygame.sprite.Sprite):
     # This class represents a Cat Hero. It derives from the "Sprite" class in PyGame.
-    def __init__(self, image, width, height):
+    def __init__(self, skin_type, width, height):
         super().__init__()
 
         # getting rect
         self.w = int(width)
         self.h = int(height)
+        image = pygame.image.load('../drawable/sprites/cat_hero/cat_hero' + str(skin_type) + '.png')
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
@@ -26,11 +28,13 @@ class MeowHero(pygame.sprite.Sprite):
 
 
 class Health(pygame.sprite.Sprite):
-    def __init__(self, image, width, height):
+    def __init__(self, level, width, height):
         super().__init__()
 
         self.w = int(width)
         self.h = int(height)
+
+        image = pygame.image.load('../drawable/other/health' + str(level) + '.png')
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
@@ -40,14 +44,17 @@ class Health(pygame.sprite.Sprite):
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, image, width, height):
+    def __init__(self, level, width, height):
         super().__init__()
 
         self.w = int(width)
         self.h = int(height)
+
+        image = pygame.image.load('../drawable/weapons/bullet' + str(level) +'.png')
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
+        self.level = level
         self.speed = 20
         self.life = 1
 
@@ -59,16 +66,19 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class DogEnemy(pygame.sprite.Sprite):
-    def __init__(self, image, width, height):
+    def __init__(self, level, width, height):
         super().__init__()
 
         self.w = int(width)
         self.h = int(height)
+
+        image = pygame.image.load('../drawable/sprites/enemy/dog_enemy' + str(level) + '.png')
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
-        self.speed = random.randint(3, 20)
-        self.life = 1
+        self.level = level
+        self.speed = random.randint(2, 14)
+        self.life = level
 
     def move(self):
         self.rect.move_ip(0, self.speed)
@@ -86,9 +96,9 @@ class Bonus(pygame.sprite.Sprite):
         self.bonus_type = bonus_type
         # switching bonus type
         if self.bonus_type == "Life":
-            image = pygame.image.load('../drawable/other/health.png')
+            image = pygame.image.load('../drawable/other/health1.png')
         elif self.bonus_type == "Coin":
-            image = pygame.image.load('../drawable/other/coin.png')
+            image = pygame.image.load('../drawable/other/coin1.png')
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
