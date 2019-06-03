@@ -5,6 +5,7 @@ import screeninfo
 import sys
 
 from modules import interface, client, objects
+from time import sleep
 from pygame.locals import *
 
 # taking screen W and H
@@ -22,7 +23,8 @@ background_image_in_game = pygame.image.load("../drawable/backgrounds/background
 background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
 # colors
-COLOR_WHITE = (255, 255, 255)  # white
+COLOR_WHITE = (255, 255, 255)
+COLOR_BLACK = (0, 0, 0)
 
 # magic
 FPS = 60
@@ -44,6 +46,48 @@ def wait_for_player_to_press_key():
                 if event.key == K_ESCAPE:  # pressing escape quits
                     terminate()
                 return
+
+
+def story_loop(window_surface, level_number, prefix):
+    pygame.mouse.set_visible(False)
+
+    try:
+        handler = open("../plot/" + prefix + "_story_" + str(level_number) + ".txt")
+    except FileNotFoundError:
+        print("No plot for level")
+        return
+
+    text = handler.read()
+    handler.close()
+
+    font = pygame.font.SysFont(None, 60)
+    text_view = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH/5, 2*WINDOW_HEIGHT/5)
+
+    window_surface.fill(COLOR_BLACK)
+
+    meow_hero = objects.MeowHero(1, WINDOW_WIDTH / 5, WINDOW_HEIGHT / 5)
+    meow_hero.rect.move_ip(4*int(WINDOW_WIDTH/5), 6*int(WINDOW_HEIGHT/8))
+    meow_hero.draw(window_surface)
+
+    pygame.display.update()
+
+    # ебааать импровизированная анимация
+    # TODO: add interruption
+    buf = ""
+    for elem in text:
+        buf += elem
+        text_view.draw(window_surface, buf)
+        pygame.display.update()
+        sleep(0.1)
+        # skip if escape
+        for event in pygame.event.get():
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    return
+    # TODO: add pause after this
+    wait_for_player_to_press_key()
+
+    pygame.mouse.set_visible(True)
 
 
 def game_loop(window_surface, level_number):
@@ -71,8 +115,6 @@ def game_loop(window_surface, level_number):
     bullets = []
     enemies = []
     bonuses = []
-
-    wait_for_player_to_press_key()
 
     main_timer = 10*level_number + 40
     top_score = 0
@@ -284,12 +326,10 @@ def levels_menu(window_surface):
                 mouse_pos = event.pos  # gets mouse position
                 for button in buttons:
                     if button.is_over(mouse_pos):
-                        # TODO: draw story here
-                        # TODO: send level as param
+                        story_loop(window_surface, int(button.text), "pre")
                         game_loop(window_surface, int(button.text))
+                        story_loop(window_surface, int(button.text), "post")
                         return
-                        # TODO: draw story here, if victory
-                        # TODO: unlock new level
 
 
 # TODO: кнопка статистики

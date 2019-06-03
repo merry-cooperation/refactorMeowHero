@@ -1,4 +1,5 @@
 import pygame
+from time import sleep
 
 
 class Button:
@@ -34,6 +35,7 @@ class TextView:
         self.color = color
         self.x = int(x)
         self.y = int(y)
+        self.buffer = ""
 
     def draw(self, window, text):
         text_object = self.font.render(text, 1, self.color)
