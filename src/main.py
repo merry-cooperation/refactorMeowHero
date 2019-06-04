@@ -273,11 +273,14 @@ def game_loop(window_surface, level_number, player):
             victory = False
 
         pygame.display.update()
-
         main_clock.tick(FPS)
 
+    pygame.mixer.music.stop()
+
     if victory:
+        # checking for new record
         if score > top_score:
+            # TODO: put level in player.levels
             handler = open("../stats/high_score.json", 'r')
             data = json.load(handler)
             handler.close()
@@ -286,10 +289,8 @@ def game_loop(window_surface, level_number, player):
             json.dump(data, handler)
             handler.close()
     else:
-        pygame.mixer.music.stop()
         game_over_sound.play()
 
-    # TODO: check if game is over
     pygame.display.update()
     wait_for_player_to_press_key(player)
 
@@ -420,6 +421,9 @@ def main_menu(window_surface):     # show the "Main menu" screen
                     # break
                 elif button_quit.is_over(mouse_pos):
                     sys.exit(0)
+                elif not_you_text_button.is_over(mouse_pos):
+                    # TODO: draw input_view
+                    pass
 
 
 def main():
