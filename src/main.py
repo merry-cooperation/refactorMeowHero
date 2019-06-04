@@ -20,10 +20,13 @@ WINDOW_WIDTH = 1600
 WINDOW_HEIGHT = 900
 
 # constant BG
+# TODO: remove in game BG
 background_image_in_game = pygame.image.load("../drawable/backgrounds/background1.jpg")
 background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 background_image_main = pygame.image.load("../drawable/backgrounds/main_menu4.jpg")
 background_image_main = pygame.transform.scale(background_image_main, (WINDOW_WIDTH, WINDOW_HEIGHT))
+background_image_levels = pygame.image.load("../drawable/backgrounds/main_menu4.jpg")
+background_image_levels = pygame.transform.scale(background_image_levels, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
 # colors
 COLOR_WHITE = (255, 255, 255)
@@ -37,6 +40,7 @@ ENEMY_MAX_COUNT = 40
 
 def terminate(player):
     # saving current state
+    print("Levels:", player.levels)
     handler = open("../stats/last_player.txt", 'w')
     handler.write(player.name)
     handler.close()
@@ -68,6 +72,7 @@ def story_loop(window_surface, level_number, prefix, player):
         handler = open("../plot/" + prefix + "_story_" + str(level_number) + ".txt")
     except FileNotFoundError:
         print("No plot for level")
+        pygame.mouse.set_visible(True)
         return
     text = handler.read()
     handler.close()
@@ -83,9 +88,13 @@ def story_loop(window_surface, level_number, prefix, player):
 
     pygame.display.update()
 
-    # TODO: add interruption
     buf = ""
+    skip = False
     for elem in text:
+        if skip:
+            text_view.draw_this(window_surface, text)
+            pygame.display.update()
+            break
         buf += elem
         text_view.draw_this(window_surface, buf)
         pygame.display.update()
@@ -95,6 +104,8 @@ def story_loop(window_surface, level_number, prefix, player):
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
                     return
+                else:
+                    skip = True
 
     pygame.mixer.music.stop()
     wait_for_player_to_press_key(player)
@@ -135,7 +146,8 @@ def game_loop(window_surface, level_number, player):
     enemies = []
     bonuses = []
 
-    main_timer = 10*level_number + 40
+    main_timer = 10  # debugging
+    # main_timer = 10*level_number + 40
     score = 0
 
     handler = open("../stats/high_score.json", 'r')
@@ -218,7 +230,7 @@ def game_loop(window_surface, level_number, player):
             dice = random.random()
             if dice < 0.1:
                 # TODO: spawn randomly by level_number
-                enemy = objects.DogEnemy(1, WINDOW_WIDTH/18, WINDOW_HEIGHT/18)
+                enemy = objects.Enemy(1, WINDOW_WIDTH/18, WINDOW_HEIGHT/18)
                 enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
                 enemies.append(enemy)
 
@@ -290,11 +302,13 @@ def game_loop(window_surface, level_number, player):
         main_clock.tick(FPS)
 
     pygame.mixer.music.stop()
+    pygame.mouse.set_visible(True)
 
     if victory:
         # checking for new record
         victory_sound.play()
-        player.levels.append(str(level_number))
+        if str(level_number+1) not in player.levels:
+            player.levels.append(int(level_number+1))
         if score > top_score:
             new_top_sound.play()
             handler = open("../stats/high_score.json", 'r')
@@ -311,7 +325,7 @@ def game_loop(window_surface, level_number, player):
     wait_for_player_to_press_key(player)
 
     game_over_sound.stop()
-    pygame.mouse.set_visible(True)
+    # TODO: draw something by the end of level
 
     return True if victory else False
 
@@ -333,10 +347,6 @@ def init_window(full_screen=False):  # set up pygame, the window, and the mouse 
 # TODO: отрисовать нормально :D
 # TODO: кнопка "назад"
 def levels_menu(window_surface, player):
-    background_image_levels = pygame.transform.scale(pygame.image.load("../drawable/backgrounds/main_menu4.jpg"),
-                                                     (WINDOW_WIDTH, WINDOW_HEIGHT))
-
-    print(player.levels)
     buttons = list()
 
     for i in range(12):
@@ -352,6 +362,10 @@ def levels_menu(window_surface, player):
     while True:
         for event in pygame.event.get():
             mouse_pos = pygame.mouse.get_pos()  # gets mouse position
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    terminate(player)
+
             for button in buttons:
                 if button.is_over(mouse_pos):
                     if event.type == pygame.MOUSEBUTTONDOWN and not button.is_off:
@@ -359,7 +373,19 @@ def levels_menu(window_surface, player):
                         victory = game_loop(window_surface, int(button.text), player)
                         if victory:
                             story_loop(window_surface, int(button.text), "post", player)
-                        return
+                            # TODO: do it in function
+                            # TEST
+                            buttons = list()
+                            for i in range(12):
+                                if i + 1 in player.levels:
+                                    button = interface.Button(i * WINDOW_WIDTH / 12, WINDOW_HEIGHT / 4,
+                                                              WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, str(i + 1))
+                                else:
+                                    button = interface.Button(i * WINDOW_WIDTH / 12, WINDOW_HEIGHT / 4,
+                                                              WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, str(i + 1), True)
+
+                                buttons.append(button)
+                            # TEST
 
             window_surface.blit(background_image_levels, [0, 0])
 

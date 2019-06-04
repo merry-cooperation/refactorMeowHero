@@ -65,7 +65,7 @@ class Bullet(pygame.sprite.Sprite):
         window.blit(self.image_surface, self.rect)
 
 
-class DogEnemy(pygame.sprite.Sprite):
+class Enemy(pygame.sprite.Sprite):
     def __init__(self, level, width, height):
         super().__init__()
 
