@@ -1,4 +1,5 @@
 import pygame
+import json
 
 
 class Button:
@@ -51,6 +52,15 @@ class Player:
         self.levels = levels
         self.skins = skins
 
+    def save_current_state(self):
+        data = dict()
+        data["name"] = self.name
+        data["score"] = self.score
+        data["levels"] = self.levels
+        data["skins"] = self.skins
+        handler = open("../stats/players/" + self.name + ".json", 'w')
+        json.dump(data, handler)
+        handler.close()
 
 # TODO: describe me pls
 class InputBox:

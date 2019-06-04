@@ -38,7 +38,7 @@ def terminate(player):
     handler = open("../stats/last_player.txt", 'w')
     handler.write(player.name)
     handler.close()
-    # TODO: save json too
+    player.save_current_state()
 
     pygame.quit()
     sys.exit()
@@ -126,8 +126,12 @@ def game_loop(window_surface, level_number, player):
     bonuses = []
 
     main_timer = 10*level_number + 40
-    top_score = 0  # TODO: take top score from high_score.txt
     score = 0
+
+    handler = open("../stats/high_score.json", 'r')
+    data = json.load(handler)
+    top_score = data[str(level_number)][1]
+    handler.close()
 
     move_left = move_right = move_up = move_down = False
     pygame.mixer.music.play(-1, 0.0)
@@ -273,8 +277,14 @@ def game_loop(window_surface, level_number, player):
         main_clock.tick(FPS)
 
     if victory:
-        # TODO: do something
-        pass
+        if score > top_score:
+            handler = open("../stats/high_score.json", 'r')
+            data = json.load(handler)
+            handler.close()
+            data[str(level_number)] = [player.name, score]
+            handler = open("../stats/high_score.json", 'w')
+            json.dump(data, handler)
+            handler.close()
     else:
         pygame.mixer.music.stop()
         game_over_sound.play()
