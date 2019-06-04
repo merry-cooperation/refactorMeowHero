@@ -53,7 +53,7 @@ def game_loop(window_surface, level_number):
     pygame.time.set_timer(pygame.USEREVENT, 1000)
 
     game_over_sound = pygame.mixer.Sound('../sound/game_over.wav')
-    pygame.mixer.music.load('../sound/main_theme.mp3')
+    pygame.mixer.music.load('../sound/music_5.mp3')
 
     # set up text
     font = pygame.font.SysFont(None, 60)
