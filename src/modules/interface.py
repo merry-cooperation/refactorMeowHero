@@ -34,14 +34,25 @@ class TextView:
         self.color = color
         self.x = int(x)
         self.y = int(y)
+        self.buffer = ""
+        self.text_rect = None
 
     def draw(self, window, text):
         text_object = self.font.render(text, 1, self.color)
-        text_rect = text_object.get_rect()
-        text_rect.topleft = (self.x, self.y)
-        window.blit(text_object, text_rect)
+        self.text_rect = text_object.get_rect()
+        self.text_rect.topleft = (self.x, self.y)
+        window.blit(text_object, self.text_rect)
 
 
+class Player:
+    def __init__(self, player_name, score, levels, skins):
+        self.name = player_name
+        self.score = score
+        self.levels = levels
+        self.skins = skins
+
+
+# TODO: describe me pls
 class InputBox:
     pass
 
