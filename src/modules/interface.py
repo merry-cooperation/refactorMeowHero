@@ -3,20 +3,33 @@ import json
 
 
 class Button:
-    def __init__(self, image, x, y, w, h, text='Hello'):
-        # TODO: send image path, not image
-        self.image = image
+    def __init__(self, x, y, w, h, text='Hello', is_off=False):
         self.x = int(x)
         self.y = int(y)
         self.w = int(w)
         self.h = int(h)
         self.text = text
+        self.is_active = False
+        self.is_off = is_off
+
+        self.image = pygame.image.load('../drawable/buttons/red_button.png')
+        self.image_active = pygame.image.load('../drawable/buttons/red_button_light.png')
+        self.image_off = pygame.image.load('../drawable/buttons/gray_button.png')
+
+        self.image = pygame.transform.scale(self.image, (self.w, self.h))
+        self.image_active = pygame.transform.scale(self.image_active, (self.w, self.h))
+        self.image_off = pygame.transform.scale(self.image_off, (self.w, self.h))
 
     def draw(self, window, outline=None):
         if outline:
             pygame.draw.rect(window, outline, (self.x-2, self.y-2, self.w+4, self.h+4), 0)
 
-        window.blit(self.image, [int(self.x), int(self.y)])
+        if self.is_off:
+            window.blit(self.image_off, [int(self.x), int(self.y)])
+        elif self.is_active:
+            window.blit(self.image_active, [int(self.x), int(self.y)])
+        else:
+            window.blit(self.image, [int(self.x), int(self.y)])
 
         font = pygame.font.SysFont(None, 42)
         text = font.render(self.text, 1, (0, 0, 0))
@@ -25,24 +38,33 @@ class Button:
     def is_over(self, pos):  # pos is the mouse position or a tuple of (x,y) coordinates
         if pos[0] > self.x and pos[0] < self.x + self.w:
             if pos[1] > self.y and pos[1] < self.y + self.h:
+                self.is_active = True
                 return True
+        self.is_active = False
         return False
 
 
 class TextView:
-    def __init__(self, font, color, x, y):
+    def __init__(self, font, color, x, y, text=""):
         self.font = font
         self.color = color
         self.x = int(x)
         self.y = int(y)
-        self.buffer = ""
-        self.rect = None
+        self.text = text
 
-    def draw(self, window, text):
-        text_object = self.font.render(text, 1, self.color)
-        self.rect = text_object.get_rect()
+        self.text_object = self.font.render(self.text, 1, self.color)
+        self.rect = self.text_object.get_rect()
         self.rect.topleft = (self.x, self.y)
-        window.blit(text_object, self.rect)
+
+    def draw(self, window):
+        window.blit(self.text_object, self.rect)
+
+    def draw_this(self, window, buffer):
+        self.text_object = self.font.render(buffer, 1, self.color)
+        self.rect = self.text_object.get_rect()
+        self.rect.topleft = (self.x, self.y)
+
+        window.blit(self.text_object, self.rect)
 
     def is_over(self, pos):  # pos is the mouse position or a tuple of (x,y) coordinates
         if pos[0] > self.rect.left and pos[0] < self.rect.right:

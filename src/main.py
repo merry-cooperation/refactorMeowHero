@@ -22,6 +22,8 @@ WINDOW_HEIGHT = 900
 # constant BG
 background_image_in_game = pygame.image.load("../drawable/backgrounds/background1.jpg")
 background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
+background_image_main = pygame.image.load("../drawable/backgrounds/main_menu4.jpg")
+background_image_main = pygame.transform.scale(background_image_main, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
 # colors
 COLOR_WHITE = (255, 255, 255)
@@ -81,12 +83,11 @@ def story_loop(window_surface, level_number, prefix, player):
 
     pygame.display.update()
 
-    # ебааать импровизированная анимация
     # TODO: add interruption
     buf = ""
     for elem in text:
         buf += elem
-        text_view.draw(window_surface, buf)
+        text_view.draw_this(window_surface, buf)
         pygame.display.update()
         sleep(0.1)
         # skip if escape
@@ -94,7 +95,7 @@ def story_loop(window_surface, level_number, prefix, player):
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
                     return
-    # TODO: add pause after this
+
     pygame.mixer.music.stop()
     wait_for_player_to_press_key(player)
     pygame.mouse.set_visible(True)
@@ -107,14 +108,14 @@ def game_loop(window_surface, level_number, player):
     main_clock = pygame.time.Clock()
     pygame.time.set_timer(pygame.USEREVENT, 1000)
 
-    # music
+    # set up music
     game_over_sound = pygame.mixer.Sound('../sound/game_over.wav')
     damage_sound = pygame.mixer.Sound('../sound/short_tracks/damage.wav')
     victory_sound = pygame.mixer.Sound('../sound/short_tracks/victory.wav')
     coin_sound = pygame.mixer.Sound('../sound/short_tracks/coin.wav')
     health_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
     new_top_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
-    attack_sound = pygame.mixer.Sound('../sound/short_tracks/attack_' + str(level_number) + ".wav")
+    attack_sound = pygame.mixer.Sound('../sound/short_tracks/attack_1' + ".wav")
 
     # TODO; exception on 10, 11 and 12 levels
     pygame.mixer.music.load('../sound/background_music/music_' + str(level_number) + ".mp3")
@@ -254,9 +255,9 @@ def game_loop(window_surface, level_number, player):
         health_points.draw(window_surface, meow_hero.life)
 
         # draw text
-        score_text.draw(window_surface, 'Score: %s' % (score), )
-        top_score_text.draw(window_surface, 'Top Score: %s' % (top_score))
-        timer_text.draw(window_surface, "Time "+ str(main_timer).rjust(3) if main_timer > 0 else 'NICE, NIGGA')
+        score_text.draw_this(window_surface, 'Score: %s' % (score), )
+        top_score_text.draw_this(window_surface, 'Top Score: %s' % (top_score))
+        timer_text.draw_this(window_surface, "Time "+ str(main_timer).rjust(3) if main_timer > 0 else 'NICE, NIGGA')
 
         # draw hero
         meow_hero.draw(window_surface)
@@ -293,8 +294,8 @@ def game_loop(window_surface, level_number, player):
     if victory:
         # checking for new record
         victory_sound.play()
+        player.levels.append(str(level_number))
         if score > top_score:
-            # TODO: put level in player.levels
             new_top_sound.play()
             handler = open("../stats/high_score.json", 'r')
             data = json.load(handler)
@@ -312,6 +313,8 @@ def game_loop(window_surface, level_number, player):
     game_over_sound.stop()
     pygame.mouse.set_visible(True)
 
+    return True if victory else False
+
 
 def init_window(full_screen=False):  # set up pygame, the window, and the mouse cursor
     pygame.init()
@@ -321,11 +324,7 @@ def init_window(full_screen=False):  # set up pygame, the window, and the mouse 
     else:
         window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    background_image_main = pygame.image.load("../drawable/backgrounds/main_menu4.jpg")
-    background_image_main = pygame.transform.scale(background_image_main, (WINDOW_WIDTH, WINDOW_HEIGHT))
-
     window_surface.blit(background_image_main, [0, 0])
-
     pygame.display.set_caption('Meow Hero')
 
     return window_surface
@@ -333,41 +332,41 @@ def init_window(full_screen=False):  # set up pygame, the window, and the mouse 
 
 # TODO: отрисовать нормально :D
 # TODO: кнопка "назад"
-# TODO: lock levels
 def levels_menu(window_surface, player):
     background_image_levels = pygame.transform.scale(pygame.image.load("../drawable/backgrounds/main_menu4.jpg"),
                                                      (WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    window_surface.blit(background_image_levels, [0, 0])
-
-    # TODO: create only this levels
     print(player.levels)
-
-    image = pygame.image.load('../drawable/buttons/red_button.png')
-    image = pygame.transform.scale(image, (int(WINDOW_WIDTH / 20), int(WINDOW_HEIGHT / 20)))
-
     buttons = list()
 
     for i in range(12):
-        button = interface.Button(image, i*WINDOW_WIDTH / 12, WINDOW_HEIGHT / 4,
-                                WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, str(i+1))
+        if i+1 in player.levels:
+            button = interface.Button(i*WINDOW_WIDTH / 12, WINDOW_HEIGHT / 4,
+                                      WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, str(i+1))
+        else:
+            button = interface.Button(i * WINDOW_WIDTH / 12, WINDOW_HEIGHT / 4,
+                                      WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, str(i + 1), True)
+
         buttons.append(button)
-
-    for button in buttons:
-        button.draw(window_surface)
-
-    pygame.display.update()
 
     while True:
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = event.pos  # gets mouse position
-                for button in buttons:
-                    if button.is_over(mouse_pos):
+            mouse_pos = pygame.mouse.get_pos()  # gets mouse position
+            for button in buttons:
+                if button.is_over(mouse_pos):
+                    if event.type == pygame.MOUSEBUTTONDOWN and not button.is_off:
                         story_loop(window_surface, int(button.text), "pre", player)
-                        game_loop(window_surface, int(button.text), player)
-                        story_loop(window_surface, int(button.text), "post", player)
+                        victory = game_loop(window_surface, int(button.text), player)
+                        if victory:
+                            story_loop(window_surface, int(button.text), "post", player)
                         return
+
+            window_surface.blit(background_image_levels, [0, 0])
+
+            for button in buttons:
+                button.draw(window_surface)
+
+            pygame.display.update()
 
 
 # TODO: кнопка статистики
@@ -376,69 +375,70 @@ def levels_menu(window_surface, player):
 # TODO: кнопка смены скина
 def main_menu(window_surface):     # show the "Main menu" screen
     # preparing text
+    font_0 = pygame.font.SysFont("rachana", 140)
     font_1 = pygame.font.SysFont(None, 78)
     font_2 = pygame.font.SysFont(None, 42)
 
+    # loading last player
     handler = open("../stats/last_player.txt", 'r')
     player_name = handler.read().strip()
     handler.close()
 
-    greeting_text = interface.TextView(font_1, COLOR_BLACK, 15, 15)
-    greeting_text.draw(window_surface, "Hello, " + player_name)
-
-    # TODO: exception here
+    # loading player info
     handler = open("../stats/players/" + player_name + ".json")
     data = json.load(handler)
     player = interface.Player(data['name'], data['score'], data['levels'], data['skins'])
     handler.close()
 
-    not_you_text_button = interface.TextView(font_2, COLOR_RED, WINDOW_WIDTH/5, 90)
-    not_you_text_button.draw(window_surface, "Not you, dude?")
+    # creating text and buttons
+    greeting_text = interface.TextView(font_1, COLOR_BLACK, 15, 15, "Hello, " + player_name)
+    game_title_text = interface.TextView(font_0, COLOR_BLACK, WINDOW_WIDTH/2, 50, "MEOW HERO")
+    not_you_text_button = interface.TextView(font_2, COLOR_RED, WINDOW_WIDTH/5, 90, "Not you, dude?")
 
-    # TODO: refactor buttons
-    image = pygame.image.load('../drawable/buttons/red_button.png')
-    image = pygame.transform.scale(image, (int(WINDOW_WIDTH/3), int(WINDOW_HEIGHT/8)))
-
-    button_single = interface.Button(image, WINDOW_WIDTH/2, WINDOW_HEIGHT/4,
+    button_single = interface.Button(WINDOW_WIDTH/2+100, WINDOW_HEIGHT/4,
                                    WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "1 Player")
-    button_two = interface.Button(image, WINDOW_WIDTH/2, WINDOW_HEIGHT/2,
-                                WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "2 Players")
-    button_quit = interface.Button(image, WINDOW_WIDTH/2, 3*WINDOW_HEIGHT/4,
+    button_two = interface.Button(WINDOW_WIDTH/2+100, WINDOW_HEIGHT/2,
+                                WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "2 Players", True)
+    button_quit = interface.Button(WINDOW_WIDTH/2+100, 3*WINDOW_HEIGHT/4,
                                  WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "Quit")
 
-    button_single.draw(window_surface)
-    button_two.draw(window_surface)
-    button_quit.draw(window_surface)
-
-    pygame.display.update()
+    drawable = list()
+    drawable.append(greeting_text)
+    drawable.append(game_title_text)
+    drawable.append(not_you_text_button)
+    drawable.append(button_quit)
+    drawable.append(button_two)
+    drawable.append(button_single)
 
     while True:
         for event in pygame.event.get():
+            mouse_pos = pygame.mouse.get_pos()
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
                     terminate(player)
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = event.pos  # gets mouse position
-                if button_single.is_over(mouse_pos):
+
+            if button_single.is_over(mouse_pos):
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     levels_menu(window_surface, player)
                     return
-                elif button_two.is_over(mouse_pos):
+            elif button_two.is_over(mouse_pos):
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     pass
                     # TODO: press F
-                    # client.open_tcp_protocol("localhost", 9027, window_surface)
-                    # init_window()
-                    #
-                    # button_single.draw(window_surface)
-                    # button_two.draw(window_surface)
-                    # button_quit.draw(window_surface)
-                    #
-                    # pygame.display.update()
-                    # break
-                elif button_quit.is_over(mouse_pos):
+            elif button_quit.is_over(mouse_pos):
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     sys.exit(0)
-                elif not_you_text_button.is_over(mouse_pos):
+            elif not_you_text_button.is_over(mouse_pos):
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     # TODO: draw input_view
                     pass
+
+        # drawing objects
+        window_surface.blit(background_image_main, [0, 0])
+        for elem in drawable:
+            elem.draw(window_surface)
+
+        pygame.display.update()
 
 
 def main():
