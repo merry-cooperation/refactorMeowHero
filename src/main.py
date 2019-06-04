@@ -58,13 +58,15 @@ def wait_for_player_to_press_key(player):
 
 def story_loop(window_surface, level_number, prefix, player):
     pygame.mouse.set_visible(False)
+    # typewriter_sound = pygame.mixer.Sound('../sound/short_tracks/typewriter.wav')
 
+    pygame.mixer.music.load('../sound/short_tracks/typewriter.mp3')
+    pygame.mixer.music.play(-1)
     try:
         handler = open("../plot/" + prefix + "_story_" + str(level_number) + ".txt")
     except FileNotFoundError:
         print("No plot for level")
         return
-
     text = handler.read()
     handler.close()
 
@@ -93,8 +95,8 @@ def story_loop(window_surface, level_number, prefix, player):
                 if event.key == K_ESCAPE:
                     return
     # TODO: add pause after this
+    pygame.mixer.music.stop()
     wait_for_player_to_press_key(player)
-
     pygame.mouse.set_visible(True)
 
 
@@ -111,6 +113,8 @@ def game_loop(window_surface, level_number, player):
     victory_sound = pygame.mixer.Sound('../sound/short_tracks/victory.wav')
     coin_sound = pygame.mixer.Sound('../sound/short_tracks/coin.wav')
     health_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
+    new_top_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
+    attack_sound = pygame.mixer.Sound('../sound/short_tracks/attack_' + str(level_number) + ".wav")
 
     # TODO; exception on 10, 11 and 12 levels
     pygame.mixer.music.load('../sound/background_music/music_' + str(level_number) + ".mp3")
@@ -223,6 +227,7 @@ def game_loop(window_surface, level_number, player):
                 if enemy.rect.colliderect(bullet.rect):
                     enemy.life -= 1
                     bullet.life -= 1
+                    attack_sound.play()
 
         # hitting hero:
         for enemy in enemies:
@@ -287,8 +292,10 @@ def game_loop(window_surface, level_number, player):
 
     if victory:
         # checking for new record
+        victory_sound.play()
         if score > top_score:
             # TODO: put level in player.levels
+            new_top_sound.play()
             handler = open("../stats/high_score.json", 'r')
             data = json.load(handler)
             handler.close()
