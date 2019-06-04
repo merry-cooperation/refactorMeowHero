@@ -16,8 +16,8 @@ for m in screeninfo.get_monitors():
     WINDOW_WIDTH, WINDOW_HEIGHT = list(map(int, re.findall(pattern, str(m))[0].split('x')))
 
 # constants, if need hardcoded
-# WINDOW_WIDTH = 800
-# WINDOW_HEIGHT = 600
+WINDOW_WIDTH = 1600
+WINDOW_HEIGHT = 900
 
 # constant BG
 background_image_in_game = pygame.image.load("../drawable/backgrounds/background1.jpg")
@@ -105,7 +105,12 @@ def game_loop(window_surface, level_number, player):
     main_clock = pygame.time.Clock()
     pygame.time.set_timer(pygame.USEREVENT, 1000)
 
+    # music
     game_over_sound = pygame.mixer.Sound('../sound/game_over.wav')
+    damage_sound = pygame.mixer.Sound('../sound/short_tracks/damage.wav')
+    victory_sound = pygame.mixer.Sound('../sound/short_tracks/victory.wav')
+    coin_sound = pygame.mixer.Sound('../sound/short_tracks/coin.wav')
+    health_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
 
     # TODO; exception on 10, 11 and 12 levels
     pygame.mixer.music.load('../sound/background_music/music_' + str(level_number) + ".mp3")
@@ -220,14 +225,17 @@ def game_loop(window_surface, level_number, player):
             if meow_hero.rect.colliderect(enemy.rect):
                 meow_hero.life -= 1
                 enemies.remove(enemy)
+                damage_sound.play()
 
         # collecting bonuses:
         for bonus in bonuses:
             if meow_hero.rect.colliderect(bonus.rect):
                 if bonus.bonus_type == "Life":
                     meow_hero.life += 1
+                    health_sound.play()
                 elif bonus.bonus_type == "Coin":
                     score += 1000
+                    coin_sound.play()
                 bonuses.remove(bonus)
 
         # draw background
@@ -274,6 +282,7 @@ def game_loop(window_surface, level_number, player):
 
     if victory:
         # TODO: do something
+        victory_sound.play()
         pass
     else:
         pygame.mixer.music.stop()
