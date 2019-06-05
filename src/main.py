@@ -307,7 +307,7 @@ def game_loop(window_surface, level_number, player):
     if victory:
         # checking for new record
         victory_sound.play()
-        if str(level_number+1) not in player.levels:
+        if level_number+1 not in player.levels:
             player.levels.append(int(level_number+1))
         if score > top_score:
             new_top_sound.play()
@@ -345,7 +345,6 @@ def init_window(full_screen=False):  # set up pygame, the window, and the mouse 
 
 
 # TODO: отрисовать нормально :D
-# TODO: кнопка "назад"
 def levels_menu(window_surface, player):
     buttons = list()
 
@@ -359,6 +358,9 @@ def levels_menu(window_surface, player):
 
         buttons.append(button)
 
+    button_back = interface.Button(20, 20, WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10, "Back")
+    buttons.append(button_back)
+
     while True:
         for event in pygame.event.get():
             mouse_pos = pygame.mouse.get_pos()  # gets mouse position
@@ -369,6 +371,8 @@ def levels_menu(window_surface, player):
             for button in buttons:
                 if button.is_over(mouse_pos):
                     if event.type == pygame.MOUSEBUTTONDOWN and not button.is_off:
+                        if button.text == "Back":
+                            return
                         story_loop(window_surface, int(button.text), "pre", player)
                         victory = game_loop(window_surface, int(button.text), player)
                         if victory:
@@ -395,10 +399,8 @@ def levels_menu(window_surface, player):
             pygame.display.update()
 
 
-# TODO: кнопка статистики
 # TODO: смена имени игрока
 # TODO: смена скина
-# TODO: кнопка смены скина
 def main_menu(window_surface):     # show the "Main menu" screen
     # preparing text
     font_0 = pygame.font.SysFont("rachana", 140)
@@ -417,7 +419,7 @@ def main_menu(window_surface):     # show the "Main menu" screen
     handler.close()
 
     # creating text and buttons
-    greeting_text = interface.TextView(font_1, COLOR_BLACK, 15, 15, "Hello, " + player_name)
+    greeting_text = interface.TextView(font_1, COLOR_BLACK, 15, 15, "Hello, " + player_name + "!")
     game_title_text = interface.TextView(font_0, COLOR_BLACK, WINDOW_WIDTH/2, 50, "MEOW HERO")
     not_you_text_button = interface.TextView(font_2, COLOR_RED, WINDOW_WIDTH/5, 90, "Not you, dude?")
 
@@ -428,6 +430,11 @@ def main_menu(window_surface):     # show the "Main menu" screen
     button_quit = interface.Button(WINDOW_WIDTH/2+100, 3*WINDOW_HEIGHT/4,
                                  WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "Quit")
 
+    # TODO: change text to images, if possible
+    button_stats = interface.Button(50, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Stats")
+    button_skins = interface.Button(260, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Skins")
+    button_future = interface.Button(470, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "KEK")
+
     drawable = list()
     drawable.append(greeting_text)
     drawable.append(game_title_text)
@@ -435,6 +442,9 @@ def main_menu(window_surface):     # show the "Main menu" screen
     drawable.append(button_quit)
     drawable.append(button_two)
     drawable.append(button_single)
+    drawable.append(button_stats)
+    drawable.append(button_skins)
+    drawable.append(button_future)
 
     while True:
         for event in pygame.event.get():
@@ -457,6 +467,18 @@ def main_menu(window_surface):     # show the "Main menu" screen
             elif not_you_text_button.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # TODO: draw input_view
+                    pass
+            elif button_stats.is_over(mouse_pos):
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # TODO: draw stats_view
+                    pass
+            elif button_skins.is_over(mouse_pos):
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # TODO: draw skins_view
+                    pass
+            elif button_future.is_over(mouse_pos):
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # I don't know why I need this button
                     pass
 
         # drawing objects
