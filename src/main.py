@@ -5,7 +5,7 @@ import pygame
 import screeninfo
 import sys
 
-from modules import interface, client, objects
+from modules import interface, client, objects, layouts
 from time import sleep
 from pygame.locals import *
 
@@ -31,6 +31,7 @@ background_image_levels = pygame.transform.scale(background_image_levels, (WINDO
 # colors
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
+COLOR_GREY = (160, 160, 160)
 COLOR_RED = (255, 0, 0)
 
 # magic
@@ -166,7 +167,6 @@ def game_loop(window_surface, level_number, player):
         # event handling
         for event in pygame.event.get():
             if event.type == QUIT:
-                # TODO: open quit menu
                 terminate(player)
 
             if event.type == pygame.USEREVENT:
@@ -196,7 +196,10 @@ def game_loop(window_surface, level_number, player):
 
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
-                    terminate(player)
+                    quit_state = layouts.interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
+                    if quit_state:
+                        print("Goodbye")
+                        terminate(player)
                 if event.key == K_LEFT or event.key == ord('a'):
                     move_left = False
                 if event.key == K_RIGHT or event.key == ord('d'):
