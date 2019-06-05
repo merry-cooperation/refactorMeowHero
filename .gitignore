@@ -2,4 +2,4 @@
 src/server_info.log
 src/client_info.log
 *.pyc
-stats/*
+stats/

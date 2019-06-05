@@ -51,7 +51,6 @@ def terminate(player):
     sys.exit()
 
 
-# TODO: it's pretty dumb
 def wait_for_player_to_press_key(player):
     while True:
         for event in pygame.event.get():
@@ -470,11 +469,11 @@ def main_menu(window_surface):     # show the "Main menu" screen
             elif not_you_text_button.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # TODO: draw input_view
+                    # TODO: creating profile
                     pass
             elif button_stats.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    # TODO: draw stats_view
-                    pass
+                    layouts.stats_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
             elif button_skins.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # TODO: draw skins_view
