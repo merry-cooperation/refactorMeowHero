@@ -1,4 +1,5 @@
 import json
+import os
 import random
 import re
 import pygame
@@ -405,7 +406,6 @@ def levels_menu(window_surface, player):
             pygame.display.update()
 
 
-# TODO: смена имени игрока
 # TODO: смена скина
 def main_menu(window_surface):     # show the "Main menu" screen
     # preparing text
@@ -419,10 +419,10 @@ def main_menu(window_surface):     # show the "Main menu" screen
     handler.close()
 
     # loading player info
-    handler = open("../stats/players/" + player_name + ".json")
-    data = json.load(handler)
-    player = interface.Player(data['name'], data['score'], data['levels'], data['skins'])
-    handler.close()
+    try:
+        player = interface.load_player_by_path("../stats/players/" + player_name + ".json")
+    except FileNotFoundError:
+        player = interface.load_player_by_path("../stats/players/" + "Test Player" + ".json")
 
     # creating text and buttons
     greeting_text = interface.TextView(font_1, COLOR_BLACK, 15, 15, "Hello, " + player_name + "!")
@@ -462,19 +462,16 @@ def main_menu(window_surface):     # show the "Main menu" screen
             if button_single.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     levels_menu(window_surface, player)
-                    return
             elif button_two.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pass
                     # TODO: press F
             elif button_quit.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    sys.exit(0)
+                    terminate(player)
             elif not_you_text_button.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    # TODO: draw input_view
-                    # TODO: creating profile
-                    pass
+                    player = layouts.create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT)
             elif button_stats.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     layouts.stats_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -491,6 +488,8 @@ def main_menu(window_surface):     # show the "Main menu" screen
         window_surface.blit(background_image_main, [0, 0])
         for elem in drawable:
             elem.draw(window_surface)
+
+        greeting_text.draw_this(window_surface, "Hello, " + player.name + "!")
 
         pygame.display.update()
 

@@ -94,17 +94,17 @@ class Player:
 # don't touch
 pygame.init()
 screen = pygame.display.set_mode((640, 480))
-COLOR_INACTIVE = pygame.Color('lightskyblue3')
-COLOR_ACTIVE = pygame.Color('dodgerblue2')
-FONT = pygame.font.Font(None, 32)
 
 
 class InputBox:
     def __init__(self, x, y, w, h, text=''):
+        self.COLOR_INACTIVE = (180, 0, 0)  # red colors
+        self.COLOR_ACTIVE = (255, 0, 0)
         self.rect = pygame.Rect(x, y, w, h)
-        self.color = COLOR_INACTIVE
+        self.color = self.COLOR_INACTIVE
+        self.font = pygame.font.Font(None, 32)  # by default
         self.text = text
-        self.txt_surface = FONT.render(text, True, self.color)
+        self.txt_surface = self.font.render(text, True, self.color)
         self.active = False
 
     def handle_event(self, event):
@@ -116,18 +116,18 @@ class InputBox:
             else:
                 self.active = False
             # Change the current color of the input box.
-            self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
+            self.color = self.COLOR_ACTIVE if self.active else self.COLOR_INACTIVE
         if event.type == pygame.KEYDOWN:
             if self.active:
-                if event.key == pygame.K_RETURN:
-                    print(self.text)
-                    self.text = ''
-                elif event.key == pygame.K_BACKSPACE:
+                # if event.key == pygame.K_RETURN:
+                #     print(self.text)
+                #     self.text = ''
+                if event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
                 else:
                     self.text += event.unicode
                 # Re-render the text.
-                self.txt_surface = FONT.render(self.text, True, self.color)
+                self.txt_surface = self.font.render(self.text, True, self.color)
 
     def update(self):
         # Resize the box if the text is too long.
@@ -237,3 +237,18 @@ def input_box_test():
 
 if __name__ == '__main__':
     input_box_test()
+
+
+def load_player_by_path(path):
+    handler = open(path, 'r')
+    data = json.load(handler)
+    player = Player(data['name'], data['score'], data['levels'], data['skins'])
+    handler.close()
+    return player
+
+
+def create_empty_profile(nickname):
+    handler = open("../stats/players/" + nickname + ".json", 'w')
+    data = {"name": nickname, "score": 0, "levels": [1], "skins": [1]}
+    json.dump(data, handler)
+    handler.close()

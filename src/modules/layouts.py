@@ -1,3 +1,5 @@
+import os
+
 import pygame
 import json
 
@@ -139,3 +141,82 @@ def defeat_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
                     return
+
+
+# returning player
+def create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
+    player.save_current_state()
+    clock = pygame.time.Clock()
+
+    rect = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3))
+    rect_border = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3 + 10, 2 * WINDOW_HEIGHT / 3 + 10))
+    rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+    rect_border.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+
+    input_box = interface.InputBox(WINDOW_WIDTH/4, WINDOW_HEIGHT/3, 220, 80)
+
+    font0 = pygame.font.SysFont(None, 100)
+    font1 = pygame.font.SysFont(None, 78)
+    input_box.font = font1
+
+    text_write_name = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Write your name here")
+    text_write_name.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 4)
+
+    button_done = interface.Button(2*WINDOW_WIDTH / 3, 3*WINDOW_HEIGHT / 5,
+                                   WINDOW_WIDTH / 15, WINDOW_HEIGHT / 10, "Done")
+    done = False
+    while not done:
+        for event in pygame.event.get():
+            mouse_pos = pygame.mouse.get_pos()
+
+            if event.type == pygame.QUIT:
+                done = True
+
+            if button_done.is_over(mouse_pos):
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    print(input_box.text)
+                    name = input_box.text.strip()
+                    path = '../stats/players/' + name + '.json'
+                    if os.path.isfile(path):
+                        print("Exist")
+                        player = interface.load_player_by_path(path)
+                    else:
+                        print("Not exist")
+                        interface.create_empty_profile(name)
+                        player = interface.load_player_by_path(path)
+                    input_box.text = ''
+                    done = True
+
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    done = True
+                elif event.key == pygame.K_RETURN:  # if enter
+                    print(input_box.text)
+                    name = input_box.text.strip()
+                    path = '../stats/players/' + name + '.json'
+                    if os.path.isfile(path):
+                        print("Exist")
+                        player = interface.load_player_by_path(path)
+                    else:
+                        print("Not exist")
+                        interface.create_empty_profile(name)
+                        player = interface.load_player_by_path(path)
+                    input_box.text = ''
+                    done = True
+
+            input_box.handle_event(event)
+
+        input_box.update()
+
+        pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
+        pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY, rect)
+
+        text_write_name.draw(window_surface)
+        input_box.draw(window_surface)
+        button_done.draw(window_surface)
+
+        pygame.display.update()
+
+        clock.tick(30)
+
+    return player
