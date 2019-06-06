@@ -1,5 +1,4 @@
 import json
-import os
 import random
 import re
 import pygame
@@ -147,6 +146,7 @@ def game_loop(window_surface, level_number, player):
     bullets = []
     enemies = []
     bonuses = []
+    enemy_bullets = []
 
     main_timer = 10  # debugging
     # main_timer = 10*level_number + 40
@@ -175,6 +175,12 @@ def game_loop(window_surface, level_number, player):
                 # victory condition
                 if main_timer <= 0:
                     running = False
+
+                # attack time
+                for enemy in enemies:
+                    enemy_bullet = enemy.attack()
+                    if enemy_bullet is not None:
+                        enemy_bullets.append(enemy_bullet)
 
             if event.type == KEYDOWN:
                 if event.key == K_SPACE:
@@ -234,7 +240,7 @@ def game_loop(window_surface, level_number, player):
             dice = random.random()
             if dice < 0.1:
                 # TODO: spawn randomly by level_number
-                enemy = objects.Enemy(1, WINDOW_WIDTH/18, WINDOW_HEIGHT/18)
+                enemy = objects.AttackerEnemy(1, WINDOW_WIDTH/18, WINDOW_HEIGHT/18)
                 enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
                 enemies.append(enemy)
 
@@ -251,6 +257,13 @@ def game_loop(window_surface, level_number, player):
             if meow_hero.rect.colliderect(enemy.rect):
                 meow_hero.life -= 1
                 enemies.remove(enemy)
+                damage_sound.play()
+
+        # hitting hero by bullets
+        for bullet in enemy_bullets:
+            if meow_hero.rect.colliderect(bullet.rect):
+                meow_hero.life -= 1
+                enemy_bullets.remove(bullet)
                 damage_sound.play()
 
         # collecting bonuses:
@@ -295,6 +308,13 @@ def game_loop(window_surface, level_number, player):
             bullet.move()
             if bullet.rect.top > WINDOW_HEIGHT or bullet.life <= 0:
                 bullets.remove(bullet)
+            bullet.draw(window_surface)
+
+        # move and draw enemy bullets
+        for bullet in enemy_bullets:
+            bullet.move()
+            if bullet.rect.top > WINDOW_HEIGHT or bullet.life <= 0:
+                enemy_bullets.remove(bullet)
             bullet.draw(window_surface)
 
         # check for ending:

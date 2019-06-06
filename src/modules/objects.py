@@ -77,11 +77,51 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image_surface.get_rect()
 
         self.level = level
-        self.speed = random.randint(2, 14)
+        # self.speed = random.randint(2, 14)
+        self.speed = 1
         self.life = level
 
     def move(self):
         self.rect.move_ip(0, self.speed)
+
+    def draw(self, window):
+        window.blit(self.image_surface, self.rect)
+
+
+class AttackerEnemy(Enemy):
+    def __init__(self, level, width, height):
+        super().__init__(level, width, height)
+
+        self.reload_time = 5
+        self.reload = 0
+
+    def attack(self):
+        if self.reload == self.reload_time:
+            bullet = EnemyBullet(self.level, 24, 24)
+            bullet.rect.center = self.rect.center
+            self.reload = 0
+            return bullet
+        else:
+            self.reload += 1
+
+
+class EnemyBullet(pygame.sprite.Sprite):
+    def __init__(self, level, width, height):
+        super().__init__()
+
+        self.w = int(width)
+        self.h = int(height)
+
+        image = pygame.image.load('../drawable/weapons/enemy_bullet' + str(level) + '.png')
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
+        self.level = level
+        self.speed = 5
+        self.life = 1
+
+    def move(self):
+        self.rect.move_ip(0, self.speed)  # another direction
 
     def draw(self, window):
         window.blit(self.image_surface, self.rect)
