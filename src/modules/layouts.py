@@ -4,10 +4,16 @@ import json
 from . import interface
 from pygame.locals import *
 
+"""
+Здесь рисую маленькие всплывающие окна
+Сначала отрисовывается рамка, потом окно, потом кнопки
+И прочее содержимое
+"""
+
 # colors
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
-COLOR_GREY = (160, 160, 160)
+COLOR_BRIGHT_GREY = (200, 200, 200)
 COLOR_RED = (255, 0, 0)
 
 
@@ -37,9 +43,10 @@ def interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     return True
 
             # я заебался это под экран подгонять
+            # TODO: create rect and move to center
             pygame.draw.rect(window_surface, COLOR_BLACK,
                              (WINDOW_WIDTH / 2 + 100 - 5, WINDOW_HEIGHT / 5 - 5, WINDOW_WIDTH / 3 + 10, WINDOW_HEIGHT / 2 + 10))
-            pygame.draw.rect(window_surface, COLOR_GREY,
+            pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY,
                              (WINDOW_WIDTH/2 + 100, WINDOW_HEIGHT/5, WINDOW_WIDTH / 3, WINDOW_HEIGHT / 2))
 
             button_continue.draw(window_surface)
@@ -77,7 +84,7 @@ def stats_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
         pygame.draw.rect(window_surface, COLOR_BLACK,
                          (WINDOW_WIDTH / 2 - 268, WINDOW_HEIGHT / 5 - 58, WINDOW_WIDTH / 3+16, 3 * WINDOW_HEIGHT / 4+16))
-        pygame.draw.rect(window_surface, COLOR_GREY,
+        pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY,
                          (WINDOW_WIDTH / 2 - 260, WINDOW_HEIGHT / 5 - 50, WINDOW_WIDTH / 3, 3*WINDOW_HEIGHT / 4))
 
         for elem in drawable:
@@ -86,3 +93,49 @@ def stats_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         button_close.draw(window_surface)
 
         pygame.display.update()
+
+
+def victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
+
+    rect = pygame.Rect((0, 0), (2*WINDOW_WIDTH/3, 2*WINDOW_HEIGHT/3))
+    rect_border = pygame.Rect((0, 0), (2*WINDOW_WIDTH/3+10, 2*WINDOW_HEIGHT/3+10))
+    rect.center = (WINDOW_WIDTH/2, WINDOW_HEIGHT/2)
+    rect_border.center = (WINDOW_WIDTH/2, WINDOW_HEIGHT/2)
+
+    font0 = pygame.font.SysFont(None, 140)
+    text_victory = interface.TextView(font0, COLOR_BLACK, 150, 2*WINDOW_HEIGHT / 6, "Congratulations!")
+    text_victory.rect.center = (WINDOW_WIDTH/2, WINDOW_HEIGHT/2)
+
+    pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
+    pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY, rect)
+
+    text_victory.draw(window_surface)
+
+    # TODO: draw another information here
+
+    pygame.display.update()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    return
+
+
+def defeat_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
+    font0 = pygame.font.SysFont(None, 200)
+    font1 = pygame.font.SysFont(None, 80)
+    text_view_message = interface.TextView(font0, COLOR_WHITE, 150, 2*WINDOW_HEIGHT / 6,
+                                           "Game over, bro =(")
+    text_view_message.draw(window_surface)
+    text_view_press_esc = interface.TextView(font1, COLOR_WHITE, WINDOW_WIDTH / 2 - 200, 3*WINDOW_HEIGHT / 5,
+                                             "Press ESC to exit...")
+    text_view_press_esc.draw(window_surface)
+
+    pygame.display.update()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    return

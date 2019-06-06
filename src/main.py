@@ -31,7 +31,7 @@ background_image_levels = pygame.transform.scale(background_image_levels, (WINDO
 # colors
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
-COLOR_GREY = (160, 160, 160)
+COLOR_BRIGHT_GREY = (200, 200, 200)
 COLOR_RED = (255, 0, 0)
 
 # magic
@@ -64,16 +64,17 @@ def wait_for_player_to_press_key(player):
 
 def story_loop(window_surface, level_number, prefix, player):
     pygame.mouse.set_visible(False)
-    # typewriter_sound = pygame.mixer.Sound('../sound/short_tracks/typewriter.wav')
 
-    pygame.mixer.music.load('../sound/short_tracks/typewriter.mp3')
-    pygame.mixer.music.play(-1)
     try:
         handler = open("../plot/" + prefix + "_story_" + str(level_number) + ".txt")
     except FileNotFoundError:
         print("No plot for level")
         pygame.mouse.set_visible(True)
         return
+
+    pygame.mixer.music.load('../sound/short_tracks/typewriter.mp3')
+    pygame.mixer.music.play(-1)
+
     text = handler.read()
     handler.close()
 
@@ -309,6 +310,8 @@ def game_loop(window_surface, level_number, player):
     if victory:
         # checking for new record
         victory_sound.play()
+        layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
+        victory_sound.stop()
         if level_number+1 not in player.levels:
             player.levels.append(int(level_number+1))
         if score > top_score:
@@ -322,12 +325,11 @@ def game_loop(window_surface, level_number, player):
             handler.close()
     else:
         game_over_sound.play()
+        layouts.defeat_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
+        game_over_sound.stop()
 
     pygame.display.update()
     wait_for_player_to_press_key(player)
-
-    game_over_sound.stop()
-    # TODO: draw something by the end of level
 
     return True if victory else False
 
@@ -391,6 +393,8 @@ def levels_menu(window_surface, player):
                                                               WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, str(i + 1), True)
 
                                 buttons.append(button)
+                            button_back = interface.Button(20, 20, WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10, "Back")
+                            buttons.append(button_back)
                             # TEST
 
             window_surface.blit(background_image_levels, [0, 0])
