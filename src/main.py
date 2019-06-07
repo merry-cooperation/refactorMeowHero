@@ -1,12 +1,12 @@
 import json
 import random
 import re
+import sys
+from time import sleep
+
 import pygame
 import screeninfo
-import sys
-
-from modules import interface, client, objects, layouts
-from time import sleep
+from modules import interface, objects, layouts
 from pygame.locals import *
 
 # taking screen W and H
@@ -89,6 +89,10 @@ def story_loop(window_surface, level_number, prefix, player):
 
     pygame.display.update()
 
+    # try to skip buffered events
+    for event in pygame.event.get():
+        continue
+
     buf = ""
     skip = False
     for elem in text:
@@ -148,7 +152,7 @@ def game_loop(window_surface, level_number, player):
     bonuses = []
     enemy_bullets = []
 
-    main_timer = 10  # debugging
+    main_timer = 25  # debugging
     # main_timer = 10*level_number + 40
     score = 0
 
@@ -492,24 +496,23 @@ def main_menu(window_surface):     # show the "Main menu" screen
             elif not_you_text_button.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     player = layouts.create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT)
+                    greeting_text.text = "Hello, " + player.name + "!"
+
             elif button_stats.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     layouts.stats_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
             elif button_skins.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    # TODO: draw skins_view
-                    pass
+                    layouts.change_skin_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
             elif button_future.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # I don't know why I need this button
-                    pass
+                    layouts.future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
 
         # drawing objects
         window_surface.blit(background_image_main, [0, 0])
         for elem in drawable:
             elem.draw(window_surface)
-
-        greeting_text.draw_this(window_surface, "Hello, " + player.name + "!")
 
         pygame.display.update()
 

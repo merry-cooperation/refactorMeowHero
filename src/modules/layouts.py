@@ -1,10 +1,10 @@
+import json
 import os
 
 import pygame
-import json
+from pygame.locals import *
 
 from . import interface
-from pygame.locals import *
 
 """
 Здесь рисую маленькие всплывающие окна
@@ -220,3 +220,55 @@ def create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
         clock.tick(30)
 
     return player
+
+
+def change_skin_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
+    rect = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3))
+    rect_border = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3 + 10, 2 * WINDOW_HEIGHT / 3 + 10))
+    rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+    rect_border.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+
+    font0 = pygame.font.SysFont(None, 140)
+    text_skins = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Nothing!")
+    text_skins.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+
+    pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
+    pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY, rect)
+
+    text_skins.draw(window_surface)
+
+    # TODO: icons here pls
+
+    pygame.display.update()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    return
+
+
+def future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
+    rect = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3))
+    rect_border = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3 + 10, 2 * WINDOW_HEIGHT / 3 + 10))
+    rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+    rect_border.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+
+    font0 = pygame.font.SysFont(None, 140)
+    text_future = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "???")
+    text_future.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+
+    pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
+    pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY, rect)
+
+    text_future.draw(window_surface)
+
+    # TODO: ???
+
+    pygame.display.update()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    return

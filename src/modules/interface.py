@@ -1,5 +1,6 @@
-import pygame
 import json
+
+import pygame
 
 
 class Button:
@@ -52,11 +53,15 @@ class TextView:
         self.y = int(y)
         self.text = text
 
+        self.COLOR_ACTIVE = (255, 0, 0)
+        self.COLOR_INACTIVE = (180, 0, 0)
+
         self.text_object = self.font.render(self.text, 1, self.color)
         self.rect = self.text_object.get_rect()
         self.rect.topleft = (self.x, self.y)
 
     def draw(self, window):
+        self.text_object = self.font.render(self.text, 1, self.color)
         window.blit(self.text_object, self.rect)
 
     def draw_this(self, window, buffer):
@@ -69,7 +74,9 @@ class TextView:
     def is_over(self, pos):  # pos is the mouse position or a tuple of (x,y) coordinates
         if pos[0] > self.rect.left and pos[0] < self.rect.right:
             if pos[1] > self.rect.top and pos[1] < self.rect.bottom:
+                self.color = self.COLOR_ACTIVE
                 return True
+        self.color = self.COLOR_INACTIVE
         return False
 
 
