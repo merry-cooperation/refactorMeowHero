@@ -6,7 +6,7 @@ from time import sleep
 
 import pygame
 import screeninfo
-from modules import interface, objects, layouts
+from modules import interface, objects, layouts, client
 from pygame.locals import *
 
 # taking screen W and H
@@ -456,7 +456,7 @@ def main_menu(window_surface):     # show the "Main menu" screen
     button_single = interface.Button(WINDOW_WIDTH/2+100, WINDOW_HEIGHT/4,
                                    WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "1 Player")
     button_two = interface.Button(WINDOW_WIDTH/2+100, WINDOW_HEIGHT/2,
-                                WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "2 Players", True)
+                                WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "2 Players")
     button_quit = interface.Button(WINDOW_WIDTH/2+100, 3*WINDOW_HEIGHT/4,
                                  WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "Quit")
 
@@ -488,8 +488,7 @@ def main_menu(window_surface):     # show the "Main menu" screen
                     levels_menu(window_surface, player)
             elif button_two.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    pass
-                    # TODO: press F
+                    client.two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
             elif button_quit.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     terminate(player)
@@ -497,7 +496,6 @@ def main_menu(window_surface):     # show the "Main menu" screen
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     player = layouts.create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT)
                     greeting_text.text = "Hello, " + player.name + "!"
-
             elif button_stats.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     layouts.stats_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -519,7 +517,7 @@ def main_menu(window_surface):     # show the "Main menu" screen
 
 def main():
     while True:
-        window = init_window(True)
+        window = init_window(False)  # True if fullscreen
         main_menu(window)
 
 
