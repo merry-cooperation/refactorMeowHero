@@ -55,10 +55,14 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     background_image_in_game = pygame.image.load("../drawable/backgrounds/background1.jpg")
     background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    meow_hero = objects.MeowHero(1, WINDOW_WIDTH / 12, WINDOW_HEIGHT / 12)
-    meow_hero.rect.move_ip(int(WINDOW_WIDTH / 2), 7 * int(WINDOW_HEIGHT / 8))
+    meow_hero1 = objects.MeowHero(1, WINDOW_WIDTH / 12, WINDOW_HEIGHT / 12)
+    meow_hero1.rect.move_ip(int(WINDOW_WIDTH / 2), 7 * int(WINDOW_HEIGHT / 8))
 
-    move_left = move_right = move_up = move_down = False
+    meow_hero2 = objects.MeowHero(1, WINDOW_WIDTH / 12, WINDOW_HEIGHT / 12)
+    meow_hero2.rect.move_ip(int(WINDOW_WIDTH / 2), 7 * int(WINDOW_HEIGHT / 8))
+
+    move_left1 = move_right1 = move_up1 = move_down1 = False
+    move_left2 = move_right2 = move_up2 = move_down2 = False
 
     bullets = []
 
@@ -68,9 +72,9 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     while running:  # the game loop runs while the game part is playing
         score += 1  # increase score
 
-        # event handling
         for event in pygame.event.get():
             if event.type == QUIT:
+                print("Goodbye")
                 terminate()
 
             if event.type == pygame.USEREVENT:
@@ -79,97 +83,110 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 if main_timer <= 0:
                     running = False
 
-            if event.type == KEYDOWN:
-                if event.key == K_SPACE:
-                    bullet = objects.Bullet(1, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
-                    bullet.rect.move_ip(meow_hero.rect.left, meow_hero.rect.top)
-                    bullets.append(bullet)
-                if event.key == K_LEFT or event.key == ord('a'):
-                    move_right = False
-                    move_left = True
-                if event.key == K_RIGHT or event.key == ord('d'):
-                    move_left = False
-                    move_right = True
-                if event.key == K_UP or event.key == ord('w'):
-                    move_down = False
-                    move_up = True
-                if event.key == K_DOWN or event.key == ord('s'):
-                    move_up = False
-                    move_down = True
-
+            # terminating by ESC
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
                     quit_state = layouts.interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
                     if quit_state:
                         print("Goodbye")
                         terminate()
-                if event.key == K_LEFT or event.key == ord('a'):
-                    move_left = False
-                if event.key == K_RIGHT or event.key == ord('d'):
-                    move_right = False
-                if event.key == K_UP or event.key == ord('w'):
-                    move_up = False
-                if event.key == K_DOWN or event.key == ord('s'):
-                    move_down = False
 
         # handling socket
+        # TODO: attack event
+        data = []
         try:
             conn, address = sock.accept()
             logger.info('Connection from %s on %s' % (address[0], address[1]))
             data = conn.recv(1024).decode()
             print(data)
             logger.info("Income data: %s" % (data))
-
-            # handle data events
             data = data.split()
-            if "Attack" in data:
-                pass
-            if "R" in data:
-                move_left = False
-                move_right = True
-            if "L" in data:
-                move_left = True
-                move_right = False
-            if "U" in data:
-                move_down = False
-                move_up = True
-            if "D" in data:
-                move_down = True
-                move_up = False
-            if "SH" in data:
-                move_left = False
-                move_right = False
-            if "SV" in data:
-                move_down = False
-                move_up = False
 
         except Exception:  # exception if timeout
             pass
 
-        # move the player around
-        if move_left and meow_hero.rect.left > 0:
-            meow_hero.move(-1, 0)
-        if move_right and meow_hero.rect.right < WINDOW_WIDTH:
-            meow_hero.move(1, 0)
-        if move_up and meow_hero.rect.top > 0:
-            meow_hero.move(0, -1)
-        if move_down and meow_hero.rect.bottom < WINDOW_HEIGHT:
-            meow_hero.move(0, 1)
+        # handle data events
+        if data:
+            # handle first player
+            if "1" in data:
+                if "Attack" in data:
+                    pass
+                if "R" in data:
+                    move_left1 = False
+                    move_right1 = True
+                if "L" in data:
+                    move_left1 = True
+                    move_right1 = False
+                if "U" in data:
+                    move_down1 = False
+                    move_up1 = True
+                if "D" in data:
+                    move_down1 = True
+                    move_up1 = False
+                if "SH" in data:
+                    move_left1 = False
+                    move_right1 = False
+                if "SV" in data:
+                    move_down1 = False
+                    move_up1 = False
+
+            # handle second player
+            elif "2" in data:
+                if "Attack" in data:
+                    pass
+                if "R" in data:
+                    move_left2 = False
+                    move_right2 = True
+                if "L" in data:
+                    move_left2 = True
+                    move_right2 = False
+                if "U" in data:
+                    move_down2 = False
+                    move_up2 = True
+                if "D" in data:
+                    move_down2 = True
+                    move_up2 = False
+                if "SH" in data:
+                    move_left2 = False
+                    move_right2 = False
+                if "SV" in data:
+                    move_down2 = False
+                    move_up2 = False
+
+        # move the first player around
+        if move_left1 and meow_hero1.rect.left > 0:
+            meow_hero1.move(-1, 0)
+        if move_right1 and meow_hero1.rect.right < WINDOW_WIDTH:
+            meow_hero1.move(1, 0)
+        if move_up1 and meow_hero1.rect.top > 0:
+            meow_hero1.move(0, -1)
+        if move_down1 and meow_hero1.rect.bottom < WINDOW_HEIGHT:
+            meow_hero1.move(0, 1)
+
+        # move the second player around
+        if move_left2 and meow_hero2.rect.left > 0:
+            meow_hero2.move(-1, 0)
+        if move_right2 and meow_hero2.rect.right < WINDOW_WIDTH:
+            meow_hero2.move(1, 0)
+        if move_up2 and meow_hero2.rect.top > 0:
+            meow_hero2.move(0, -1)
+        if move_down2 and meow_hero2.rect.bottom < WINDOW_HEIGHT:
+            meow_hero2.move(0, 1)
 
         # draw background
         window_surface.blit(background_image_in_game, [0, 0])
 
-        # draw hero
-        meow_hero.draw(window_surface)
+        # draw players
+        meow_hero1.draw(window_surface)
+        meow_hero2.draw(window_surface)
 
         # check for ending:
-        if meow_hero.life <= 0:
+        if meow_hero1.life <= 0 or meow_hero2.life <= 0:
             running = False
 
         pygame.display.update()
-        main_clock.tick(40) # FPS
+        main_clock.tick(40)  # FPS
 
-    pygame.mixer.music.stop()
     pygame.mouse.set_visible(True)
 
     sock.close()
