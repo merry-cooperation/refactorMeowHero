@@ -176,6 +176,9 @@ def create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     print(input_box.text)
                     name = input_box.text.strip()
+                    if not name:
+                        done = True
+                        continue
                     path = '../stats/players/' + name + '.json'
                     if os.path.isfile(path):
                         print("Exist")
@@ -193,6 +196,9 @@ def create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
                 elif event.key == pygame.K_RETURN:  # if enter
                     print(input_box.text)
                     name = input_box.text.strip()
+                    if not name:
+                        done = True
+                        continue
                     path = '../stats/players/' + name + '.json'
                     if os.path.isfile(path):
                         print("Exist")
@@ -264,6 +270,32 @@ def future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     text_future.draw(window_surface)
 
     # TODO: ???
+
+    pygame.display.update()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    return
+
+
+def two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
+    rect = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3))
+    rect_border = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3 + 10, 2 * WINDOW_HEIGHT / 3 + 10))
+    rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+    rect_border.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+
+    font0 = pygame.font.SysFont(None, 140)
+    text_victory = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Nice game")
+    text_victory.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+
+    pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
+    pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY, rect)
+
+    text_victory.draw(window_surface)
+
+    # TODO: draw current score and time
 
     pygame.display.update()
 

@@ -66,9 +66,6 @@ class TextView:
 
     def draw_this(self, window, buffer):
         self.text_object = self.font.render(buffer, 1, self.color)
-        self.rect = self.text_object.get_rect()
-        self.rect.topleft = (self.x, self.y)
-
         window.blit(self.text_object, self.rect)
 
     def is_over(self, pos):  # pos is the mouse position or a tuple of (x,y) coordinates
@@ -96,11 +93,6 @@ class Player:
         handler = open("../stats/players/" + self.name + ".json", 'w')
         json.dump(data, handler)
         handler.close()
-
-
-# don't touch
-pygame.init()
-screen = pygame.display.set_mode((640, 480))
 
 
 class InputBox:
@@ -217,6 +209,8 @@ def timer_test():
 
 
 def input_box_test():
+    pygame.init()
+    screen = pygame.display.set_mode((640, 480))
     clock = pygame.time.Clock()
 
     input_box1 = InputBox(100, 100, 140, 32)

@@ -6,10 +6,22 @@ import sys
 import pygame
 from pygame.locals import *
 
-from . import objects, layouts
+from . import objects, layouts, interface
 
+# socket magic
 HOST = '0.0.0.0'
 PORT = 9027
+
+# magic
+FPS = 40
+TIMEOUT_TIME = 0.01
+ENEMY_MAX_COUNT = 30
+
+# colors
+COLOR_WHITE = (255, 255, 255)
+COLOR_BLACK = (0, 0, 0)
+COLOR_BRIGHT_GREY = (200, 200, 200)
+COLOR_RED = (255, 0, 0)
 
 
 def terminate_connection(sock):
@@ -23,9 +35,8 @@ def terminate():
     sys.exit(0)
 
 
-ENEMY_MAX_COUNT = 30
-
-
+# TODO: add top score
+# TODO: add top time
 def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     # setup socket and logger
     logger = logging.getLogger("Fucking Server")
@@ -45,7 +56,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
     sock.bind((HOST, PORT))
     sock.listen(100)
-    sock.settimeout(0.01)
+    sock.settimeout(TIMEOUT_TIME)
 
     print("Serving on ", PORT)
     logger.info('Start serving on %s' % (PORT))
@@ -60,10 +71,10 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
     meow_hero1 = objects.MeowHero(1, WINDOW_WIDTH / 12, WINDOW_HEIGHT / 12)
-    meow_hero1.rect.move_ip(int(WINDOW_WIDTH / 2), 7 * int(WINDOW_HEIGHT / 8))
+    meow_hero1.rect.move_ip(int(WINDOW_WIDTH / 2)-100, 7 * int(WINDOW_HEIGHT / 8))
 
     meow_hero2 = objects.MeowHero(1, WINDOW_WIDTH / 12, WINDOW_HEIGHT / 12)
-    meow_hero2.rect.move_ip(int(WINDOW_WIDTH / 2), 7 * int(WINDOW_HEIGHT / 8))
+    meow_hero2.rect.move_ip(int(WINDOW_WIDTH / 2)+100, 7 * int(WINDOW_HEIGHT / 8))
 
     move_left1 = move_right1 = move_up1 = move_down1 = False
     move_left2 = move_right2 = move_up2 = move_down2 = False
@@ -76,6 +87,17 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     health_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
     new_top_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
     attack_sound = pygame.mixer.Sound('../sound/short_tracks/attack_1' + ".wav")
+
+    # set up text
+    font = pygame.font.SysFont(None, 78)
+    player1_text = interface.TextView(font, COLOR_WHITE, 10, 10, "Player 1")
+    player1_life_text = interface.TextView(font, COLOR_WHITE, 10, 80)
+    player2_text = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH*10/12, 10, "Player 2")
+    player2_life_text = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH*10/12, 80)
+    score_text = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH / 2, 72)
+    score_text.rect.center = (WINDOW_WIDTH/2-120, 30)
+    timer_text = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH / 2, 10)
+    timer_text.rect.center = (WINDOW_WIDTH/2-120, 96)
 
     bullets = []
     enemies = []
@@ -91,6 +113,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         for event in pygame.event.get():
             if event.type == QUIT:
                 print("Goodbye")
+                logger.info('Connection closed, game over')
                 terminate()
 
             if event.type == pygame.USEREVENT:
@@ -105,14 +128,13 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     quit_state = layouts.interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
                     if quit_state:
                         print("Goodbye")
+                        logger.info('Connection closed, game over')
                         terminate()
 
         # handling socket
-        # TODO: attack event
         data = []
         try:
             conn, address = sock.accept()
-            logger.info('Connection from %s on %s' % (address[0], address[1]))
             data = conn.recv(1024).decode()
             print(data)
             logger.info("Income data: %s" % (data))
@@ -267,6 +289,14 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         meow_hero1.draw(window_surface)
         meow_hero2.draw(window_surface)
 
+        # draw text
+        player1_text.draw(window_surface)
+        player2_text.draw(window_surface)
+        score_text.draw_this(window_surface, 'Score: %s' % (score))
+        timer_text.draw_this(window_surface, "Time " + str(main_timer).rjust(3) if main_timer <= 200 else 'NICE, NIGGA')
+        player1_life_text.draw_this(window_surface, 'Live: x%s' % (meow_hero1.life))
+        player2_life_text.draw_this(window_surface, 'Live: x%s' % (meow_hero2.life))
+
         # draw bonuses
         for bonus in bonuses:
             bonus.draw(window_surface)
@@ -298,8 +328,10 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
             running = False
 
         pygame.display.update()
-        main_clock.tick(40)  # FPS
+        main_clock.tick(FPS)
 
     pygame.mouse.set_visible(True)
-
     sock.close()
+
+    layouts.two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
+    return
