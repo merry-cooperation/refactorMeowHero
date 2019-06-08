@@ -20,9 +20,6 @@ WINDOW_WIDTH = 1600
 WINDOW_HEIGHT = 900
 
 # constant BG
-# TODO: remove in game BG
-background_image_in_game = pygame.image.load("../drawable/backgrounds/background1.jpg")
-background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 background_image_main = pygame.image.load("../drawable/backgrounds/main_menu4.jpg")
 background_image_main = pygame.transform.scale(background_image_main, (WINDOW_WIDTH, WINDOW_HEIGHT))
 background_image_levels = pygame.image.load("../drawable/backgrounds/main_menu4.jpg")
@@ -123,6 +120,13 @@ def game_loop(window_surface, level_number, player):
 
     main_clock = pygame.time.Clock()
     pygame.time.set_timer(pygame.USEREVENT, 1000)
+
+    # set up background
+    try:
+        background_image_in_game = pygame.image.load("../drawable/backgrounds/background" + str(level_number) + ".jpg")
+    except Exception:
+        background_image_in_game = pygame.image.load("../drawable/backgrounds/abstract_background.jpg")
+    background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
     # set up music
     game_over_sound = pygame.mixer.Sound('../sound/game_over.wav')

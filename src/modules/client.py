@@ -67,7 +67,8 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     main_clock = pygame.time.Clock()
     pygame.time.set_timer(pygame.USEREVENT, 1000)
 
-    background_image_in_game = pygame.image.load("../drawable/backgrounds/background1.jpg")
+    # setup bg
+    background_image_in_game = pygame.image.load("../drawable/backgrounds/abstract_background.jpg")
     background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
     meow_hero1 = objects.MeowHero(1, WINDOW_WIDTH / 12, WINDOW_HEIGHT / 12)
@@ -87,6 +88,9 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     health_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
     new_top_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
     attack_sound = pygame.mixer.Sound('../sound/short_tracks/attack_1' + ".wav")
+
+    pygame.mixer.music.load('../sound/main_theme.mp3')
+    pygame.mixer.music.play(-1, 0.0)
 
     # set up text
     font = pygame.font.SysFont(None, 78)
@@ -333,5 +337,6 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     pygame.mouse.set_visible(True)
     sock.close()
 
+    pygame.mixer_music.stop()
     layouts.two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
     return
