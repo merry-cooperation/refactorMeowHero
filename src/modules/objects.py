@@ -20,8 +20,16 @@ class MeowHero(pygame.sprite.Sprite):
         self.life = 9
         self.weapon_power = 1
         self.move_rate = 12
+        self.invulnerability = 16
+
+        # shield image
+        image = pygame.image.load('../drawable/sprites/cat_hero/meow_shield.png')
+        self.image_shield = pygame.transform.scale(image, (self.w, self.h))
+        self.shield_rect = self.image_shield.get_rect()
 
     def draw(self, window):
+        if self.invulnerability:
+            window.blit(self.image_shield, self.rect)
         window.blit(self.image_surface, self.rect)
 
     def move(self, x_d, y_d):
@@ -138,6 +146,10 @@ class Bonus(pygame.sprite.Sprite):
             image = pygame.image.load('../drawable/other/coin1.png')
         elif self.bonus_type == "Weapon":
             image = pygame.image.load('../drawable/other/weapon_levelup.png')
+        elif self.bonus_type == "Shield":
+            image = pygame.image.load('../drawable/other/shield.png')
+        elif self.bonus_type == "Mass Attack":
+            image = pygame.image.load('../drawable/other/mass_attack.png')
 
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
