@@ -112,7 +112,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     enemies = []
     enemy_bullets = []
     bonuses = []
-    bonus_types = ["Coin", "Life", "Weapon", "Shield", "Mass attack"]
+    bonus_types = ["Coin", "Life", "Weapon", "Shield", "Rate of fire", "Mass Attack"]
 
     meow_heroes = list()
     meow_heroes.append(meow_hero1)
@@ -133,10 +133,11 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
             if event.type == pygame.USEREVENT:  # time tick
                 main_timer += 1
 
-                # increase enemy level
+                # increase enemy level and bonus type
                 if main_timer % 20 == 0 and available_enemy_level < 12:
                     available_enemy_level += 1
-                    available_bonus_type += 1
+                    if available_bonus_type < len(bonus_types):
+                        available_bonus_type += 1
 
                 # spawn enemy
                 if len(enemies) < ENEMY_MAX_COUNT:
@@ -161,13 +162,17 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     if enemy_bullet is not None:
                         enemy_bullets.append(enemy_bullet)
 
-                # decrement invulnerability
+                # decrement invulnerability and rate of fire
                 for meow in meow_heroes:
                     if meow.invulnerability > 0:
                         meow.invulnerability -= 1
+                    if meow.rate_of_fire_time_limit > 0:
+                        meow.rate_of_fire_time_limit -= 1
+                        if meow.rate_of_fire_time_limit == 0:
+                            meow.max_weapon_reload = 30
 
                 # spawn bonus
-                if main_timer % 14 == 0 and len(bonuses) <= 7:
+                if main_timer % 12 == 0 and len(bonuses) <= 7:
                     bonus_type = random.randint(1, available_bonus_type)
                     bonus = objects.Bonus(bonus_types[bonus_type - 1], WINDOW_WIDTH / 24, WINDOW_HEIGHT / 24)
                     bonus.rect.move_ip(random.randint(50, WINDOW_WIDTH - 50),
@@ -185,11 +190,11 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
             # TEST #
             if event.type == KEYDOWN:
-                if event.key == K_SPACE:
-                    attack_sound.play()
-                    bullet = objects.Bullet(meow_hero1.weapon_power, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
-                    bullet.rect.move_ip(meow_hero1.rect.left, meow_hero1.rect.top)
-                    bullets.append(bullet)
+                # if event.key == K_SPACE:
+                #     attack_sound.play()
+                #     bullet = objects.Bullet(meow_hero1.weapon_power, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
+                #     bullet.rect.move_ip(meow_hero1.rect.left, meow_hero1.rect.top)
+                #     bullets.append(bullet)
                 if event.key == K_LEFT or event.key == ord('a'):
                     move_right1 = False
                     move_left1 = True
@@ -235,11 +240,6 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         if data:
             # handle first player
             if "1" in data:
-                if "Attack" in data:
-                    bullet = objects.Bullet(meow_hero1.weapon_power, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
-                    bullet.rect.move_ip(meow_hero1.rect.left, meow_hero1.rect.top)
-                    bullets.append(bullet)
-                    attack_sound.play()
                 if "R" in data:
                     move_left1 = False
                     move_right1 = True
@@ -261,11 +261,6 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
             # handle second player
             elif "2" in data:
-                if "Attack" in data:
-                    bullet = objects.Bullet(meow_hero2.weapon_power, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
-                    bullet.rect.move_ip(meow_hero2.rect.left, meow_hero2.rect.top)
-                    bullets.append(bullet)
-                    attack_sound.play()
                 if "R" in data:
                     move_left2 = False
                     move_right2 = True
@@ -305,6 +300,16 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         if move_down2 and meow_hero2.rect.bottom < WINDOW_HEIGHT:
             meow_hero2.move(0, 1)
 
+        # auto attack
+        for meow in meow_heroes:
+            meow.current_reload += 1
+            if meow.current_reload >= meow.max_weapon_reload:
+                bullet = objects.Bullet(meow.weapon_power, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
+                bullet.rect.move_ip(meow.rect.left, meow.rect.top)
+                bullets.append(bullet)
+                meow.current_reload = 0
+                # attack_sound.play()
+
         # hitting enemy
         for enemy in enemies:
             for bullet in bullets:
@@ -312,23 +317,23 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     enemy.life -= bullet.power
                     bullet.life -= 1
 
-        # hitting enemy and player
-        for enemy in enemies:
-            for meow in meow_heroes:
-                if meow.rect.colliderect(enemy.rect) and not meow.invulnerability:
-                    meow.life -= 1
-                    enemies.remove(enemy)
-                    damage_sound.play()
-
-        # hitting players by bullets
-        for bullet in enemy_bullets:
-            for meow in meow_heroes:
-                if meow.rect.colliderect(bullet.rect) and not meow.invulnerability:
-                    meow.life -= 1
-                    if meow.weapon_power > 1:
-                        meow.weapon_power -= 1
-                    enemy_bullets.remove(bullet)
-                    damage_sound.play()
+        # # hitting enemy and player
+        # for enemy in enemies:
+        #     for meow in meow_heroes:
+        #         if meow.rect.colliderect(enemy.rect) and not meow.invulnerability:
+        #             meow.life -= 1
+        #             enemies.remove(enemy)
+        #             damage_sound.play()
+        #
+        # # hitting players by bullets
+        # for bullet in enemy_bullets:
+        #     for meow in meow_heroes:
+        #         if meow.rect.colliderect(bullet.rect) and not meow.invulnerability:
+        #             meow.life -= 1
+        #             if meow.weapon_power > 1:
+        #                 meow.weapon_power -= 1
+        #             enemy_bullets.remove(bullet)
+        #             damage_sound.play()
 
         # collecting bonuses:
         for bonus in bonuses:
@@ -338,7 +343,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                         meow.life += 1
                         health_sound.play()
                     elif bonus.bonus_type == "Coin":
-                        score += 1000
+                        score += 800*available_enemy_level
                         coin_sound.play()
                     elif bonus.bonus_type == "Weapon":
                         if meow.weapon_power < 7:
@@ -350,6 +355,10 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     elif bonus.bonus_type == "Mass Attack":
                         for enemy in enemies:
                             enemy.life -= meow.weapon_power
+                    elif bonus.bonus_type == "Rate of fire":
+                        meow.max_weapon_reload = 8
+                        meow.rate_of_fire_time_limit += 12
+
                     bonuses.remove(bonus)
 
         # draw background

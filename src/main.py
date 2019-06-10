@@ -483,6 +483,11 @@ def main_menu(window_surface):     # show the "Main menu" screen
     while True:
         for event in pygame.event.get():
             mouse_pos = pygame.mouse.get_pos()
+
+            if event.type == QUIT:
+                print("Goodbye")
+                terminate(player)
+
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
                     terminate(player)
