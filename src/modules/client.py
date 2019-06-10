@@ -65,7 +65,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     pygame.mouse.set_visible(False)
 
     main_clock = pygame.time.Clock()
-    pygame.time.set_timer(pygame.USEREVENT, 1000)
+    pygame.time.set_timer(pygame.USEREVENT, 500)
 
     # setup bg
     background_image_in_game = pygame.image.load("../drawable/backgrounds/abstract_background.jpg")
@@ -103,10 +103,17 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     timer_text = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH / 2, 10)
     timer_text.rect.center = (WINDOW_WIDTH/2-120, 96)
 
+    # spawn enemy by level
+    available_enemy_level = 1
+
     bullets = []
     enemies = []
     enemy_bullets = []
     bonuses = []
+
+    meow_heroes = list()
+    meow_heroes.append(meow_hero1)
+    meow_heroes.append(meow_hero2)
 
     main_timer = 0
     score = 0
@@ -122,9 +129,32 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
             if event.type == pygame.USEREVENT:
                 main_timer += 1
+                # increase enemy level
+                if main_timer % 20 == 0 and available_enemy_level < 12:
+                    available_enemy_level += 1
+
+                # spawn enemy
+                if len(enemies) < ENEMY_MAX_COUNT:
+                    level = random.randint(1, available_enemy_level)
+                    enemy = objects.DogEnemy(level, WINDOW_WIDTH / 18, WINDOW_HEIGHT / 18)
+                    enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
+                    enemies.append(enemy)
+
+                # bonus lifetime
+                for bonus in bonuses:
+                    bonus.lifetime -= 1
+                    if bonus.lifetime <= 0:
+                        bonuses.remove(bonus)
+
                 # victory condition
-                if main_timer >= 200:
+                if main_timer >= 600:
                     running = False
+
+                # attack time
+                for enemy in enemies:
+                    enemy_bullet = enemy.attack()
+                    if enemy_bullet is not None:
+                        enemy_bullets.append(enemy_bullet)
 
             # terminating by ESC
             if event.type == KEYUP:
@@ -134,6 +164,42 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                         print("Goodbye")
                         logger.info('Connection closed, game over')
                         terminate()
+
+            # TEST #
+            if event.type == KEYDOWN:
+                if event.key == K_SPACE:
+                    attack_sound.play()
+                    bullet = objects.Bullet(meow_hero1.weapon_power, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
+                    bullet.rect.move_ip(meow_hero1.rect.left, meow_hero1.rect.top)
+                    bullets.append(bullet)
+                if event.key == K_LEFT or event.key == ord('a'):
+                    move_right1 = False
+                    move_left1 = True
+                if event.key == K_RIGHT or event.key == ord('d'):
+                    move_left1 = False
+                    move_right1 = True
+                if event.key == K_UP or event.key == ord('w'):
+                    move_down1 = False
+                    move_up1 = True
+                if event.key == K_DOWN or event.key == ord('s'):
+                    move_up1 = False
+                    move_down1 = True
+
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    quit_state = layouts.interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
+                    if quit_state:
+                        print("Goodbye")
+                        terminate()
+                if event.key == K_LEFT or event.key == ord('a'):
+                    move_left1 = False
+                if event.key == K_RIGHT or event.key == ord('d'):
+                    move_right1 = False
+                if event.key == K_UP or event.key == ord('w'):
+                    move_up1 = False
+                if event.key == K_DOWN or event.key == ord('s'):
+                    move_down1 = False
+                # TEST #
 
         # handling socket
         data = []
@@ -152,9 +218,10 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
             # handle first player
             if "1" in data:
                 if "Attack" in data:
-                    bullet = objects.Bullet(1, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
+                    bullet = objects.Bullet(meow_hero1.weapon_power, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
                     bullet.rect.move_ip(meow_hero1.rect.left, meow_hero1.rect.top)
                     bullets.append(bullet)
+                    attack_sound.play()
                 if "R" in data:
                     move_left1 = False
                     move_right1 = True
@@ -177,9 +244,10 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
             # handle second player
             elif "2" in data:
                 if "Attack" in data:
-                    bullet = objects.Bullet(1, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
+                    bullet = objects.Bullet(meow_hero2.weapon_power, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
                     bullet.rect.move_ip(meow_hero2.rect.left, meow_hero2.rect.top)
                     bullets.append(bullet)
+                    attack_sound.play()
                 if "R" in data:
                     move_left2 = False
                     move_right2 = True
@@ -222,69 +290,56 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         # spawn bonuses by time
         if main_timer % 10 == 0 and len(bonuses) <= 1:
             bonus = objects.Bonus("Life", WINDOW_WIDTH / 24, WINDOW_HEIGHT / 24)
-            bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
+            bonus.rect.move_ip(random.randint(50, WINDOW_WIDTH-50), random.randint(50, WINDOW_HEIGHT-50))
             bonuses.append(bonus)
             bonus = objects.Bonus("Coin", WINDOW_WIDTH / 24, WINDOW_HEIGHT / 24)
-            bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
+            bonus.rect.move_ip(random.randint(50, WINDOW_WIDTH-50), random.randint(50, WINDOW_HEIGHT-50))
             bonuses.append(bonus)
-
-        # spawn enemy
-        if len(enemies) < ENEMY_MAX_COUNT:
-            dice = random.random()
-            if dice < 0.1:
-                # TODO: spawn randomly by time
-                enemy = objects.AttackerEnemy(1, WINDOW_WIDTH / 18, WINDOW_HEIGHT / 18)
-                enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
-                enemies.append(enemy)
+            bonus = objects.Bonus("Weapon", WINDOW_WIDTH / 24, WINDOW_HEIGHT / 24)
+            bonus.rect.move_ip(random.randint(50, WINDOW_WIDTH-50), random.randint(50, WINDOW_HEIGHT-50))
+            bonuses.append(bonus)
 
         # hitting enemy
         for enemy in enemies:
             for bullet in bullets:
                 if enemy.rect.colliderect(bullet.rect):
-                    enemy.life -= 1
+                    enemy.life -= bullet.power
                     bullet.life -= 1
-                    attack_sound.play()
 
         # hitting second and first player
         for enemy in enemies:
-            if meow_hero1.rect.colliderect(enemy.rect):
-                meow_hero1.life -= 1
-                enemies.remove(enemy)
-                damage_sound.play()
-            elif meow_hero2.rect.colliderect(enemy.rect):
-                meow_hero2.life -= 1
-                enemies.remove(enemy)
-                damage_sound.play()
+            for meow in meow_heroes:
+                if meow.rect.colliderect(enemy.rect):
+                    meow.life -= 1
+                    enemies.remove(enemy)
+                    damage_sound.play()
 
         # hitting players by bullets
         for bullet in enemy_bullets:
-            if meow_hero1.rect.colliderect(bullet.rect):
-                meow_hero1.life -= 1
-                enemy_bullets.remove(bullet)
-                damage_sound.play()
-            elif meow_hero2.rect.colliderect(bullet.rect):
-                meow_hero2.life -= 1
-                enemy_bullets.remove(bullet)
-                damage_sound.play()
+            for meow in meow_heroes:
+                if meow.rect.colliderect(bullet.rect):
+                    meow.life -= 1
+                    if meow.weapon_power > 1:
+                        meow.weapon_power -= 1
+                    enemy_bullets.remove(bullet)
+                    damage_sound.play()
 
         # collecting bonuses:
         for bonus in bonuses:
-            if meow_hero1.rect.colliderect(bonus.rect):
-                if bonus.bonus_type == "Life":
-                    meow_hero1.life += 1
-                    health_sound.play()
-                elif bonus.bonus_type == "Coin":
-                    score += 1000
-                    coin_sound.play()
-                bonuses.remove(bonus)
-            elif meow_hero2.rect.colliderect(bonus.rect):
-                if bonus.bonus_type == "Life":
-                    meow_hero2.life += 1
-                    health_sound.play()
-                elif bonus.bonus_type == "Coin":
-                    score += 1000
-                    coin_sound.play()
-                bonuses.remove(bonus)
+            for meow in meow_heroes:
+                if meow.rect.colliderect(bonus.rect):
+                    if bonus.bonus_type == "Life":
+                        meow.life += 1
+                        health_sound.play()
+                    elif bonus.bonus_type == "Coin":
+                        score += 1000
+                        coin_sound.play()
+                    elif bonus.bonus_type == "Weapon":
+                        if meow.weapon_power < 7:
+                            meow.weapon_power += 1
+                        else:
+                            score += 10000
+                    bonuses.remove(bonus)
 
         # draw background
         window_surface.blit(background_image_in_game, [0, 0])
@@ -338,5 +393,6 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     sock.close()
 
     pygame.mixer_music.stop()
+    victory_sound.play()
     layouts.two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
     return

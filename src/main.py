@@ -248,7 +248,7 @@ def game_loop(window_surface, level_number, player):
             dice = random.random()
             if dice < 0.1:
                 # TODO: spawn randomly by level_number
-                enemy = objects.AttackerEnemy(1, WINDOW_WIDTH/18, WINDOW_HEIGHT/18)
+                enemy = objects.DogEnemy(1, WINDOW_WIDTH/18, WINDOW_HEIGHT/18)
                 enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
                 enemies.append(enemy)
 
@@ -256,7 +256,7 @@ def game_loop(window_surface, level_number, player):
         for enemy in enemies:
             for bullet in bullets:
                 if enemy.rect.colliderect(bullet.rect):
-                    enemy.life -= 1
+                    enemy.life -= bullet.power
                     bullet.life -= 1
                     attack_sound.play()
 

@@ -1,5 +1,6 @@
-import pygame
 import random
+
+import pygame
 
 
 # TODO: move_rate by screen params please
@@ -55,7 +56,8 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image_surface.get_rect()
 
         self.level = level
-        self.speed = 20
+        self.power = self.level
+        self.speed = 14 + self.power*2
         self.life = 1
 
     def move(self):
@@ -65,7 +67,7 @@ class Bullet(pygame.sprite.Sprite):
         window.blit(self.image_surface, self.rect)
 
 
-class Enemy(pygame.sprite.Sprite):
+class DogEnemy(pygame.sprite.Sprite):
     def __init__(self, level, width, height):
         super().__init__()
 
@@ -81,19 +83,14 @@ class Enemy(pygame.sprite.Sprite):
         self.speed = 1
         self.life = level
 
+        self.reload_time = 10
+        self.reload = random.randint(0, 8)
+
     def move(self):
         self.rect.move_ip(0, self.speed)
 
     def draw(self, window):
         window.blit(self.image_surface, self.rect)
-
-
-class AttackerEnemy(Enemy):
-    def __init__(self, level, width, height):
-        super().__init__(level, width, height)
-
-        self.reload_time = 5
-        self.reload = 0
 
     def attack(self):
         if self.reload == self.reload_time:
@@ -139,10 +136,13 @@ class Bonus(pygame.sprite.Sprite):
             image = pygame.image.load('../drawable/other/health1.png')
         elif self.bonus_type == "Coin":
             image = pygame.image.load('../drawable/other/coin1.png')
+        elif self.bonus_type == "Weapon":
+            image = pygame.image.load('../drawable/other/weapon_levelup.png')
+
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
-        # TODO: add lifetime
+        self.lifetime = 22
 
     def draw(self, window):
         window.blit(self.image_surface, self.rect)
