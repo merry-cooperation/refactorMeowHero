@@ -121,7 +121,7 @@ class EnemyBullet(pygame.sprite.Sprite):
         self.w = int(width)
         self.h = int(height)
 
-        image = pygame.image.load('../drawable/weapons/enemy_bullet' + str(level) + '.png')
+        image = pygame.image.load('../drawable/weapons/enemy_bullet' + str(level + 12) + '.png')
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 

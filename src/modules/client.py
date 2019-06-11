@@ -13,21 +13,15 @@ HOST = '0.0.0.0'
 PORT = 9027
 
 # magic
-FPS = 40
+FPS = 50
 TIMEOUT_TIME = 0.01
-ENEMY_MAX_COUNT = 30
+ENEMY_MAX_COUNT = 20
 
 # colors
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
 COLOR_BRIGHT_GREY = (200, 200, 200)
 COLOR_RED = (255, 0, 0)
-
-
-def terminate_connection(sock):
-    print("Connection closed")
-    sock.send("Connection closed".encode())
-    sock.close()
 
 
 def terminate():
@@ -39,6 +33,15 @@ def terminate():
 # TODO: add top time
 def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     # setup socket and logger
+    PORT = layouts.giving_port_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
+
+    # socket.setdefaulttimeout(1)
+    sock = socket.socket()
+
+    sock.bind((HOST, PORT))
+    sock.listen(100)
+    sock.settimeout(TIMEOUT_TIME)
+
     logger = logging.getLogger("Fucking Server")
     logger.setLevel(logging.INFO)
 
@@ -51,14 +54,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     # add handler to logger object
     logger.addHandler(fh)
 
-    socket.setdefaulttimeout(60)
-    sock = socket.socket()
-
-    sock.bind((HOST, PORT))
-    sock.listen(100)
-    sock.settimeout(TIMEOUT_TIME)
-
-    print("Serving on ", PORT)
+    print("Serving on", PORT)
     logger.info('Start serving on %s' % (PORT))
 
     # setup game
@@ -71,10 +67,11 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     background_image_in_game = pygame.image.load("../drawable/backgrounds/abstract_background.jpg")
     background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    meow_hero1 = objects.MeowHero(1, WINDOW_WIDTH / 12, WINDOW_HEIGHT / 12)
+    # setup Meow Hero
+    meow_hero1 = objects.MeowHero(1, WINDOW_WIDTH / 15, WINDOW_HEIGHT / 8)
     meow_hero1.rect.move_ip(int(WINDOW_WIDTH / 2)-100, 7 * int(WINDOW_HEIGHT / 8))
 
-    meow_hero2 = objects.MeowHero(1, WINDOW_WIDTH / 12, WINDOW_HEIGHT / 12)
+    meow_hero2 = objects.MeowHero(1, WINDOW_WIDTH / 15, WINDOW_HEIGHT / 8)
     meow_hero2.rect.move_ip(int(WINDOW_WIDTH / 2)+100, 7 * int(WINDOW_HEIGHT / 8))
 
     move_left1 = move_right1 = move_up1 = move_down1 = False
@@ -103,7 +100,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     timer_text = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH / 2, 10)
     timer_text.rect.center = (WINDOW_WIDTH/2-120, 96)
 
-    # spawn enemy by level
+    # spawn enemy by time
     available_enemy_level = 1
     # spawn bonuses by time
     available_bonus_type = 1
@@ -232,6 +229,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
             print(data)
             logger.info("Income data: %s" % (data))
             data = data.split()
+            conn.close()
 
         except Exception:  # exception if timeout
             pass
@@ -325,15 +323,16 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         #             enemies.remove(enemy)
         #             damage_sound.play()
         #
-        # # hitting players by bullets
-        # for bullet in enemy_bullets:
-        #     for meow in meow_heroes:
-        #         if meow.rect.colliderect(bullet.rect) and not meow.invulnerability:
-        #             meow.life -= 1
-        #             if meow.weapon_power > 1:
-        #                 meow.weapon_power -= 1
-        #             enemy_bullets.remove(bullet)
-        #             damage_sound.play()
+        # hitting players by bullets
+        for bullet in enemy_bullets:
+            for meow in meow_heroes:
+                if meow.rect.colliderect(bullet.rect) and not meow.invulnerability:
+                    meow.life -= 1
+                    meow.invulnerability += 2
+                    if meow.weapon_power > 1:
+                        meow.weapon_power -= 1
+                    enemy_bullets.remove(bullet)
+                    damage_sound.play()
 
         # collecting bonuses:
         for bonus in bonuses:
@@ -351,7 +350,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                         else:
                             score += 10000
                     elif bonus.bonus_type == "Shield":
-                        meow.invulnerability = 10
+                        meow.invulnerability += 10
                     elif bonus.bonus_type == "Mass Attack":
                         for enemy in enemies:
                             enemy.life -= meow.weapon_power
@@ -372,7 +371,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         player1_text.draw(window_surface)
         player2_text.draw(window_surface)
         score_text.draw_this(window_surface, 'Score: %s' % (score))
-        timer_text.draw_this(window_surface, "Time " + str(main_timer).rjust(3) if main_timer <= 200 else 'NICE, NIGGA')
+        timer_text.draw_this(window_surface, "Time " + str(main_timer).rjust(3) if main_timer <= 600 else 'NICE, NIGGA')
         player1_life_text.draw_this(window_surface, 'Live: x%s' % (meow_hero1.life))
         player2_life_text.draw_this(window_surface, 'Live: x%s' % (meow_hero2.life))
 
@@ -409,8 +408,9 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         pygame.display.update()
         main_clock.tick(FPS)
 
+    logger.info('Connection closed, game over')
     pygame.mouse.set_visible(True)
-    sock.close()
+    pygame.mouse.set_visible(True)
 
     pygame.mixer_music.stop()
     victory_sound.play()
