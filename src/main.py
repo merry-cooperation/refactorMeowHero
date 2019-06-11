@@ -73,6 +73,7 @@ def story_loop(window_surface, level_number, prefix, player):
     pygame.mixer.music.play(-1)
 
     text = handler.read()
+    text = text.split('\n')
     handler.close()
 
     font = pygame.font.SysFont(None, 60)
@@ -92,22 +93,25 @@ def story_loop(window_surface, level_number, prefix, player):
 
     buf = ""
     skip = False
-    for elem in text:
-        if skip:
-            text_view.draw_this(window_surface, text)
+    for line in text:
+        for elem in line:
+            if skip:
+                text_view.draw_this(window_surface, line)
+                pygame.display.update()
+                break
+            buf += elem
+            text_view.draw_this(window_surface, buf)
             pygame.display.update()
-            break
-        buf += elem
-        text_view.draw_this(window_surface, buf)
-        pygame.display.update()
-        sleep(0.1)
-        # skip if escape
-        for event in pygame.event.get():
-            if event.type == KEYUP:
-                if event.key == K_ESCAPE:
-                    return
-                else:
-                    skip = True
+            sleep(0.1)
+            # skip if escape
+            for event in pygame.event.get():
+                if event.type == KEYUP:
+                    if event.key == K_ESCAPE:
+                        return
+                    else:
+                        skip = True
+        buf = ""
+        text_view.next_line(60)
 
     pygame.mixer.music.stop()
     wait_for_player_to_press_key(player)
@@ -119,7 +123,7 @@ def game_loop(window_surface, level_number, player):
     pygame.mouse.set_visible(False)
 
     main_clock = pygame.time.Clock()
-    pygame.time.set_timer(pygame.USEREVENT, 1000)
+    pygame.time.set_timer(pygame.USEREVENT, 500)
 
     # set up background
     try:
@@ -137,8 +141,10 @@ def game_loop(window_surface, level_number, player):
     new_top_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
     attack_sound = pygame.mixer.Sound('../sound/short_tracks/attack_1' + ".wav")
 
-    # TODO; exception on 10, 11 and 12 levels
-    pygame.mixer.music.load('../sound/background_music/music_' + str(level_number) + ".mp3")
+    try:
+        pygame.mixer.music.load('../sound/background_music/music_' + str(level_number) + ".mp3")
+    except Exception:
+        pygame.mixer.music.load("../sound/main_theme.mp3")
 
     # set up text
     font = pygame.font.SysFont(None, 60)
@@ -156,10 +162,16 @@ def game_loop(window_surface, level_number, player):
     bonuses = []
     enemy_bullets = []
 
-    main_timer = 25  # debugging
+    main_timer = 50  # debugging
     # main_timer = 10*level_number + 40
-    score = 0
 
+    # set up bosses
+    if level_number == 1:
+        enemy = objects.ZloyMuzhic("Zloy muzhic", WINDOW_WIDTH / 5, WINDOW_HEIGHT / 6)
+        enemies.append(enemy)
+
+    # setting score
+    score = 0
     handler = open("../stats/high_score.json", 'r')
     data = json.load(handler)
     top_score = data[str(level_number)][1]
@@ -186,7 +198,7 @@ def game_loop(window_surface, level_number, player):
 
                 # attack time
                 for enemy in enemies:
-                    enemy_bullet = enemy.attack()
+                    enemy_bullet = enemy.attack(meow_hero.rect.center)
                     if enemy_bullet is not None:
                         enemy_bullets.append(enemy_bullet)
 
@@ -244,13 +256,13 @@ def game_loop(window_surface, level_number, player):
             bonuses.append(bonus)
 
         # spawn enemy
-        if len(enemies) < ENEMY_MAX_COUNT:
-            dice = random.random()
-            if dice < 0.1:
-                # TODO: spawn randomly by level_number
-                enemy = objects.DogEnemy(1, WINDOW_WIDTH/18, WINDOW_HEIGHT/18)
-                enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
-                enemies.append(enemy)
+        # if len(enemies) < ENEMY_MAX_COUNT:
+        #     dice = random.random()
+        #     if dice < 0.1:
+        #         # TODO: spawn randomly by level_number
+        #         enemy = objects.DogEnemy(1, WINDOW_WIDTH/18, WINDOW_HEIGHT/18)
+        #         enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
+        #         enemies.append(enemy)
 
         # hitting enemy
         for enemy in enemies:

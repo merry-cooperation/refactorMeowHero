@@ -3,7 +3,6 @@ import random
 import pygame
 
 
-# TODO: move_rate by screen params please
 class MeowHero(pygame.sprite.Sprite):
     # This class represents a Cat Hero. It derives from the "Sprite" class in PyGame.
     def __init__(self, skin_type, width, height):
@@ -104,7 +103,7 @@ class DogEnemy(pygame.sprite.Sprite):
     def draw(self, window):
         window.blit(self.image_surface, self.rect)
 
-    def attack(self):
+    def attack(self, *args):
         if self.reload == self.reload_time:
             bullet = EnemyBullet(self.level, 24, 24)
             bullet.rect.center = self.rect.center
@@ -114,8 +113,71 @@ class DogEnemy(pygame.sprite.Sprite):
             self.reload += 1
 
 
+class Bosses(pygame.sprite.Sprite):
+    def __init__(self, name, width, height):
+        super().__init__()
+
+        self.w = int(width)
+        self.h = int(height)
+        self.name = name
+
+        if self.name == "Zloy muzhic":
+            image = pygame.image.load('../drawable/sprites/enemy/zloy_muzhic.png')
+
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
+        self.life = 100
+        self.reload = 0
+        self.reload_time = 2
+
+    def draw(self, window):
+        window.blit(self.image_surface, self.rect)
+
+    def attack(self, pos):
+        if self.reload == self.reload_time:
+            bullet = EnemyBullet(-11, 100, 100, "In hero", pos)
+            bullet.rect.center = self.rect.center
+            self.reload = 0
+            return bullet
+        else:
+            self.reload += 1
+
+    def move(self):
+        pass
+
+
+class ZloyMuzhic(Bosses):
+    def __init__(self, name, width, height):
+        super().__init__(name, width, height)
+
+        self.move_right = True
+        self.move_left = False
+        self.speed = 3
+        self.move_time = 120
+
+    def move(self):
+        if self.move_time:
+            if self.move_right:
+                self.rect.move_ip(self.speed, 0)
+                self.move_time -= 1
+            elif self.move_left:
+                self.rect.move_ip(-self.speed, 0)
+                self.move_time -= 1
+        else:
+            self.move_left = False
+            self.move_right = False
+            dice = random.random()
+            if dice < 0.08:
+                self.move_time = random.randint(10, 100)
+                if random.randint(1, 2) == 2:
+                    self.move_right = True
+                else:
+                    self.move_left = True
+
+
 class EnemyBullet(pygame.sprite.Sprite):
-    def __init__(self, level, width, height):
+    def __init__(self, level, width, height, bullet_type="Simple", *args):
         super().__init__()
 
         self.w = int(width)
@@ -129,8 +191,23 @@ class EnemyBullet(pygame.sprite.Sprite):
         self.speed = 5
         self.life = 1
 
+        self.bullet_type = bullet_type
+
+        if self.bullet_type == "In hero":  # calculate direction
+            x, y = args[0]
+            x0, y0 = self.rect.center
+            x -= x0
+            y -= y0
+            z = (x**2 + y**2)**(1/2)
+            coef = z/self.speed
+            self.x = int(x/coef)
+            self.y = int(y/coef)
+        else:
+            self.x = 0
+            self.y = -self.speed
+
     def move(self):
-        self.rect.move_ip(0, self.speed)  # another direction
+        self.rect.move_ip(self.x, self.y)
 
     def draw(self, window):
         window.blit(self.image_surface, self.rect)

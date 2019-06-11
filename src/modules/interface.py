@@ -68,6 +68,9 @@ class TextView:
         self.text_object = self.font.render(buffer, 1, self.color)
         window.blit(self.text_object, self.rect)
 
+    def next_line(self, size):
+        self.rect.move_ip(0, size+2)
+
     def is_over(self, pos):  # pos is the mouse position or a tuple of (x,y) coordinates
         if pos[0] > self.rect.left and pos[0] < self.rect.right:
             if pos[1] > self.rect.top and pos[1] < self.rect.bottom:
