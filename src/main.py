@@ -167,7 +167,7 @@ def game_loop(window_surface, level_number, player):
 
     # set up bosses
     if level_number == 1:
-        enemy = objects.ZloyMuzhic("Zloy muzhic", WINDOW_WIDTH / 5, WINDOW_HEIGHT / 6)
+        enemy = objects.ZloyMuzhic("Zloy muzhic", level_number, WINDOW_WIDTH / 5, WINDOW_HEIGHT / 6)
         enemies.append(enemy)
 
     # setting score
@@ -190,6 +190,7 @@ def game_loop(window_surface, level_number, player):
             if event.type == QUIT:
                 terminate(player)
 
+            # TODO: spawn enemy
             if event.type == pygame.USEREVENT:
                 main_timer -= 1
                 # victory condition
@@ -204,7 +205,6 @@ def game_loop(window_surface, level_number, player):
 
             if event.type == KEYDOWN:
                 if event.key == K_SPACE:
-                    # TODO: add sound
                     bullet = objects.Bullet(1, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
                     bullet.rect.move_ip(meow_hero.rect.left, meow_hero.rect.top)
                     bullets.append(bullet)
@@ -255,15 +255,6 @@ def game_loop(window_surface, level_number, player):
             bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
             bonuses.append(bonus)
 
-        # spawn enemy
-        # if len(enemies) < ENEMY_MAX_COUNT:
-        #     dice = random.random()
-        #     if dice < 0.1:
-        #         # TODO: spawn randomly by level_number
-        #         enemy = objects.DogEnemy(1, WINDOW_WIDTH/18, WINDOW_HEIGHT/18)
-        #         enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
-        #         enemies.append(enemy)
-
         # hitting enemy
         for enemy in enemies:
             for bullet in bullets:
@@ -306,7 +297,7 @@ def game_loop(window_surface, level_number, player):
         # draw text
         score_text.draw_this(window_surface, 'Score: %s' % (score), )
         top_score_text.draw_this(window_surface, 'Top Score: %s' % (top_score))
-        timer_text.draw_this(window_surface, "Time "+ str(main_timer).rjust(3) if main_timer > 0 else 'NICE, NIGGA')
+        timer_text.draw_this(window_surface, "Time " + str(main_timer).rjust(3) if main_timer > 0 else 'NICE, NIGGA')
 
         # draw hero
         meow_hero.draw(window_surface)

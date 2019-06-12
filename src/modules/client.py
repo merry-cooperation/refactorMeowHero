@@ -139,7 +139,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 # spawn enemy
                 if len(enemies) < ENEMY_MAX_COUNT:
                     level = random.randint(1, available_enemy_level)
-                    enemy = objects.DogEnemy(level, WINDOW_WIDTH / 18, WINDOW_HEIGHT / 18)
+                    enemy = objects.DogEnemy("Dog Enemy" + str(level), level, WINDOW_WIDTH / 18, WINDOW_HEIGHT / 18)
                     enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
                     enemies.append(enemy)
 
