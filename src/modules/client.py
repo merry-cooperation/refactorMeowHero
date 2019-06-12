@@ -85,6 +85,13 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     health_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
     new_top_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
     attack_sound = pygame.mixer.Sound('../sound/short_tracks/attack_1' + ".wav")
+    freeze_sound = pygame.mixer.Sound('../sound/short_tracks/freeze.wav')
+    boom_sound = pygame.mixer.Sound('../sound/short_tracks/boom.wav')
+    reload_sound = pygame.mixer.Sound('../sound/short_tracks/reload.wav')
+    # coin_drop_sound = pygame.mixer.Sound('../sound/short_tracks/coin_dropping.wav')
+    shield_sound = pygame.mixer.Sound('../sound/short_tracks/shield.wav')
+    rate_of_fire_sound = pygame.mixer.Sound('../sound/short_tracks/rate_of_fire.wav')
+    laser_sound = pygame.mixer.Sound('../sound/short_tracks/laser.wav')
 
     pygame.mixer.music.load('../sound/main_theme.mp3')
     pygame.mixer.music.play(-1, 0.0)
@@ -381,23 +388,30 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                         score += 800*available_enemy_level*k
                         coin_sound.play()
                     elif bonus.bonus_type == "Weapon":
+                        reload_sound.play()
                         if meow.weapon_power < 7:
                             meow.weapon_power += 1
                         else:
                             score += 10000*k
                     elif bonus.bonus_type == "Shield":
                         meow.invulnerability += 10
+                        shield_sound.play()
                     elif bonus.bonus_type == "Mass Attack":
+                        boom_sound.play()
                         for enemy in enemies:
                             enemy.life -= meow.weapon_power
                     elif bonus.bonus_type == "Rate of fire":
+                        rate_of_fire_sound.play()
                         meow.max_weapon_reload = 8
                         meow.rate_of_fire_time_limit += 12
                     elif bonus.bonus_type == "Freeze":
+                        freeze_sound.play()
                         freeze_bonus += 10 + available_enemy_level
                     elif bonus.bonus_type == "Three Directions":
+                        laser_sound.play()
                         meow.three_directions_time += 40
                     elif bonus.bonus_type == "x2":
+                        coin_sound.play()
                         x2_time += 2*available_enemy_level
                         k = 2
 
