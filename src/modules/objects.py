@@ -249,6 +249,7 @@ class Bonus(pygame.sprite.Sprite):
         self.w = int(width)
         self.h = int(height)
         self.bonus_type = bonus_type
+
         # switching bonus type
         if self.bonus_type == "Life":
             image = pygame.image.load('../drawable/other/health1.png')
@@ -266,6 +267,8 @@ class Bonus(pygame.sprite.Sprite):
             image = pygame.image.load('../drawable/other/three_directions.png')
         elif self.bonus_type == "Freeze":
             image = pygame.image.load('../drawable/other/freeze.png')
+        elif self.bonus_type == "x2":
+            image = pygame.image.load('../drawable/other/x2.png')
 
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()

@@ -109,7 +109,9 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     enemies = []
     enemy_bullets = []
     bonuses = []
-    bonus_types = ["Coin", "Life", "Weapon", "Shield", "Rate of fire", "Mass Attack", "Three Directions", "Freeze"]
+    bonus_types = ["Coin", "Life", "Weapon",
+                   "Shield", "Rate of fire", "Mass Attack",
+                   "Three Directions", "Freeze", "x2"]
 
     meow_heroes = list()
     meow_heroes.append(meow_hero1)
@@ -117,12 +119,19 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
     enemy_spawn_probability = 0.3
 
+    # score coefficient
+    k = 1
+
     main_timer = 0
     score = 0
+
+    # bonus timers
     freeze_bonus = 0
+    x2_time = 0
+
     running = True
     while running:  # the game loop runs while the game part is playing
-        score += 1  # increase score
+        score += 1*k  # increase score
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -176,9 +185,13 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                         if meow.rate_of_fire_time_limit == 0:
                             meow.max_weapon_reload = 30
 
-                # decrement freeze bonus
+                # decrement freeze and x2 bonuses
                 if freeze_bonus > 0:
                     freeze_bonus -= 1
+                if x2_time > 0:
+                    x2_time -= 1
+                    if x2_time == 0:
+                        k = 1
 
                 # spawn bonus
                 if main_timer % 12 == 0 and len(bonuses) <= 7:
@@ -365,13 +378,13 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                         meow.life += 1
                         health_sound.play()
                     elif bonus.bonus_type == "Coin":
-                        score += 800*available_enemy_level
+                        score += 800*available_enemy_level*k
                         coin_sound.play()
                     elif bonus.bonus_type == "Weapon":
                         if meow.weapon_power < 7:
                             meow.weapon_power += 1
                         else:
-                            score += 10000
+                            score += 10000*k
                     elif bonus.bonus_type == "Shield":
                         meow.invulnerability += 10
                     elif bonus.bonus_type == "Mass Attack":
@@ -384,6 +397,9 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                         freeze_bonus += 10 + available_enemy_level
                     elif bonus.bonus_type == "Three Directions":
                         meow.three_directions_time += 40
+                    elif bonus.bonus_type == "x2":
+                        x2_time += 2*available_enemy_level
+                        k = 2
 
                     bonuses.remove(bonus)
 
