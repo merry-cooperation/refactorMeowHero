@@ -15,7 +15,7 @@ PORT = 9027
 # magic
 FPS = 50
 TIMEOUT_TIME = 0.01
-ENEMY_MAX_COUNT = 20
+ENEMY_MAX_COUNT = 16
 
 # colors
 COLOR_WHITE = (255, 255, 255)
@@ -115,6 +115,8 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     meow_heroes.append(meow_hero1)
     meow_heroes.append(meow_hero2)
 
+    enemy_spawn_probability = 0.3
+
     main_timer = 0
     score = 0
     freeze_bonus = 0
@@ -131,18 +133,21 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
             if event.type == pygame.USEREVENT:  # time tick
                 main_timer += 1
 
-                # increase enemy level and bonus type
+                # increase enemy level, bonus type and enemy spawn probability
                 if main_timer % 20 == 0 and available_enemy_level < 12:
                     available_enemy_level += 1
+                    enemy_spawn_probability += 0.05
                     if available_bonus_type < len(bonus_types):
                         available_bonus_type += 1
 
                 # spawn enemy
                 if len(enemies) < ENEMY_MAX_COUNT and not freeze_bonus:
-                    level = random.randint(1, available_enemy_level)
-                    enemy = objects.DogEnemy("Dog Enemy" + str(level), level, WINDOW_WIDTH / 18, WINDOW_HEIGHT / 18)
-                    enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
-                    enemies.append(enemy)
+                    dice = random.random()
+                    if dice < enemy_spawn_probability:
+                        level = random.randint(1, available_enemy_level)
+                        enemy = objects.DogEnemy("Dog Enemy" + str(level), level, WINDOW_WIDTH / 18, WINDOW_HEIGHT / 18)
+                        enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
+                        enemies.append(enemy)
 
                 # bonus lifetime
                 for bonus in bonuses:
@@ -377,7 +382,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                         meow.rate_of_fire_time_limit += 12
                     elif bonus.bonus_type == "Freeze":
                         freeze_bonus += 10 + available_enemy_level
-                    elif bonus.bonus_type == "Three directions":
+                    elif bonus.bonus_type == "Three Directions":
                         meow.three_directions_time += 40
 
                     bonuses.remove(bonus)
@@ -394,8 +399,8 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         player2_text.draw(window_surface)
         score_text.draw_this(window_surface, 'Score: %s' % (score))
         timer_text.draw_this(window_surface, "Time " + str(main_timer).rjust(3) if main_timer <= 600 else 'NICE, NIGGA')
-        player1_life_text.draw_this(window_surface, 'Live: x%s' % (meow_hero1.life))
-        player2_life_text.draw_this(window_surface, 'Live: x%s' % (meow_hero2.life))
+        player1_life_text.draw_this(window_surface, 'Life: x%s' % (meow_hero1.life))
+        player2_life_text.draw_this(window_surface, 'Life: x%s' % (meow_hero2.life))
 
         # draw bonuses
         for bonus in bonuses:
