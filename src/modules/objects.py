@@ -26,7 +26,10 @@ class MeowHero(pygame.sprite.Sprite):
         self.life = 9
         self.weapon_power = 1
         self.move_rate = 12
-        self.invulnerability = 16
+
+        # self.invulnerability = 16
+        self.invulnerability = 100000  # debug
+        self.three_directions_time = 0
 
         self.max_weapon_reload = 30
         self.current_reload = 0
@@ -44,6 +47,9 @@ class MeowHero(pygame.sprite.Sprite):
 
     def move(self, x_d, y_d):
         self.rect.move_ip(x_d*self.move_rate, y_d*self.move_rate)
+
+    def attack(self):
+        pass
 
 
 class Health(pygame.sprite.Sprite):
@@ -78,8 +84,11 @@ class Bullet(pygame.sprite.Sprite):
         self.speed = 14 + self.power*2
         self.life = 1
 
+        self.x = 0
+        self.y = self.speed*(-1)
+
     def move(self):
-        self.rect.move_ip(0, self.speed*(-1))  # another direction
+        self.rect.move_ip(self.x, self.y)
 
     def draw(self, window):
         window.blit(self.image_surface, self.rect)
@@ -253,6 +262,10 @@ class Bonus(pygame.sprite.Sprite):
             image = pygame.image.load('../drawable/other/mass_attack.png')
         elif self.bonus_type == "Rate of fire":
             image = pygame.image.load('../drawable/other/rate_of_fire.png')
+        elif self.bonus_type == "Three Directions":
+            image = pygame.image.load('../drawable/other/three_directions.png')
+        elif self.bonus_type == "Freeze":
+            image = pygame.image.load('../drawable/other/freeze.png')
 
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()

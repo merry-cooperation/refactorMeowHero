@@ -109,7 +109,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     enemies = []
     enemy_bullets = []
     bonuses = []
-    bonus_types = ["Coin", "Life", "Weapon", "Shield", "Rate of fire", "Mass Attack"]
+    bonus_types = ["Coin", "Life", "Weapon", "Shield", "Rate of fire", "Mass Attack", "Three Directions", "Freeze"]
 
     meow_heroes = list()
     meow_heroes.append(meow_hero1)
@@ -117,6 +117,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
     main_timer = 0
     score = 0
+    freeze_bonus = 0
     running = True
     while running:  # the game loop runs while the game part is playing
         score += 1  # increase score
@@ -137,7 +138,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                         available_bonus_type += 1
 
                 # spawn enemy
-                if len(enemies) < ENEMY_MAX_COUNT:
+                if len(enemies) < ENEMY_MAX_COUNT and not freeze_bonus:
                     level = random.randint(1, available_enemy_level)
                     enemy = objects.DogEnemy("Dog Enemy" + str(level), level, WINDOW_WIDTH / 18, WINDOW_HEIGHT / 18)
                     enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
@@ -159,14 +160,20 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     if enemy_bullet is not None:
                         enemy_bullets.append(enemy_bullet)
 
-                # decrement invulnerability and rate of fire
+                # decrement invulnerability, three directions and rate of fire
                 for meow in meow_heroes:
                     if meow.invulnerability > 0:
                         meow.invulnerability -= 1
+                    if meow.three_directions_time > 0:
+                        meow.three_directions_time -= 1
                     if meow.rate_of_fire_time_limit > 0:
                         meow.rate_of_fire_time_limit -= 1
                         if meow.rate_of_fire_time_limit == 0:
                             meow.max_weapon_reload = 30
+
+                # decrement freeze bonus
+                if freeze_bonus > 0:
+                    freeze_bonus -= 1
 
                 # spawn bonus
                 if main_timer % 12 == 0 and len(bonuses) <= 7:
@@ -306,6 +313,17 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 bullet.rect.move_ip(meow.rect.left, meow.rect.top)
                 bullets.append(bullet)
                 meow.current_reload = 0
+                if meow.three_directions_time > 0:
+                    bullet = objects.Bullet(meow.weapon_power, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
+                    bullet.rect.move_ip(meow.rect.left, meow.rect.top)
+                    bullet.x = int(bullet.speed/3)
+                    bullets.append(bullet)
+
+                    bullet = objects.Bullet(meow.weapon_power, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
+                    bullet.rect.move_ip(meow.rect.left, meow.rect.top)
+                    bullet.x = int(bullet.speed/3)*(-1)
+                    bullets.append(bullet)
+
                 # attack_sound.play()
 
         # hitting enemy
@@ -322,7 +340,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         #             meow.life -= 1
         #             enemies.remove(enemy)
         #             damage_sound.play()
-        #
+
         # hitting players by bullets
         for bullet in enemy_bullets:
             for meow in meow_heroes:
@@ -357,6 +375,10 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     elif bonus.bonus_type == "Rate of fire":
                         meow.max_weapon_reload = 8
                         meow.rate_of_fire_time_limit += 12
+                    elif bonus.bonus_type == "Freeze":
+                        freeze_bonus += 10 + available_enemy_level
+                    elif bonus.bonus_type == "Three directions":
+                        meow.three_directions_time += 40
 
                     bonuses.remove(bonus)
 
@@ -379,14 +401,6 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         for bonus in bonuses:
             bonus.draw(window_surface)
 
-        # draw enemies
-        for enemy in enemies:
-            enemy.move()
-            if enemy.rect.top > WINDOW_HEIGHT or enemy.life <= 0:
-                enemies.remove(enemy)
-                score += 100 * enemy.level
-            enemy.draw(window_surface)
-
         # move and draw hero bullets
         for bullet in bullets:
             bullet.move()
@@ -394,9 +408,22 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 bullets.remove(bullet)
             bullet.draw(window_surface)
 
-        # move and draw enemy bullets
+        # move enemies and bullets
+        if not freeze_bonus:
+            for enemy in enemies:
+                enemy.move()
+            for bullet in enemy_bullets:
+                bullet.move()
+
+        # draw enemies
+        for enemy in enemies:
+            if enemy.rect.top > WINDOW_HEIGHT or enemy.life <= 0:
+                enemies.remove(enemy)
+                score += 100 * enemy.level
+            enemy.draw(window_surface)
+
+        # draw enemy bullets
         for bullet in enemy_bullets:
-            bullet.move()
             if bullet.rect.top > WINDOW_HEIGHT or bullet.life <= 0:
                 enemy_bullets.remove(bullet)
             bullet.draw(window_surface)
