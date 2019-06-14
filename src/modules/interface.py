@@ -16,6 +16,7 @@ class Button:
         self.text = text
         self.is_active = False
         self.is_off = is_off
+        self.font = pygame.font.SysFont(None, 42)
 
         self.image = pygame.image.load('../drawable/buttons/red_button.png')
         self.image_active = pygame.image.load('../drawable/buttons/red_button_light.png')
@@ -36,8 +37,7 @@ class Button:
         else:
             window.blit(self.image, [int(self.x), int(self.y)])
 
-        font = pygame.font.SysFont(None, 42)
-        text = font.render(self.text, 1, (0, 0, 0))
+        text = self.font.render(self.text, 1, (0, 0, 0))
         window.blit(text, (self.x+(self.w/2-text.get_width()/2), self.y+(self.h/2-text.get_height()/2)))
 
     def is_over(self, pos):  # pos is the mouse position or a tuple of (x,y) coordinates

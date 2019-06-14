@@ -354,3 +354,8 @@ def game_loop(window_surface, level_number, player):
     wait_for_player_to_press_key(player)
 
     return True if victory else False
+
+
+# TODO: here
+def boss_game_loop(window_surface, level_number, player):
+    pass

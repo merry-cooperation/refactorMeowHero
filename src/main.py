@@ -41,10 +41,12 @@ def draw_level_buttons(window_surface, player):
             button = interface.Button(WINDOW_WIDTH / 2 + (i % 3) * (WINDOW_WIDTH / 8 + 40) + 50,
                                       WINDOW_HEIGHT / 12 + int(i / 3) * (WINDOW_HEIGHT / 8 + 70),
                                       WINDOW_WIDTH / 8, WINDOW_HEIGHT / 6, str(i + 1))
+            button.font = pygame.font.SysFont(None, 64)
         else:
             button = interface.Button(WINDOW_WIDTH / 2 + (i % 3) * (WINDOW_WIDTH / 8 + 40) + 50,
                                       WINDOW_HEIGHT / 12 + int(i / 3) * (WINDOW_HEIGHT / 8 + 70),
                                       WINDOW_WIDTH / 8, WINDOW_HEIGHT / 6, str(i + 1), True)
+            button.font = pygame.font.SysFont(None, 64)
 
         buttons.append(button)
 
@@ -57,20 +59,34 @@ def draw_level_buttons(window_surface, player):
 def levels_menu(window_surface, player):
     buttons = draw_level_buttons(window_surface, player)
 
+    boss_levels = [1, 4, 5, 6, 7, 9, 10]
+
     while True:
         for event in pygame.event.get():
             mouse_pos = pygame.mouse.get_pos()  # gets mouse position
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
-                    game.terminate(player)
+                    return
+
+            if event.type == QUIT:
+                print("Goodbye")
+                game.terminate(player)
 
             for button in buttons:
                 if button.is_over(mouse_pos):
                     if event.type == pygame.MOUSEBUTTONDOWN and not button.is_off:
                         if button.text == "Back":
                             return
+                        # print story
                         game.story_loop(window_surface, int(button.text), "pre", player)
-                        victory = game.game_loop(window_surface, int(button.text), player)
+
+                        # start game
+                        if int(button.text) in boss_levels:
+                            victory = game.boss_game_loop(window_surface, int(button.text), player)
+                        else:
+                            victory = game.game_loop(window_surface, int(button.text), player)
+
+                        # print post-story
                         if victory:
                             game.story_loop(window_surface, int(button.text), "post", player)
                             buttons = draw_level_buttons(window_surface, player)
@@ -113,7 +129,6 @@ def main_menu(window_surface):     # show the "Main menu" screen
     button_quit = interface.Button(WINDOW_WIDTH/2+100, 3*WINDOW_HEIGHT/4,
                                  WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "Quit")
 
-    # TODO: change text to images, if possible
     button_stats = interface.Button(50, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Stats")
     button_skins = interface.Button(260, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Skins")
     button_future = interface.Button(470, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Info")
