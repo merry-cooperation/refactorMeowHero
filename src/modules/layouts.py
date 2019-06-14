@@ -235,8 +235,8 @@ def change_skin_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
     rect_border.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
 
-    font0 = pygame.font.SysFont(None, 140)
-    text_skins = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Nothing!")
+    font0 = pygame.font.SysFont(None, 100)
+    text_skins = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Will be able later")
     text_skins.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
 
     pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
@@ -261,8 +261,8 @@ def future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
     rect_border.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
 
-    font0 = pygame.font.SysFont(None, 140)
-    text_future = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "???")
+    font0 = pygame.font.SysFont(None, 100)
+    text_future = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Will be able later")
     text_future.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
 
     pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
