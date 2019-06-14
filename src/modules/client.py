@@ -8,6 +8,11 @@ from pygame.locals import *
 
 from . import objects, layouts, interface
 
+"""
+Game loop для двух игроков.
+Игроки управляются с контроллера.
+"""
+
 # socket magic
 HOST = '0.0.0.0'
 PORT = 9027

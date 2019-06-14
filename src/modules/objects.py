@@ -5,6 +5,9 @@ import pygame
 WINDOW_WIDTH = 1600
 WINDOW_HEIGHT = 900
 
+"""
+Основные объекты, появляющиеся в игре
+"""
 
 def enemy_image_loader(name):
     return pygame.image.load('../drawable/sprites/enemy/' + name.lower().replace(' ', '_') + '.png')
