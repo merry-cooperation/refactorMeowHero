@@ -280,6 +280,116 @@ class ZloyMuzhic(Boss):
             self.reload += 1
 
 
+class EGE(Boss):
+    def __init__(self, name, level):
+        super().__init__(name, level)
+
+        self.w = int(WINDOW_WIDTH / 3)
+        self.h = int(WINDOW_HEIGHT / 5)
+
+        image = pygame.image.load('../drawable/sprites/enemy/bosses/ege.png')
+
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
+        self.move_right = True
+        self.move_left = False
+        self.speed = 3
+        self.move_time = 120
+
+        self.reload_time = 1
+
+    def move(self):
+        if self.move_time:
+            if self.rect.left < 0:
+                self.move_left = False
+                self.move_right = True
+            if self.rect.right > WINDOW_WIDTH:
+                self.move_left = True
+                self.move_right = False
+            if self.move_right:
+                self.rect.move_ip(self.speed, 0)
+                self.move_time -= 1
+            elif self.move_left:
+                self.rect.move_ip(-self.speed, 0)
+                self.move_time -= 1
+        else:
+            self.move_left = False
+            self.move_right = False
+            dice = random.random()
+            if dice < 0.05:
+                self.move_time = random.randint(20, 120)
+                if random.randint(1, 2) == 2:
+                    self.move_right = True
+                else:
+                    self.move_left = True
+
+    # TODO: change this
+    def attack(self, pos):
+        if self.reload == self.reload_time:
+            bullet = EnemyBullet(4, "Boss InHero", pos, self.rect.center)
+            bullet.rect.center = self.rect.center
+            self.reload = 0
+            return bullet
+        else:
+            self.reload += 1
+
+
+class Committee(Boss):
+    def __init__(self, name, level):
+        super().__init__(name, level)
+
+        self.w = int(WINDOW_WIDTH / 3)
+        self.h = int(WINDOW_HEIGHT / 5)
+
+        image = pygame.image.load('../drawable/sprites/enemy/bosses/komissia3.png')
+
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
+        self.move_right = True
+        self.move_left = False
+        self.speed = 1
+        self.move_time = 150
+
+        self.reload_time = 1
+
+    def move(self):
+        if self.move_time:
+            if self.rect.left < 0:
+                self.move_left = False
+                self.move_right = True
+            if self.rect.right > WINDOW_WIDTH:
+                self.move_left = True
+                self.move_right = False
+            if self.move_right:
+                self.rect.move_ip(self.speed, 0)
+                self.move_time -= 1
+            elif self.move_left:
+                self.rect.move_ip(-self.speed, 0)
+                self.move_time -= 1
+        else:
+            self.move_left = False
+            self.move_right = False
+            dice = random.random()
+            if dice < 0.05:
+                self.move_time = random.randint(20, 120)
+                if random.randint(1, 2) == 2:
+                    self.move_right = True
+                else:
+                    self.move_left = True
+
+    # TODO: change this
+    def attack(self, pos):
+        if self.reload == self.reload_time:
+            bullet = EnemyBullet(5, "Boss InHero", pos, self.rect.center)
+            bullet.rect.center = self.rect.center
+            self.reload = 0
+            return bullet
+        else:
+            self.reload += 1
+
+
 class EnemyBullet(pygame.sprite.Sprite):
     def __init__(self, level, bullet_type="Simple", *args):
         super().__init__()
@@ -298,7 +408,10 @@ class EnemyBullet(pygame.sprite.Sprite):
             self.speed = 5
             self.life = 1
 
-        image = pygame.image.load('../drawable/weapons/enemy_bullets/enemy_bullet' + str(level) + '.png')
+        if level == 5:
+            image = random_image_loader('../drawable/weapons/faculty/faculty', 18)
+        else:
+            image = pygame.image.load('../drawable/weapons/enemy_bullets/enemy_bullet' + str(level) + '.png')
 
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()

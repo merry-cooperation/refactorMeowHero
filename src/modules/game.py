@@ -369,6 +369,7 @@ def game_loop(window_surface, level_number, player):
     return True if victory else False
 
 
+# TODO: timer to another direction
 def boss_game_loop(window_surface, level_number, player):
     print(player.name)
     pygame.mouse.set_visible(False)
@@ -421,9 +422,11 @@ def boss_game_loop(window_surface, level_number, player):
         enemy = objects.ZloyMuzhic("Zloy muzhic", level_number)
         enemies.append(enemy)
     elif level_number == 4:
-        pass
+        enemy = objects.EGE("EGE", level_number)
+        enemies.append(enemy)
     elif level_number == 5:
-        pass
+        enemy = objects.Committee("Committee", level_number)
+        enemies.append(enemy)
     elif level_number == 6:
         pass
     elif level_number == 7:
