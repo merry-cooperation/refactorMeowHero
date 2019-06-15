@@ -154,7 +154,60 @@ class CommonEnemy(Enemy):
         super().__init__(name, level)
 
 
-class DogEnemy(Enemy):
+class Children(CommonEnemy):
+    def __init__(self, name, level):
+        super().__init__(name, level)
+
+        self.w = int(WINDOW_WIDTH / 12)
+        self.h = int(WINDOW_HEIGHT / 8)
+
+        self.speed = random.randint(2, 7)
+        self.direction = random.randint(-4, 4)
+
+        self.life = 4
+
+        image = random_image_loader('../drawable/sprites/enemy/children/children', 6)
+
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
+        self.rect.move_ip(random.randint(50, WINDOW_WIDTH-50), 0)
+
+    def attack(self, *args):
+        pass
+
+    def move(self):
+        self.rect.move_ip(self.direction, self.speed)
+
+
+class Dog(CommonEnemy):
+    def __init__(self, name, level):
+        super().__init__(name, level)
+
+        self.w = int(WINDOW_WIDTH / 12)
+        self.h = int(WINDOW_HEIGHT / 12)
+
+        self.speed = random.randint(1, 4)
+        self.direction = random.randint(-2, 2)
+
+        self.life = random.randint(4, 7)
+
+        image = random_image_loader('../drawable/sprites/enemy/dog_enemy/dog_enemy', 12)
+
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
+        self.rect.move_ip(random.randint(50, WINDOW_WIDTH-50), 0)
+
+    def attack(self, *args):
+        pass
+
+    # TODO: change it pls
+    def move(self):
+        self.rect.move_ip(self.direction, self.speed)
+
+
+class DogEnemyMultiplayer(Enemy):
     def __init__(self, name, level):
         super().__init__(name, level)
 

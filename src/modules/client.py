@@ -157,7 +157,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 # increase enemy level, bonus type and enemy spawn probability
                 if main_timer % 20 == 0 and available_enemy_level < 12:
                     available_enemy_level += 1
-                    enemy_spawn_probability += 0.05
+                    enemy_spawn_probability += 0.03
                     if available_bonus_type < len(bonus_types):
                         available_bonus_type += 1
 
@@ -166,7 +166,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     dice = random.random()
                     if dice < enemy_spawn_probability:
                         level = random.randint(1, available_enemy_level)
-                        enemy = objects.DogEnemy("Dog Enemy" + str(level), level)
+                        enemy = objects.DogEnemyMultiplayer("Dog Enemy" + str(level), level)
                         enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
                         enemies.append(enemy)
 
