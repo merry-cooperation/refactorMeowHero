@@ -73,10 +73,10 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
     # setup Meow Hero
-    meow_hero1 = objects.MeowHero(1, WINDOW_WIDTH / 15, WINDOW_HEIGHT / 8)
+    meow_hero1 = objects.MeowHero(1)
     meow_hero1.rect.move_ip(int(WINDOW_WIDTH / 2)-100, 7 * int(WINDOW_HEIGHT / 8))
 
-    meow_hero2 = objects.MeowHero(1, WINDOW_WIDTH / 15, WINDOW_HEIGHT / 8)
+    meow_hero2 = objects.MeowHero(1)
     meow_hero2.rect.move_ip(int(WINDOW_WIDTH / 2)+100, 7 * int(WINDOW_HEIGHT / 8))
 
     move_left1 = move_right1 = move_up1 = move_down1 = False
@@ -166,7 +166,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     dice = random.random()
                     if dice < enemy_spawn_probability:
                         level = random.randint(1, available_enemy_level)
-                        enemy = objects.DogEnemy("Dog Enemy" + str(level), level, WINDOW_WIDTH / 18, WINDOW_HEIGHT / 18)
+                        enemy = objects.DogEnemy("Dog Enemy" + str(level), level)
                         enemy.rect.move_ip(random.randint(0, WINDOW_WIDTH), 0)
                         enemies.append(enemy)
 
@@ -208,7 +208,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 # spawn bonus
                 if main_timer % 12 == 0 and len(bonuses) <= 7:
                     bonus_type = random.randint(1, available_bonus_type)
-                    bonus = objects.Bonus(bonus_types[bonus_type - 1], WINDOW_WIDTH / 24, WINDOW_HEIGHT / 24)
+                    bonus = objects.Bonus(bonus_types[bonus_type - 1])
                     bonus.rect.move_ip(random.randint(50, WINDOW_WIDTH - 50),
                                        random.randint(50, WINDOW_HEIGHT - 50))
                     bonuses.append(bonus)

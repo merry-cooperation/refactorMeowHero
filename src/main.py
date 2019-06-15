@@ -81,7 +81,7 @@ def story_loop(window_surface, level_number, prefix, player):
 
     window_surface.fill(COLOR_BLACK)
 
-    meow_hero = objects.MeowHero(1, WINDOW_WIDTH / 5, WINDOW_HEIGHT / 5)
+    meow_hero = objects.MeowHero(1)
     meow_hero.rect.move_ip(4*int(WINDOW_WIDTH/5), 6*int(WINDOW_HEIGHT/8))
     meow_hero.draw(window_surface)
 
@@ -152,7 +152,7 @@ def game_loop(window_surface, level_number, player):
     top_score_text = interface.TextView(font, COLOR_WHITE, 10, 40)
     timer_text = interface.TextView(font, COLOR_WHITE, 10*WINDOW_WIDTH/12, 10)
 
-    meow_hero = objects.MeowHero(1, WINDOW_WIDTH/12, WINDOW_HEIGHT/12)
+    meow_hero = objects.MeowHero(1)
     meow_hero.rect.move_ip(int(WINDOW_WIDTH/2), 7*int(WINDOW_HEIGHT/8))
 
     health_points = objects.Health(1, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
@@ -167,7 +167,7 @@ def game_loop(window_surface, level_number, player):
 
     # set up bosses
     if level_number == 1:
-        enemy = objects.ZloyMuzhic("Zloy muzhic", level_number, WINDOW_WIDTH / 5, WINDOW_HEIGHT / 6)
+        enemy = objects.ZloyMuzhic("Zloy muzhic", level_number)
         enemies.append(enemy)
 
     # setting score
@@ -248,10 +248,10 @@ def game_loop(window_surface, level_number, player):
 
         # spawn bonuses by time
         if main_timer % 10 == 0 and len(bonuses) == 0:
-            bonus = objects.Bonus("Life", WINDOW_WIDTH/24, WINDOW_HEIGHT/24)
+            bonus = objects.Bonus("Life")
             bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
             bonuses.append(bonus)
-            bonus = objects.Bonus("Coin", WINDOW_WIDTH / 24, WINDOW_HEIGHT / 24)
+            bonus = objects.Bonus("Coin")
             bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
             bonuses.append(bonus)
 

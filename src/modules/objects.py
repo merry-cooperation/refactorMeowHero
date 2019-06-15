@@ -9,19 +9,23 @@ WINDOW_HEIGHT = 900
 Основные объекты, появляющиеся в игре
 """
 
-def enemy_image_loader(name):
-    return pygame.image.load('../drawable/sprites/enemy/' + name.lower().replace(' ', '_') + '.png')
+
+def random_image_loader(path, max_num):
+    number = random.randint(1, max_num)
+    return pygame.image.load(path + str(number) + '.png')
 
 
 class MeowHero(pygame.sprite.Sprite):
     # This class represents a Cat Hero. It derives from the "Sprite" class in PyGame.
-    def __init__(self, skin_type, width, height):
+    def __init__(self, skin_type):
         super().__init__()
 
         # getting rect
-        self.w = int(width)
-        self.h = int(height)
+        self.w = int(WINDOW_WIDTH / 15)
+        self.h = int(WINDOW_HEIGHT / 8)
+
         image = pygame.image.load('../drawable/sprites/cat_hero/cat_hero' + str(skin_type) + '.png')
+
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
@@ -78,7 +82,7 @@ class Bullet(pygame.sprite.Sprite):
         self.w = int(width)
         self.h = int(height)
 
-        image = pygame.image.load('../drawable/weapons/bullet' + str(level) + '.png')
+        image = pygame.image.load('../drawable/weapons/bullets/bullet' + str(level) + '.png')
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
@@ -98,11 +102,11 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, name, level, width, height):
+    def __init__(self, name, level):
         super().__init__()
 
-        self.w = int(width)
-        self.h = int(height)
+        self.w = int(WINDOW_WIDTH / 18)  # by default
+        self.h = int(WINDOW_HEIGHT / 18)  # by default
 
         self.name = name
         self.level = level
@@ -112,7 +116,7 @@ class Enemy(pygame.sprite.Sprite):
         self.reload = 0
         self.reload_time = 14 - level
 
-        image = enemy_image_loader(name)
+        image = pygame.image.load('../drawable/sprites/enemy/enemy_3.png')  # by default
 
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
@@ -125,7 +129,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def attack(self, *args):
         if self.reload == self.reload_time:
-            bullet = EnemyBullet(self.level, 24, 24)
+            bullet = EnemyBullet(self.level)
             bullet.rect.center = self.rect.center
             self.reload = 0
             return bullet
@@ -134,27 +138,37 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Boss(Enemy):
-    def __init__(self, name, level, width, height):
-        super().__init__(name, level, width, height)
+    def __init__(self, name, level):
+        super().__init__(name, level)
 
+        # bosses are bigger
+        self.w = int(WINDOW_WIDTH / 5)
+        self.h = int(WINDOW_HEIGHT / 6)
+
+        # and stronger
         self.life *= 100
 
 
 class CommonEnemy(Enemy):
-    def __init__(self, name, level, width, height):
-        super().__init__(name, level, width, height)
+    def __init__(self, name, level):
+        super().__init__(name, level)
 
 
 class DogEnemy(Enemy):
-    def __init__(self, name, level, width, height):
-        super().__init__(name, level, width, height)
+    def __init__(self, name, level):
+        super().__init__(name, level)
 
         self.reload_time = 10
         self.reload = random.randint(0, 8)
 
+        image =  pygame.image.load('../drawable/sprites/enemy/dog_enemy/dog_enemy' + str(level) + '.png')
+
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
     def attack(self, *args):
         if self.reload == self.reload_time:
-            bullet = EnemyBullet(self.level+12, 24, 24)
+            bullet = EnemyBullet(self.level+12)
             bullet.rect.center = self.rect.center
             self.reload = 0
             return bullet
@@ -163,8 +177,13 @@ class DogEnemy(Enemy):
 
 
 class ZloyMuzhic(Boss):
-    def __init__(self, name, level, width, height):
-        super().__init__(name, level, width, height)
+    def __init__(self, name, level):
+        super().__init__(name, level)
+
+        image = pygame.image.load('../drawable/sprites/enemy/bosses/zloy_muzhic.png')
+
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
 
         self.move_right = True
         self.move_left = False
@@ -200,7 +219,7 @@ class ZloyMuzhic(Boss):
 
     def attack(self, pos):
         if self.reload == self.reload_time:
-            bullet = EnemyBullet(1, 100, 100, "In hero", pos, self.rect.center)
+            bullet = EnemyBullet(1, "Boss InHero", pos, self.rect.center)
             bullet.rect.center = self.rect.center
             self.reload = 0
             return bullet
@@ -209,23 +228,29 @@ class ZloyMuzhic(Boss):
 
 
 class EnemyBullet(pygame.sprite.Sprite):
-    def __init__(self, level, width, height, bullet_type="Simple", *args):
+    def __init__(self, level, bullet_type="Simple", *args):
         super().__init__()
 
-        self.w = int(width)
-        self.h = int(height)
+        self.bullet_type = bullet_type.split()
+        self.level = level
 
-        image = pygame.image.load('../drawable/weapons/enemy_bullet' + str(level) + '.png')
+        if "Boss" in self.bullet_type:
+            self.w = 100
+            self.h = 100
+            self.speed = 8
+            self.life = 10
+        else:
+            self.w = 24
+            self.h = 24
+            self.speed = 5
+            self.life = 1
+
+        image = pygame.image.load('../drawable/weapons/enemy_bullets/enemy_bullet' + str(level) + '.png')
+
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
-        self.level = level
-        self.speed = 5
-        self.life = 1
-
-        self.bullet_type = bullet_type
-
-        if self.bullet_type == "In hero":  # calculate direction
+        if "InHero" in self.bullet_type:  # calculate direction
             x, y = args[0]
             x0, y0 = args[1]
             x -= x0
@@ -246,11 +271,11 @@ class EnemyBullet(pygame.sprite.Sprite):
 
 
 class Bonus(pygame.sprite.Sprite):
-    def __init__(self, bonus_type, width, height):
+    def __init__(self, bonus_type):
         super().__init__()
 
-        self.w = int(width)
-        self.h = int(height)
+        self.w = int(WINDOW_WIDTH / 24)
+        self.h = int(WINDOW_HEIGHT / 24)
         self.bonus_type = bonus_type
 
         # switching bonus type
