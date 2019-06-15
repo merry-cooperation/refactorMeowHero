@@ -142,7 +142,7 @@ def game_loop(window_surface, level_number, player):
     attack_sound = pygame.mixer.Sound('../sound/short_tracks/attack_1' + ".wav")
 
     try:
-        pygame.mixer.music.load('../sound/background_music/music_' + str(level_number) + ".mp3")
+        pygame.mixer.music.load('../sound/background_music/music' + str(level_number) + ".mp3")
     except Exception:
         pygame.mixer.music.load("../sound/main_theme.mp3")
 
