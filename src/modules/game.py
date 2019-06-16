@@ -441,9 +441,12 @@ def boss_game_loop(window_surface, level_number, player):
         enemies.append(enemy)
     elif level_number == 9:
         enemy = objects.DedMoroz("Ded Moroz", level_number)
+        enemy.rect.move_ip(WINDOW_WIDTH/2, 0)
         enemies.append(enemy)
     elif level_number == 10:
-        pass
+        enemy = objects.DiplomCommittee("Diplom Committee", level_number)
+        enemy.rect.move_ip(WINDOW_WIDTH/2, 0)
+        enemies.append(enemy)
     elif level_number == 12:
         enemy = objects.OlegAlexeevich("Oleg Alexeevich", level_number)
         enemies.append(enemy)

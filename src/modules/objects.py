@@ -434,6 +434,16 @@ class Committee(Boss):
             self.reload += 1
 
 
+class DiplomCommittee(Committee):
+    def __init__(self, name, level):
+        super().__init__(name, level)
+
+        image = pygame.image.load('../drawable/sprites/enemy/bosses/komissia2.png')
+
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
+
 class DedMoroz(Boss):
     def __init__(self, name, level):
         super().__init__(name, level)
@@ -665,6 +675,8 @@ class EnemyBullet(pygame.sprite.Sprite):
             image = random_image_loader('../drawable/weapons/faculty/faculty', 18)
         elif level == 7:
             image = random_image_loader('../drawable/weapons/languages/language', 18)
+        elif level == 10:
+            image = random_image_loader('../drawable/weapons/questions/question', 15)
         elif level == 12:
             image = random_image_loader('../drawable/weapons/projects/project', 30)
         else:
