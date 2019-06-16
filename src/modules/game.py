@@ -207,7 +207,7 @@ def game_loop(window_surface, level_number, player):
 
             if event.type == KEYDOWN:
                 if event.key == K_SPACE:
-                    bullet = objects.Bullet(1, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
+                    bullet = objects.Bullet(level_number)
                     bullet.rect.move_ip(meow_hero.rect.left, meow_hero.rect.top)
                     bullets.append(bullet)
                 if event.key == K_LEFT or event.key == ord('a'):
@@ -369,7 +369,6 @@ def game_loop(window_surface, level_number, player):
     return True if victory else False
 
 
-# TODO: timer to another direction
 def boss_game_loop(window_surface, level_number, player):
     print(player.name)
     pygame.mouse.set_visible(False)
@@ -414,7 +413,7 @@ def boss_game_loop(window_surface, level_number, player):
     bonuses = []
     enemy_bullets = []
 
-    main_timer = 50  # debugging
+    main_timer = 0  # debugging
     # main_timer = 10*level_number + 40
 
     # set up bosses
@@ -430,9 +429,11 @@ def boss_game_loop(window_surface, level_number, player):
     elif level_number == 6:
         pass
     elif level_number == 7:
-        pass
+        enemy = objects.Ejudje("Ejudje", level_number)
+        enemies.append(enemy)
     elif level_number == 9:
-        pass
+        enemy = objects.DedMoroz("Ded Moroz", level_number)
+        enemies.append(enemy)
     elif level_number == 10:
         pass
     elif level_number == 12:
@@ -459,10 +460,12 @@ def boss_game_loop(window_surface, level_number, player):
                 terminate(player)
 
             if event.type == pygame.USEREVENT:
-                main_timer -= 1
+                main_timer += 1
                 # victory condition
-                if main_timer <= 0:
+                if len(enemies) == 0:
                     running = False
+                    victory = True
+                    break
 
                 # attack time
                 for enemy in enemies:
@@ -472,7 +475,7 @@ def boss_game_loop(window_surface, level_number, player):
 
             if event.type == KEYDOWN:
                 if event.key == K_SPACE:
-                    bullet = objects.Bullet(1, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
+                    bullet = objects.Bullet(level_number)
                     bullet.rect.move_ip(meow_hero.rect.left, meow_hero.rect.top)
                     bullets.append(bullet)
                 if event.key == K_LEFT or event.key == ord('a'):

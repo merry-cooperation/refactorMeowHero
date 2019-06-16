@@ -339,17 +339,17 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         for meow in meow_heroes:
             meow.current_reload += 1
             if meow.current_reload >= meow.max_weapon_reload:
-                bullet = objects.Bullet(meow.weapon_power, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
+                bullet = objects.Bullet(meow.weapon_power, "Multiplayer")
                 bullet.rect.move_ip(meow.rect.left, meow.rect.top)
                 bullets.append(bullet)
                 meow.current_reload = 0
                 if meow.three_directions_time > 0:
-                    bullet = objects.Bullet(meow.weapon_power, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
+                    bullet = objects.Bullet(meow.weapon_power, "Multiplayer")
                     bullet.rect.move_ip(meow.rect.left, meow.rect.top)
                     bullet.x = int(bullet.speed/3)
                     bullets.append(bullet)
 
-                    bullet = objects.Bullet(meow.weapon_power, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
+                    bullet = objects.Bullet(meow.weapon_power, "Multiplayer")
                     bullet.rect.move_ip(meow.rect.left, meow.rect.top)
                     bullet.x = int(bullet.speed/3)*(-1)
                     bullets.append(bullet)

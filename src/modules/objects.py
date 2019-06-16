@@ -76,23 +76,39 @@ class Health(pygame.sprite.Sprite):
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, level, width, height):
+    def __init__(self, level, type="Simple"):
         super().__init__()
 
-        self.w = int(width)
-        self.h = int(height)
+        self.w = int(WINDOW_WIDTH / 24)
+        self.h = int(WINDOW_HEIGHT / 24)
 
-        image = pygame.image.load('../drawable/weapons/bullets/bullet' + str(level) + '.png')
-        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
-        self.rect = self.image_surface.get_rect()
+        if type == "Simple":
+            image = pygame.image.load('../drawable/weapons/bullets/bullet' + str(level) + '.png')
+            self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+            self.rect = self.image_surface.get_rect()
 
-        self.level = level
-        self.power = self.level
-        self.speed = 14 + self.power*2
-        self.life = 1
+            self.level = level
+            self.power = 1
+            self.speed = 10
+            self.life = 1
 
+            self.x = 0
+            self.y = self.speed*(-1)
+
+        if type == "Multiplayer":
+            # TODO: different images here
+            image = pygame.image.load('../drawable/weapons/bullets/bullet' + str(level) + '.png')
+            self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+            self.rect = self.image_surface.get_rect()
+
+            self.level = level
+            self.power = self.level
+            self.speed = 14 + self.power * 2
+            self.life = 1
+
+        # move direction
         self.x = 0
-        self.y = self.speed*(-1)
+        self.y = self.speed * (-1)
 
     def move(self):
         self.rect.move_ip(self.x, self.y)
@@ -135,18 +151,6 @@ class Enemy(pygame.sprite.Sprite):
             return bullet
         else:
             self.reload += 1
-
-
-class Boss(Enemy):
-    def __init__(self, name, level):
-        super().__init__(name, level)
-
-        # bosses are bigger
-        self.w = int(WINDOW_WIDTH / 5)
-        self.h = int(WINDOW_HEIGHT / 6)
-
-        # and stronger
-        self.life *= 100
 
 
 class CommonEnemy(Enemy):
@@ -227,6 +231,18 @@ class DogEnemyMultiplayer(Enemy):
             return bullet
         else:
             self.reload += 1
+
+
+class Boss(Enemy):
+    def __init__(self, name, level):
+        super().__init__(name, level)
+
+        # bosses are bigger
+        self.w = int(WINDOW_WIDTH / 5)
+        self.h = int(WINDOW_HEIGHT / 6)
+
+        # and stronger
+        self.life *= 100
 
 
 class ZloyMuzhic(Boss):
@@ -382,12 +398,141 @@ class Committee(Boss):
     # TODO: change this
     def attack(self, pos):
         if self.reload == self.reload_time:
-            bullet = EnemyBullet(5, "Boss InHero", pos, self.rect.center)
+            bullet = EnemyBullet(self.level, "Boss InHero", pos, self.rect.center)
             bullet.rect.center = self.rect.center
             self.reload = 0
             return bullet
         else:
             self.reload += 1
+
+
+class DedMoroz(Boss):
+    def __init__(self, name, level):
+        super().__init__(name, level)
+
+        self.w = int(WINDOW_WIDTH / 5)
+        self.h = int(WINDOW_HEIGHT / 5)
+
+        self.life = 299
+
+        image = pygame.image.load('../drawable/sprites/enemy/bosses/ded_moroz/ded_moroz3.png')
+
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
+        self.move_right = True
+        self.move_left = False
+        self.speed = 1
+        self.move_time = 150
+
+        self.reload_time = 1
+
+    def move(self):
+        if self.move_time:
+            if self.rect.left < 0:
+                self.move_left = False
+                self.move_right = True
+            if self.rect.right > WINDOW_WIDTH:
+                self.move_left = True
+                self.move_right = False
+            if self.move_right:
+                self.rect.move_ip(self.speed, 0)
+                self.move_time -= 1
+            elif self.move_left:
+                self.rect.move_ip(-self.speed, 0)
+                self.move_time -= 1
+        else:
+            self.move_left = False
+            self.move_right = False
+            dice = random.random()
+            if dice < 0.05:
+                self.move_time = random.randint(20, 120)
+                if random.randint(1, 2) == 2:
+                    self.move_right = True
+                else:
+                    self.move_left = True
+
+    # TODO: change this
+    def attack(self, pos):
+        if self.reload == self.reload_time:
+            bullet = EnemyBullet(self.level, "Boss InHero", pos, self.rect.center)
+            bullet.rect.center = self.rect.center
+            self.reload = 0
+            return bullet
+        else:
+            self.reload += 1
+
+    def draw(self, window):
+        # draw damaged boss
+        num = int(self.life / 100) + 1
+
+        image = pygame.image.load('../drawable/sprites/enemy/bosses/ded_moroz/ded_moroz' + str(num) + '.png')
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+
+        window.blit(self.image_surface, self.rect)
+
+
+class Ejudje(Boss):
+    def __init__(self, name, level):
+        super().__init__(name, level)
+
+        image = pygame.image.load('../drawable/sprites/enemy/bosses/ejudje/ejudje1.png')
+
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
+        self.life = 639
+
+        self.move_right = True
+        self.move_left = False
+        self.speed = 1
+        self.move_time = 150
+
+        self.reload_time = 1
+
+    def move(self):
+        if self.move_time:
+            if self.rect.left < 0:
+                self.move_left = False
+                self.move_right = True
+            if self.rect.right > WINDOW_WIDTH:
+                self.move_left = True
+                self.move_right = False
+            if self.move_right:
+                self.rect.move_ip(self.speed, 0)
+                self.move_time -= 1
+            elif self.move_left:
+                self.rect.move_ip(-self.speed, 0)
+                self.move_time -= 1
+        else:
+            self.move_left = False
+            self.move_right = False
+            dice = random.random()
+            if dice < 0.05:
+                self.move_time = random.randint(20, 120)
+                if random.randint(1, 2) == 2:
+                    self.move_right = True
+                else:
+                    self.move_left = True
+
+        # TODO: change this
+    def attack(self, pos):
+        if self.reload == self.reload_time:
+            bullet = EnemyBullet(self.level, "Boss InHero", pos, self.rect.center)
+            bullet.rect.center = self.rect.center
+            self.reload = 0
+            return bullet
+        else:
+            self.reload += 1
+
+    def draw(self, window):
+        # draw damaged boss
+        num = int(self.life / 80) + 1
+
+        image = pygame.image.load('../drawable/sprites/enemy/bosses/ejudje/ejudje' + str(num) + '.png')
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+
+        window.blit(self.image_surface, self.rect)
 
 
 class EnemyBullet(pygame.sprite.Sprite):
@@ -410,6 +555,8 @@ class EnemyBullet(pygame.sprite.Sprite):
 
         if level == 5:
             image = random_image_loader('../drawable/weapons/faculty/faculty', 18)
+        elif level == 7:
+            image = random_image_loader('../drawable/weapons/languages/language', 18)
         else:
             image = pygame.image.load('../drawable/weapons/enemy_bullets/enemy_bullet' + str(level) + '.png')
 
