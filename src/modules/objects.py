@@ -24,7 +24,7 @@ class MeowHero(pygame.sprite.Sprite):
         self.w = int(WINDOW_WIDTH / 15)
         self.h = int(WINDOW_HEIGHT / 8)
 
-        image = pygame.image.load('../drawable/sprites/cat_hero/cat_hero' + str(skin_type) + '.png')
+        image = pygame.image.load('../drawable/sprites/cat_hero/cat' + str(skin_type) + '.png')
 
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()

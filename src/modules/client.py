@@ -73,10 +73,10 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
     # setup Meow Hero
-    meow_hero1 = objects.MeowHero(1)
+    meow_hero1 = objects.MeowHero(8)
     meow_hero1.rect.move_ip(int(WINDOW_WIDTH / 2)-100, 7 * int(WINDOW_HEIGHT / 8))
 
-    meow_hero2 = objects.MeowHero(1)
+    meow_hero2 = objects.MeowHero(9)
     meow_hero2.rect.move_ip(int(WINDOW_WIDTH / 2)+100, 7 * int(WINDOW_HEIGHT / 8))
 
     move_left1 = move_right1 = move_up1 = move_down1 = False

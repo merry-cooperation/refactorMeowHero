@@ -19,10 +19,6 @@ COLOR_BLACK = (0, 0, 0)
 COLOR_BRIGHT_GREY = (200, 200, 200)
 COLOR_RED = (255, 0, 0)
 
-# magic
-FPS = 60
-ENEMY_MAX_COUNT = 40
-
 
 def init_window(full_screen=False):  # set up pygame, the window, and the mouse cursor
     pygame.init()
@@ -134,7 +130,6 @@ def main_menu(window_surface):     # show the "Main menu" screen
     button_quit = interface.Button(WINDOW_WIDTH/2+100, 3*WINDOW_HEIGHT/4,
                                  WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "Quit")
 
-    # TODO: change text to images, if possible
     button_stats = interface.Button(50, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Stats")
     button_skins = interface.Button(260, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Skins")
     button_future = interface.Button(470, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "KEK")
