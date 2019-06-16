@@ -211,6 +211,34 @@ class Dog(CommonEnemy):
         self.rect.move_ip(self.direction, self.speed)
 
 
+class DancingCat(CommonEnemy):
+    def __init__(self, name, level):
+        super().__init__(name, level)
+
+        self.w = int(WINDOW_WIDTH / 12)
+        self.h = int(WINDOW_HEIGHT / 12)
+
+        self.speed = random.randint(1, 4)
+        self.direction = random.randint(-2, 2)
+
+        self.life = random.randint(4, 7)
+
+        image = random_image_loader('../drawable/sprites/enemy/dancing_cats/dancing_cat', 4)
+
+        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image_surface.get_rect()
+
+        self.rect.move_ip(random.randint(50, WINDOW_WIDTH-50), 0)
+
+    # TODO: add it
+    def attack(self, *args):
+        pass
+
+    # TODO: change it =)
+    def move(self):
+        self.rect.move_ip(self.direction, self.speed)
+
+
 class DogEnemyMultiplayer(Enemy):
     def __init__(self, name, level):
         super().__init__(name, level)

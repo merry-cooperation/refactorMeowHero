@@ -16,7 +16,7 @@ from . import interface, objects, layouts
 WINDOW_WIDTH = 1600
 WINDOW_HEIGHT = 900
 
-FPS = 60
+FPS = 50
 ENEMY_MAX_COUNT = 40
 
 # colors
@@ -67,13 +67,17 @@ def story_loop(window_surface, level_number, prefix, player):
     handler.close()
 
     font = pygame.font.SysFont(None, 60)
-    text_view = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH/5, 2*WINDOW_HEIGHT/5)
+    text_view = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH/6+50, WINDOW_HEIGHT/10)
 
     window_surface.fill(COLOR_BLACK)
 
-    meow_hero = objects.MeowHero(1)
-    meow_hero.rect.move_ip(4*int(WINDOW_WIDTH/5), 6*int(WINDOW_HEIGHT/8))
-    meow_hero.draw(window_surface)
+    image = pygame.image.load('../drawable/sprites/cat_hero/cat' + str(1) + '.png')
+
+    image_surface = pygame.transform.scale(image, (100, 200))
+    rect = image_surface.get_rect()
+
+    rect.move_ip(0, 150)
+    window_surface.blit(image, rect)
 
     pygame.display.update()
 
@@ -84,6 +88,7 @@ def story_loop(window_surface, level_number, prefix, player):
     buf = ""
     skip = False
     for line in text:
+        line = line.replace("(username)", player.name)
         for elem in line:
             if skip:
                 text_view.draw_this(window_surface, line)
@@ -92,7 +97,7 @@ def story_loop(window_surface, level_number, prefix, player):
             buf += elem
             text_view.draw_this(window_surface, buf)
             pygame.display.update()
-            sleep(0.1)
+            sleep(0.05)
             # skip if escape
             for event in pygame.event.get():
                 if event.type == KEYUP:
@@ -111,11 +116,11 @@ def story_loop(window_surface, level_number, prefix, player):
 def enemy_switch_by_level(level_number):
     # set up enemies
     if level_number == 2:
-        return objects.Children("Children", 2)
+        return objects.Children("Children", level_number)
     elif level_number == 3:
-        return objects.Dog("Dog", 3)
+        return objects.Dog("Dog", level_number)
     elif level_number == 8:
-        pass
+        return objects.DancingCat("Dancing cat", level_number)
     elif level_number == 11:
         pass
 
