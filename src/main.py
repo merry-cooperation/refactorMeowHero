@@ -8,9 +8,9 @@ WINDOW_WIDTH = 1600
 WINDOW_HEIGHT = 900
 
 # constant BG
-background_image_main = pygame.image.load("../drawable/backgrounds/main_menu4.jpg")
+background_image_main = pygame.image.load("../drawable/backgrounds/main_menu5.jpg")
 background_image_main = pygame.transform.scale(background_image_main, (WINDOW_WIDTH, WINDOW_HEIGHT))
-background_image_levels = pygame.image.load("../drawable/backgrounds/main_menu4.jpg")
+background_image_levels = pygame.image.load("../drawable/backgrounds/main_menu5.jpg")
 background_image_levels = pygame.transform.scale(background_image_levels, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
 # colors
