@@ -427,7 +427,10 @@ def boss_game_loop(window_surface, level_number, player):
         enemy = objects.Committee("Committee", level_number)
         enemies.append(enemy)
     elif level_number == 6:
-        pass
+        for i in range(4):
+            enemy = objects.Teacher(str(i+1), level_number)
+            enemy.rect.move_ip(i*300, 0)
+            enemies.append(enemy)
     elif level_number == 7:
         enemy = objects.Ejudje("Ejudje", level_number)
         enemies.append(enemy)
@@ -437,7 +440,8 @@ def boss_game_loop(window_surface, level_number, player):
     elif level_number == 10:
         pass
     elif level_number == 12:
-        pass
+        enemy = objects.OlegAlexeevich("Oleg Alexeevich", level_number)
+        enemies.append(enemy)
 
     # setting score
     score = 0
