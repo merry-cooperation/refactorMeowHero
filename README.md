@@ -2,10 +2,10 @@
 
 The game about cat, who study on "Software engineering" program in TSU.
 
-Developers:
-Alexander Zorkin (programming)
-Rufina Rafikova (plot and music)
-Anastasia Politova (design)
+Developers: 
+- Alexander Zorkin (programming) 
+- Rufina Rafikova (plot and music)
+- Anastasia Politova (design)
 
 # Installation
 
