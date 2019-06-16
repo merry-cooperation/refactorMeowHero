@@ -2,16 +2,24 @@
 
 The game about cat, who study on "Software engineering" program in TSU.
 
-Developers: 
+##### Developers: 
 - Alexander Zorkin (programming) 
 - Rufina Rafikova (plot and music)
 - Anastasia Politova (design)
 
-# Installation
+### Installation
 
-1. Install the repo to your working directory.
-2. cd meow_hero
-3. pip install -r requirements.txt
-4. python3 main.py
+1. Download or clone the repo to your working directory.
 
-Enjoy!
+        git clone https://github.com/somnoynadno/meow_hero.git
+2. Move to project directory
+
+        cd meow_hero
+3. Install game requirements
+
+        pip3 install -r requirements.txt
+4. Start the main script
+
+        python3 main.py
+
+#### Enjoy!
