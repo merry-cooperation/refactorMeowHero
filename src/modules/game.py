@@ -53,7 +53,7 @@ def story_loop(window_surface, level_number, prefix, player):
     pygame.mouse.set_visible(False)
 
     try:
-        handler = open("../plot/" + prefix + "_story_" + str(level_number) + ".txt")
+        handler = open("../plot/eng/" + prefix + "_story_" + str(level_number) + ".txt")
     except FileNotFoundError:
         print("No plot for level")
         pygame.mouse.set_visible(True)
@@ -122,7 +122,7 @@ def enemy_switch_by_level(level_number):
     elif level_number == 8:
         return objects.DancingCat("Dancing cat", level_number)
     elif level_number == 11:
-        pass
+        return objects.CatBossEnemy("Cat Boss", level_number)
 
 
 def game_loop(window_surface, level_number, player):
@@ -369,7 +369,6 @@ def game_loop(window_surface, level_number, player):
         game_over_sound.stop()
 
     pygame.display.update()
-    wait_for_player_to_press_key(player)
 
     return True if victory else False
 
@@ -418,7 +417,7 @@ def boss_game_loop(window_surface, level_number, player):
     bonuses = []
     enemy_bullets = []
 
-    main_timer = 0  # debugging
+    main_timer = 995  # debugging
     # main_timer = 10*level_number + 40
 
     # set up bosses
@@ -465,7 +464,7 @@ def boss_game_loop(window_surface, level_number, player):
     victory = True
     while running:  # the game loop runs while the game part is playing
         score += 1  # increase score
-
+        running = False
         # event handling
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -643,6 +642,5 @@ def boss_game_loop(window_surface, level_number, player):
         game_over_sound.stop()
 
     pygame.display.update()
-    wait_for_player_to_press_key(player)
 
     return True if victory else False
