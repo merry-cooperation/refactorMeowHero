@@ -144,7 +144,6 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     running = True
     while running:  # the game loop runs while the game part is playing
         score += 1*k  # increase score
-
         for event in pygame.event.get():
             if event.type == QUIT:
                 print("Goodbye")
@@ -155,7 +154,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 main_timer += 1
 
                 # increase enemy level, bonus type and enemy spawn probability
-                if main_timer % 20 == 0 and available_enemy_level < 12:
+                if main_timer % 60 == 0 and available_enemy_level < 12:
                     available_enemy_level += 1
                     enemy_spawn_probability += 0.03
                     if available_bonus_type < len(bonus_types):
@@ -481,5 +480,5 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
     pygame.mixer_music.stop()
     victory_sound.play()
-    layouts.two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
+    layouts.two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, score, main_timer)
     return

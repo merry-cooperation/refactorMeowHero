@@ -45,10 +45,9 @@ def interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     return True
 
-            # я заебался это под экран подгонять
-            # TODO: create rect and move to center
             pygame.draw.rect(window_surface, COLOR_BLACK,
-                             (WINDOW_WIDTH / 2 + 100 - 5, WINDOW_HEIGHT / 5 - 5, WINDOW_WIDTH / 3 + 10, WINDOW_HEIGHT / 2 + 10))
+                             (WINDOW_WIDTH / 2 + 100 - 5, WINDOW_HEIGHT / 5 - 5,
+                              WINDOW_WIDTH / 3 + 10, WINDOW_HEIGHT / 2 + 10))
             pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY,
                              (WINDOW_WIDTH/2 + 100, WINDOW_HEIGHT/5, WINDOW_WIDTH / 3, WINDOW_HEIGHT / 2))
 
@@ -149,21 +148,21 @@ def create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
     player.save_current_state()
     clock = pygame.time.Clock()
 
-    rect = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3))
-    rect_border = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3 + 10, 2 * WINDOW_HEIGHT / 3 + 10))
+    rect = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3, WINDOW_HEIGHT / 3))
+    rect_border = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3 + 10, WINDOW_HEIGHT / 3 + 10))
     rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
     rect_border.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
 
-    input_box = interface.InputBox(WINDOW_WIDTH/4, WINDOW_HEIGHT/3, 220, 80)
+    input_box = interface.InputBox(WINDOW_WIDTH/4, 4*WINDOW_HEIGHT/8, 220, 80)
 
     font0 = pygame.font.SysFont(None, 100)
     font1 = pygame.font.SysFont(None, 78)
     input_box.font = font1
 
     text_write_name = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Write your name here")
-    text_write_name.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 4)
+    text_write_name.rect.center = (WINDOW_WIDTH / 2, 2*WINDOW_HEIGHT / 5)
 
-    button_done = interface.Button(2*WINDOW_WIDTH / 3, 3*WINDOW_HEIGHT / 5,
+    button_done = interface.Button(2*WINDOW_WIDTH / 3, 4*WINDOW_HEIGHT / 8,
                                    WINDOW_WIDTH / 15, WINDOW_HEIGHT / 10, "Done")
     done = False
     while not done:
@@ -281,22 +280,54 @@ def future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     return
 
 
-def two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
+def two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, score, time):
     rect = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3))
     rect_border = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3 + 10, 2 * WINDOW_HEIGHT / 3 + 10))
     rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
     rect_border.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
 
     font0 = pygame.font.SysFont(None, 140)
-    text_victory = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Nice game")
-    text_victory.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+    font1 = pygame.font.SysFont(None, 80)
+    text_victory = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Nice game!")
+    text_victory.rect.center = (WINDOW_WIDTH / 2, 2*WINDOW_HEIGHT / 8)
 
     pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
     pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY, rect)
 
+    handler = open("../stats/multiplayer_score.json", 'r')
+    data = json.load(handler)
+    handler.close()
+
     text_victory.draw(window_surface)
 
-    # TODO: draw current score and time
+    score_and_time_text = interface.TextView(font1, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6)
+    score_and_time_text.rect.center = (WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3 + 30)
+
+    score_and_time_text.draw_this(window_surface, "Your score is " + str(score))
+    score_and_time_text.next_line(82)
+    score_and_time_text.draw_this(window_surface, "Your time is " + str(time))
+    score_and_time_text.next_line(82)
+
+    handler = open("../stats/multiplayer_score.json", 'w')
+
+    if score > data["Top score"] and time > data["Top time"]:
+        score_and_time_text.draw_this(window_surface, "New top score and time!")
+        data["Top score"] = score
+        data["Top time"] = time
+    elif score > data["Top score"]:
+        score_and_time_text.draw_this(window_surface, "New top score!")
+        data["Top score"] = score
+    elif time > data["Top time"]:
+        score_and_time_text.draw_this(window_surface, "New top time!")
+        data["Top time"] = time
+
+    json.dump(data, handler)
+    handler.close()
+
+    score_and_time_text.next_line(82)
+    score_and_time_text.draw_this(window_surface, "Top score: " + str(data["Top score"]))
+    score_and_time_text.next_line(82)
+    score_and_time_text.draw_this(window_surface, "Top time: " + str(data["Top time"]))
 
     pygame.display.update()
 
@@ -319,15 +350,28 @@ def giving_port_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     text_victory = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Your port is " + str(port))
     text_victory.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
 
-    pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
-    pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY, rect)
-
-    text_victory.draw(window_surface)
-
     pygame.display.update()
+
+    button_done = interface.Button(2 * WINDOW_WIDTH / 3, 5 * WINDOW_HEIGHT / 8 + 60,
+                                   WINDOW_WIDTH / 6, WINDOW_HEIGHT / 8, "We are ready!")
 
     while True:
         for event in pygame.event.get():
+            mouse_pos = pygame.mouse.get_pos()
+            if event.type == QUIT:
+                exit(0)
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
                     return port
+
+            if button_done.is_over(mouse_pos):
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    return port
+
+            pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
+            pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY, rect)
+
+            text_victory.draw(window_surface)
+
+            button_done.draw(window_surface)
+            pygame.display.update()

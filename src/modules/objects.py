@@ -281,7 +281,7 @@ class DogEnemyMultiplayer(Enemy):
         self.reload_time = 10
         self.reload = random.randint(0, 8)
 
-        image =  pygame.image.load('../drawable/sprites/enemy/dog_enemy/dog_enemy' + str(level) + '.png')
+        image = pygame.image.load('../drawable/sprites/enemy/dog_enemy/dog_enemy' + str(level) + '.png')
 
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()

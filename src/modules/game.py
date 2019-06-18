@@ -417,8 +417,7 @@ def boss_game_loop(window_surface, level_number, player):
     bonuses = []
     enemy_bullets = []
 
-    main_timer = 995  # debugging
-    # main_timer = 10*level_number + 40
+    main_timer = 0
 
     # set up bosses
     if level_number == 1:
@@ -464,7 +463,6 @@ def boss_game_loop(window_surface, level_number, player):
     victory = True
     while running:  # the game loop runs while the game part is playing
         score += 1  # increase score
-        running = False
         # event handling
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -578,7 +576,7 @@ def boss_game_loop(window_surface, level_number, player):
         # draw text
         score_text.draw_this(window_surface, 'Score: %s' % (score), )
         top_score_text.draw_this(window_surface, 'Top Score: %s' % (top_score))
-        timer_text.draw_this(window_surface, "Time " + str(main_timer).rjust(3) if main_timer > 0 else 'NICE, NIGGA')
+        timer_text.draw_this(window_surface, "Time " + str(main_timer).rjust(3) if main_timer > 0 else 'GG')
 
         # draw hero
         meow_hero.draw(window_surface)
