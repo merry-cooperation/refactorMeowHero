@@ -227,7 +227,7 @@ def game_loop(window_surface, level_number, player):
                 # spawn bonuses by time
                 if main_timer % 10 == 0:
                     bonus = objects.Bonus("Coin", level_number)
-                    bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
+                    bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(200, WINDOW_HEIGHT))
                     bonuses.append(bonus)
 
             if event.type == KEYDOWN:
@@ -619,9 +619,10 @@ def boss_game_loop(window_surface, level_number, player):
 
         # draw healthbar
         if health_bar is not None:
-            health_bar.rect.topleft = enemies[0].rect.center
-            health_bar.rect.move_ip(20, 80)
-            health_bar.draw_this(window_surface, str(enemies[0].life) + '/' + str(boss_life))
+            if len(enemies):
+                health_bar.rect.topleft = enemies[0].rect.center
+                health_bar.rect.move_ip(20, 80)
+                health_bar.draw_this(window_surface, str(enemies[0].life) + '/' + str(boss_life))
 
         # move and draw hero bullets
         for bullet in bullets:
