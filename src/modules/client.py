@@ -18,7 +18,7 @@ HOST = '0.0.0.0'
 PORT = 9027
 
 # magic
-FPS = 50
+FPS = 45
 TIMEOUT_TIME = 0.01
 ENEMY_MAX_COUNT = 16
 

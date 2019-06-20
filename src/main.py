@@ -16,9 +16,9 @@ background_image_levels = pygame.transform.scale(background_image_levels, (WINDO
 # colors
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
-COLOR_BRIGHT_GREY = (200, 200, 200)
-COLOR_RED = (255, 0, 0)
-
+COLOR_BRIGHT_GREY = (200, 200, 200) 
+COLOR_RED = (255, 0, 0)  
+ 
 
 def init_window(full_screen=False):  # set up pygame, the window, and the mouse cursor
     pygame.init()

@@ -271,7 +271,7 @@ class CatBossEnemy(CommonEnemy):
         pass
 
     def move(self):
-        self.rect.move_ip(random.randint(-5, 5), random.randint(-1, 4))
+        self.rect.move_ip(random.randint(-5, 5), random.randint(-1, 3))
 
 
 class DogEnemyMultiplayer(Enemy):

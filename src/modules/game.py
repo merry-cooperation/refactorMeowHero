@@ -16,7 +16,7 @@ from . import interface, objects, layouts
 WINDOW_WIDTH = 1600
 WINDOW_HEIGHT = 900
 
-FPS = 50
+FPS = 30
 ENEMY_MAX_COUNT = 40
 
 # colors
@@ -170,15 +170,18 @@ def game_loop(window_surface, level_number, player):
     bonuses = []
     enemy_bullets = []
 
-    main_timer = 50  # debugging
-    # main_timer = 10*level_number + 40
-
     # setting score
     score = 0
     handler = open("../stats/high_score.json", 'r')
     data = json.load(handler)
     top_score = data[str(level_number)][1]
     handler.close()
+
+    # setting spawn probability and level time
+    enemy_spawn_proba = {2:1, 3:0.9, 8:0.5, 11:0.4}
+    spawn_proba = enemy_spawn_proba[int(level_number)]
+    # main_timer = 50
+    main_timer = 25*level_number + 40
 
     move_left = move_right = move_up = move_down = False
     pygame.mixer.music.play(-1, 0.0)
@@ -199,10 +202,11 @@ def game_loop(window_surface, level_number, player):
                 if main_timer <= 0:
                     running = False
 
-                # TODO: add probability
                 # spawn enemy
-                enemy = enemy_switch_by_level(level_number)
-                enemies.append(enemy)
+                dice = random.random()
+                if dice < spawn_proba:
+                    enemy = enemy_switch_by_level(level_number)
+                    enemies.append(enemy)
 
                 # attack time
                 for enemy in enemies:
