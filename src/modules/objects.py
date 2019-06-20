@@ -569,10 +569,10 @@ class OlegAlexeevich(Boss):
     def __init__(self, name, level):
         super().__init__(name, level)
 
-        self.w = int(WINDOW_WIDTH / 5)
+        self.w = int(WINDOW_WIDTH / 3)
         self.h = int(WINDOW_HEIGHT / 5)
 
-        image = pygame.image.load('../drawable/sprites/enemy/bosses/teachers/teachers5.png')
+        image = pygame.image.load('../drawable/sprites/enemy/bosses/teachers/teachers6.png')
 
         self.life = 527
 
@@ -643,7 +643,7 @@ class EnemyBullet(pygame.sprite.Sprite):
         elif level == 10:
             image = random_image_loader('../drawable/weapons/questions/question', 15)
         elif level == 12:
-            image = random_image_loader('../drawable/weapons/projects/project', 30)
+            image = random_image_loader('../drawable/weapons/projects/project', 31)
         else:
             image = pygame.image.load('../drawable/weapons/enemy_bullets/enemy_bullet' + str(level) + '.png')
 
