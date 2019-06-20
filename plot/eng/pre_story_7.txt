@@ -1,4 +1,6 @@
-Sample fucking teeext
-And this is too
-Hahaha
-kekekekekekekee
+ Programming begin to learn on an interesting site.
+ It is called ejudge. Here we write tasks, and we have to solve them. We can write in any language.
+
+ I will write in the cat language, where assigning a variable to a value looks like: meow Meow = Mur.
+
+ Unfortunately, I only know this language.
