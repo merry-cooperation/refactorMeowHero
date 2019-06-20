@@ -220,9 +220,9 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     quit_state = layouts.interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
                     if quit_state:
                         print("Goodbye")
-                        logger.info('Connection closed, game over')
-                        terminate()
-
+                        pygame.mixer.music.stop()
+                        pygame.mouse.set_visible(True)
+                        return False
             # TEST #
             if event.type == KEYDOWN:
                 # if event.key == K_SPACE:
@@ -244,11 +244,6 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     move_down1 = True
 
             if event.type == KEYUP:
-                if event.key == K_ESCAPE:
-                    quit_state = layouts.interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
-                    if quit_state:
-                        print("Goodbye")
-                        terminate()
                 if event.key == ord('a'):
                     move_left1 = False
                 if event.key == ord('d'):
@@ -279,11 +274,6 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     move_down2 = True
 
             if event.type == KEYUP:
-                if event.key == K_ESCAPE:
-                    quit_state = layouts.interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
-                    if quit_state:
-                        print("Goodbye")
-                        terminate()
                 if event.key == K_LEFT:
                     move_left2 = False
                 if event.key == K_RIGHT:
