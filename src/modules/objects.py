@@ -490,7 +490,7 @@ class Teacher(Boss):
         try:
             image = pygame.image.load('../drawable/sprites/enemy/bosses/teachers/teachers' + name + '.png')
         except Exception:
-            self.w = int(WINDOW_WIDTH / 8)
+            self.w = int(WINDOW_WIDTH / 10)
             self.h = int(WINDOW_HEIGHT / 6)
             image = pygame.image.load('../drawable/sprites/enemy/bosses/komissia2.png')
 
@@ -573,7 +573,7 @@ class OlegAlexeevich(Boss):
 
         image = pygame.image.load('../drawable/sprites/enemy/bosses/teachers/teachers6.png')
 
-        self.life = 10
+        self.life = 527
 
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()

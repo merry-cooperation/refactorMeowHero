@@ -230,16 +230,16 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 #     bullet = objects.Bullet(meow_hero1.weapon_power, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
                 #     bullet.rect.move_ip(meow_hero1.rect.left, meow_hero1.rect.top)
                 #     bullets.append(bullet)
-                if event.key == K_LEFT or event.key == ord('a'):
+                if event.key == ord('a'):
                     move_right1 = False
                     move_left1 = True
-                if event.key == K_RIGHT or event.key == ord('d'):
+                if event.key == ord('d'):
                     move_left1 = False
                     move_right1 = True
-                if event.key == K_UP or event.key == ord('w'):
+                if event.key == ord('w'):
                     move_down1 = False
                     move_up1 = True
-                if event.key == K_DOWN or event.key == ord('s'):
+                if event.key == ord('s'):
                     move_up1 = False
                     move_down1 = True
 
@@ -249,14 +249,49 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     if quit_state:
                         print("Goodbye")
                         terminate()
-                if event.key == K_LEFT or event.key == ord('a'):
+                if event.key == ord('a'):
                     move_left1 = False
-                if event.key == K_RIGHT or event.key == ord('d'):
+                if event.key == ord('d'):
                     move_right1 = False
-                if event.key == K_UP or event.key == ord('w'):
+                if event.key == ord('w'):
                     move_up1 = False
-                if event.key == K_DOWN or event.key == ord('s'):
+                if event.key == ord('s'):
                     move_down1 = False
+                # TEST #
+
+            if event.type == KEYDOWN:
+                # if event.key == K_SPACE:
+                #     attack_sound.play()
+                #     bullet = objects.Bullet(meow_hero1.weapon_power, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
+                #     bullet.rect.move_ip(meow_hero1.rect.left, meow_hero1.rect.top)
+                #     bullets.append(bullet)
+                if event.key == K_LEFT:
+                    move_right2 = False
+                    move_left2 = True
+                if event.key == K_RIGHT:
+                    move_left2 = False
+                    move_right2 = True
+                if event.key == K_UP:
+                    move_down2 = False
+                    move_up2 = True
+                if event.key == K_DOWN:
+                    move_up2 = False
+                    move_down2 = True
+
+            if event.type == KEYUP:
+                if event.key == K_ESCAPE:
+                    quit_state = layouts.interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
+                    if quit_state:
+                        print("Goodbye")
+                        terminate()
+                if event.key == K_LEFT:
+                    move_left2 = False
+                if event.key == K_RIGHT:
+                    move_right2 = False
+                if event.key == K_UP:
+                    move_up2 = False
+                if event.key == K_DOWN:
+                    move_down2 = False
                 # TEST #
 
         # handling socket
