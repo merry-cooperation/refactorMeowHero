@@ -20,6 +20,6 @@ The game about cat, who study on "Software engineering" program in TSU.
         pip3 install -r requirements.txt
 4. Start the main script
 
-        python3 main.py
+        python3 src/main.py
 
 #### Enjoy!

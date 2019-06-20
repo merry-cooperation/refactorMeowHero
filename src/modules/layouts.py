@@ -282,8 +282,6 @@ def future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     text_future.next_line(82)
     text_future.draw_this(window_surface, "Anastasia Politova")
 
-    
-
     pygame.display.update()
 
     while True:
@@ -301,6 +299,8 @@ def two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, scor
 
     font0 = pygame.font.SysFont(None, 140)
     font1 = pygame.font.SysFont(None, 80)
+    font2 = pygame.font.SysFont(None, 60)
+
     text_victory = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Nice game!")
     text_victory.rect.center = (WINDOW_WIDTH / 2, 2*WINDOW_HEIGHT / 8)
 
@@ -323,6 +323,7 @@ def two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, scor
 
     handler = open("../stats/multiplayer_score.json", 'w')
 
+    score_and_time_text.color = COLOR_RED
     if score > data["Top score"] and time > data["Top time"]:
         score_and_time_text.draw_this(window_surface, "New top score and time!")
         data["Top score"] = score
@@ -333,6 +334,7 @@ def two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, scor
     elif time > data["Top time"]:
         score_and_time_text.draw_this(window_surface, "New top time!")
         data["Top time"] = time
+    score_and_time_text.color = COLOR_BLACK
 
     json.dump(data, handler)
     handler.close()
@@ -341,6 +343,10 @@ def two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, scor
     score_and_time_text.draw_this(window_surface, "Top score: " + str(data["Top score"]))
     score_and_time_text.next_line(82)
     score_and_time_text.draw_this(window_surface, "Top time: " + str(data["Top time"]))
+
+    text_press_esc = interface.TextView(font2, COLOR_WHITE, 150, 2 * WINDOW_HEIGHT / 6, "Press ESC to exit")
+    text_press_esc.rect.center = (4*WINDOW_WIDTH / 5, 7*WINDOW_HEIGHT / 8)
+    text_press_esc.draw(window_surface)
 
     pygame.display.update()
 

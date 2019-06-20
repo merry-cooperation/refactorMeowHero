@@ -69,7 +69,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     pygame.time.set_timer(pygame.USEREVENT, 500)
 
     # setup bg
-    background_image_in_game = pygame.image.load("../drawable/backgrounds/abstract_background.jpg")
+    background_image_in_game = pygame.image.load("../drawable/backgrounds/abstract_background" + str(random.randint(1, 16)) + '.jpg')
     background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
     # setup Meow Hero
@@ -98,7 +98,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     rate_of_fire_sound = pygame.mixer.Sound('../sound/short_tracks/rate_of_fire.wav')
     laser_sound = pygame.mixer.Sound('../sound/short_tracks/laser.wav')
 
-    pygame.mixer.music.load('../sound/main_theme.mp3')
+    pygame.mixer.music.load('../sound/background_music/music' + str(random.randint(1, 13)) + '.mp3')
     pygame.mixer.music.play(-1, 0.0)
 
     # set up text
@@ -470,7 +470,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         # check for ending:
         if meow_hero1.life <= 0 or meow_hero2.life <= 0:
             running = False
-
+        running = False
         pygame.display.update()
         main_clock.tick(FPS)
 

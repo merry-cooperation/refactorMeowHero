@@ -133,7 +133,7 @@ def main_menu(window_surface):     # show the "Main menu" screen
 
     button_stats = interface.Button(50, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Stats")
     button_skins = interface.Button(260, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Skins")
-    button_future = interface.Button(470, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Info")
+    button_future = interface.Button(470, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Info" )
 
     drawable = list()
     drawable.append(greeting_text)

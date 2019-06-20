@@ -237,7 +237,7 @@ def game_loop(window_surface, level_number, player):
                     quit_state = layouts.interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
                     if quit_state:
                         print("Goodbye")
-                        terminate(player)
+                        return False
                 if event.key == K_LEFT or event.key == ord('a'):
                     move_left = False
                 if event.key == K_RIGHT or event.key == ord('d'):
@@ -509,7 +509,7 @@ def boss_game_loop(window_surface, level_number, player):
                     quit_state = layouts.interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
                     if quit_state:
                         print("Goodbye")
-                        terminate(player)
+                        return False
                 if event.key == K_LEFT or event.key == ord('a'):
                     move_left = False
                 if event.key == K_RIGHT or event.key == ord('d'):
