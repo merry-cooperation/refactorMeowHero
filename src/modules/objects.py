@@ -573,7 +573,7 @@ class OlegAlexeevich(Boss):
 
         image = pygame.image.load('../drawable/sprites/enemy/bosses/teachers/teachers6.png')
 
-        self.life = 527
+        self.life = 10
 
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()

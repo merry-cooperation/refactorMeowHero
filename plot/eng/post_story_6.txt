@@ -1,1 +1,7 @@
-Sample teeext aaaaaaaaaaaaa
+ Yes, I'm a real cat! I was able to reach 
+heights in the disciplines taught to me!
+
+ But I still do not know what I am in programming, 
+and this is my main discipline.
+
+ We, at HITS, programming study by learning by doing.
