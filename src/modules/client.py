@@ -131,7 +131,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     meow_heroes.append(meow_hero1)
     meow_heroes.append(meow_hero2)
 
-    enemy_spawn_probability = 0.3
+    enemy_spawn_probability = 0.2
 
     # score coefficient
     k = 1
