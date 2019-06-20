@@ -421,6 +421,9 @@ class DiplomCommittee(Committee):
     def __init__(self, name, level):
         super().__init__(name, level)
 
+        self.w = int(WINDOW_WIDTH / 12)
+        self.h = int(WINDOW_HEIGHT / 5)
+
         image = pygame.image.load('../drawable/sprites/enemy/bosses/komissia2.png')
 
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
