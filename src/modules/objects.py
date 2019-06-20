@@ -417,19 +417,6 @@ class Committee(Boss):
             self.reload += 1
 
 
-class DiplomCommittee(Committee):
-    def __init__(self, name, level):
-        super().__init__(name, level)
-
-        self.w = int(WINDOW_WIDTH / 12)
-        self.h = int(WINDOW_HEIGHT / 5)
-
-        image = pygame.image.load('../drawable/sprites/enemy/bosses/komissia2.png')
-
-        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
-        self.rect = self.image_surface.get_rect()
-
-
 class DedMoroz(Boss):
     def __init__(self, name, level):
         super().__init__(name, level)
@@ -475,7 +462,6 @@ class Ejudje(Boss):
 
         self.life = 639
 
-        # TODO: change this
     def attack(self, pos):
         if self.reload == self.reload_time:
             bullet = EnemyBullet(self.level, "Boss InHero", pos, self.rect.center)
@@ -502,7 +488,12 @@ class Teacher(Boss):
         self.w = int(WINDOW_WIDTH / 10)
         self.h = int(WINDOW_HEIGHT / 8)
 
-        image = pygame.image.load('../drawable/sprites/enemy/bosses/teachers/teachers' + name + '.png')
+        try:
+            image = pygame.image.load('../drawable/sprites/enemy/bosses/teachers/teachers' + name + '.png')
+        except Exception:
+            self.w = int(WINDOW_WIDTH / 8)
+            self.h = int(WINDOW_HEIGHT / 6)
+            image = pygame.image.load('../drawable/sprites/enemy/bosses/komissia2.png')
 
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
@@ -518,7 +509,7 @@ class Teacher(Boss):
         self.reload = random.randint(0, 7)
 
     def attack(self, pos):
-        if self.reload == self.reload_time:
+        if self.reload >= self.reload_time:
             bullet = EnemyBullet(self.level, "Boss InHero", pos, self.rect.center)
             bullet.rect.center = self.rect.center
             self.reload = 0
@@ -583,6 +574,8 @@ class OlegAlexeevich(Boss):
 
         image = pygame.image.load('../drawable/sprites/enemy/bosses/teachers/teachers5.png')
 
+        self.life = 527
+
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
@@ -590,13 +583,32 @@ class OlegAlexeevich(Boss):
         self.move_time = 300
 
     def attack(self, pos):
-        if self.reload == self.reload_time:
+        if self.reload >= self.reload_time:
             bullet = EnemyBullet(self.level, "Boss NoResize RandomSpeed", pos, self.rect.center)
             bullet.rect.center = (random.randint(300, WINDOW_WIDTH-300), 0)
             self.reload = 0
             return bullet
         else:
             self.reload += 1
+
+
+class DiplomCommittee(Teacher):
+    def __init__(self, name, level):
+        super().__init__(name, level)
+        self.life = 420
+
+        self.reload_time = 3
+
+    def attack(self, pos):
+        if self.reload >= self.reload_time:
+            bullet = EnemyBullet(self.level, "Boss InHero", pos, self.rect.center)
+            bullet.rect.center = self.rect.center
+            self.reload = 0
+            return bullet
+        else:
+            self.reload += 1
+
+        self.speed = random.randint(2, 7)
 
 
 class EnemyBullet(pygame.sprite.Sprite):
