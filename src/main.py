@@ -104,6 +104,7 @@ def levels_menu(window_surface, player):
 def main_menu(window_surface):     # show the "Main menu" screen
     # preparing text
     font_0 = pygame.font.SysFont("rachana", 140)
+
     font_1 = pygame.font.SysFont(None, 78)
     font_2 = pygame.font.SysFont(None, 42)
 
