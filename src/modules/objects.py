@@ -32,7 +32,7 @@ class MeowHero(pygame.sprite.Sprite):
         # getting attributes
         self.life = 9
         self.weapon_power = 1
-        self.move_rate = 12
+        self.move_rate = 8
 
         # self.invulnerability = 16
         self.invulnerability = 100000  # debug
@@ -267,8 +267,10 @@ class CatBossEnemy(CommonEnemy):
 
         self.rect.move_ip(random.randint(50, WINDOW_WIDTH - 50), 0)
 
-    def attack(self, *args):
-        pass
+        self.reload_time = 20
+        self.reload = random.randint(0, 12)
+
+        self.life = 24
 
     def move(self):
         self.rect.move_ip(random.randint(-5, 5), random.randint(-1, 3))
@@ -349,6 +351,8 @@ class ZloyMuzhic(Boss):
 
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
+
+        self.reload_time = 2
 
     def attack(self, pos):
         if self.reload == self.reload_time:
@@ -493,7 +497,7 @@ class Teacher(Boss):
         super().__init__(name, level)
 
         self.w = int(WINDOW_WIDTH / 10)
-        self.h = int(WINDOW_HEIGHT / 10)
+        self.h = int(WINDOW_HEIGHT / 8)
 
         image = pygame.image.load('../drawable/sprites/enemy/bosses/teachers/teachers' + name + '.png')
 
@@ -502,9 +506,69 @@ class Teacher(Boss):
 
         self.life = 100
 
-    # TODO: you know what to do
-    def attack(self, *args):
-        pass
+        self.speed = 6
+
+        self.move_up = False
+        self.move_down = False
+
+        self.reload_time = 8
+        self.reload = random.randint(0, 7)
+
+    def attack(self, pos):
+        if self.reload == self.reload_time:
+            bullet = EnemyBullet(self.level, "Boss InHero", pos, self.rect.center)
+            bullet.rect.center = self.rect.center
+            self.reload = 0
+            return bullet
+        else:
+            self.reload += 1
+
+    def move(self):
+        if self.move_time:
+            # check border
+            if self.rect.left < 0:
+                self.move_left = False
+                self.move_right = True
+            elif self.rect.right > WINDOW_WIDTH:
+                self.move_left = True
+                self.move_right = False
+            elif self.rect.top < 0:
+                self.move_up = False
+                self.move_down = True
+            elif self.rect.bottom > WINDOW_HEIGHT:
+                self.move_up = True
+                self.move_down = False
+            # move enemy
+            if self.move_right:
+                self.rect.move_ip(self.speed, 0)
+                self.move_time -= 1
+            elif self.move_left:
+                self.rect.move_ip(-self.speed, 0)
+                self.move_time -= 1
+            elif self.move_up:
+                self.rect.move_ip(0, -self.speed)
+                self.move_time -= 1
+            elif self.move_down:
+                self.rect.move_ip(0, self.speed)
+                self.move_time -= 1
+        else:
+            self.move_left = False
+            self.move_right = False
+            self.move_up = False
+            self.move_down = False
+
+            dice = random.random()
+            if dice < 0.05:
+                self.move_time = random.randint(20, 120) 
+                coin = random.randint(1, 4)
+                if coin == 1:
+                    self.move_right = True
+                elif coin == 2:
+                    self.move_left = True
+                elif coin == 3:
+                    self.move_up = True
+                elif coin == 4:
+                    self.move_down = True
 
 
 class OlegAlexeevich(Boss):
@@ -555,6 +619,8 @@ class EnemyBullet(pygame.sprite.Sprite):
 
         if level == 5:
             image = random_image_loader('../drawable/weapons/faculty/faculty', 18)
+        elif level == 6:
+            image = random_image_loader('../drawable/weapons/books/book', 6)
         elif level == 7:
             image = random_image_loader('../drawable/weapons/languages/language', 18)
         elif level == 8:

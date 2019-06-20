@@ -16,7 +16,7 @@ from . import interface, objects, layouts
 WINDOW_WIDTH = 1600
 WINDOW_HEIGHT = 900
 
-FPS = 30
+FPS = 40
 ENEMY_MAX_COUNT = 40
 
 # colors
@@ -53,7 +53,7 @@ def story_loop(window_surface, level_number, prefix, player):
     pygame.mouse.set_visible(False)
 
     try:
-        handler = open("../plot/eng/" + prefix + "_story_" + str(level_number) + ".txt")
+        handler = open("../plot/eng/" + prefix + "_story_" + str(level_number) + ".txt", 'r', encoding="utf8", errors='ignore')
     except FileNotFoundError:
         print("No plot for level")
         pygame.mouse.set_visible(True)
@@ -181,7 +181,7 @@ def game_loop(window_surface, level_number, player):
     enemy_spawn_proba = {2:1, 3:0.9, 8:0.5, 11:0.4}
     spawn_proba = enemy_spawn_proba[int(level_number)]
     # main_timer = 50
-    main_timer = 25*level_number + 40
+    main_timer = 20*level_number + 60
 
     move_left = move_right = move_up = move_down = False
     pygame.mixer.music.play(-1, 0.0)

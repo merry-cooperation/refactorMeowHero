@@ -260,16 +260,29 @@ def future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
     rect_border.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
 
-    font0 = pygame.font.SysFont(None, 100)
-    text_future = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Will be able later")
-    text_future.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+    font0 = pygame.font.SysFont(None, 120)
+    font1 = pygame.font.SysFont(None, 70)
+    text_title = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Developers")
+    text_title.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 4)
 
     pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
     pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY, rect)
 
-    text_future.draw(window_surface)
+    text_title.draw(window_surface)
 
-    # TODO: ???
+    text_future = interface.TextView(font1, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6)
+    text_future.rect.center = (WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3)
+
+    text_future.next_line(82)
+    text_future.draw_this(window_surface, "Vlad Cepelev")
+    text_future.next_line(82)
+    text_future.draw_this(window_surface, "Alexander Zorkin")
+    text_future.next_line(82)
+    text_future.draw_this(window_surface, "Rufina Rafikova")
+    text_future.next_line(82)
+    text_future.draw_this(window_surface, "Anastasia Politova")
+
+    
 
     pygame.display.update()
 
