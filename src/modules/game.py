@@ -202,6 +202,10 @@ def game_loop(window_surface, level_number, player):
                 if main_timer <= 0:
                     running = False
 
+                # decrement invulnerability
+                if meow_hero.invulnerability > 0:
+                    meow_hero.invulnerability -= 1
+
                 # spawn enemy
                 dice = random.random()
                 if dice < spawn_proba:
@@ -213,6 +217,18 @@ def game_loop(window_surface, level_number, player):
                     enemy_bullet = enemy.attack(meow_hero.rect.center)
                     if enemy_bullet is not None:
                         enemy_bullets.append(enemy_bullet)
+
+                # bonus lifetime
+                for bonus in bonuses:
+                    bonus.lifetime -= 1
+                    if bonus.lifetime <= 0:
+                        bonuses.remove(bonus)
+
+                # spawn bonuses by time
+                if main_timer % 10 == 0:
+                    bonus = objects.Bonus("Coin", level_number)
+                    bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
+                    bonuses.append(bonus)
 
             if event.type == KEYDOWN:
                 if event.key == K_SPACE:
@@ -237,6 +253,8 @@ def game_loop(window_surface, level_number, player):
                     quit_state = layouts.interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
                     if quit_state:
                         print("Goodbye")
+                        pygame.mixer.music.stop()
+                        pygame.mouse.set_visible(True)
                         return False
                 if event.key == K_LEFT or event.key == ord('a'):
                     move_left = False
@@ -257,15 +275,6 @@ def game_loop(window_surface, level_number, player):
         if move_down and meow_hero.rect.bottom < WINDOW_HEIGHT:
             meow_hero.move(0, 1)
 
-        # spawn bonuses by time
-        if main_timer % 10 == 0 and len(bonuses) == 0:
-            bonus = objects.Bonus("Life")
-            bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
-            bonuses.append(bonus)
-            bonus = objects.Bonus("Coin")
-            bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
-            bonuses.append(bonus)
-
         # hitting enemy
         for enemy in enemies:
             for bullet in bullets:
@@ -276,26 +285,24 @@ def game_loop(window_surface, level_number, player):
 
         # hitting hero:
         for enemy in enemies:
-            if meow_hero.rect.colliderect(enemy.rect):
+            if meow_hero.rect.colliderect(enemy.rect) and not meow_hero.invulnerability:
                 meow_hero.life -= 1
-                meow_hero.invulnerability += 2
+                meow_hero.invulnerability += 1
                 enemies.remove(enemy)
                 damage_sound.play()
 
         # hitting hero by bullets
         for bullet in enemy_bullets:
-            if meow_hero.rect.colliderect(bullet.rect):
+            if meow_hero.rect.colliderect(bullet.rect) and not meow_hero.invulnerability:
                 meow_hero.life -= 1
                 enemy_bullets.remove(bullet)
+                meow_hero.invulnerability += 1
                 damage_sound.play()
 
         # collecting bonuses:
         for bonus in bonuses:
             if meow_hero.rect.colliderect(bonus.rect):
-                if bonus.bonus_type == "Life":
-                    meow_hero.life += 1
-                    health_sound.play()
-                elif bonus.bonus_type == "Coin":
+                if bonus.bonus_type == "Coin":
                     score += 1000
                     coin_sound.play()
                 bonuses.remove(bonus)
@@ -486,11 +493,27 @@ def boss_game_loop(window_surface, level_number, player):
                     victory = True
                     break
 
+                # decrement invulnerability
+                if meow_hero.invulnerability > 0:
+                    meow_hero.invulnerability -= 1
+
                 # attack time
                 for enemy in enemies:
                     enemy_bullet = enemy.attack(meow_hero.rect.center)
                     if enemy_bullet is not None:
                         enemy_bullets.append(enemy_bullet)
+
+                # bonus lifetime
+                for bonus in bonuses:
+                    bonus.lifetime -= 1
+                    if bonus.lifetime <= 0:
+                        bonuses.remove(bonus)
+
+                # spawn bonuses by time
+                if main_timer % 10 == 0:
+                    bonus = objects.Bonus("Coin", level_number)
+                    bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(200, WINDOW_HEIGHT))
+                    bonuses.append(bonus)
 
             if event.type == KEYDOWN:
                 if event.key == K_SPACE:
@@ -515,6 +538,8 @@ def boss_game_loop(window_surface, level_number, player):
                     quit_state = layouts.interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
                     if quit_state:
                         print("Goodbye")
+                        pygame.mixer.music.stop()
+                        pygame.mouse.set_visible(True)
                         return False
                 if event.key == K_LEFT or event.key == ord('a'):
                     move_left = False
@@ -535,15 +560,6 @@ def boss_game_loop(window_surface, level_number, player):
         if move_down and meow_hero.rect.bottom < WINDOW_HEIGHT:
             meow_hero.move(0, 1)
 
-        # spawn bonuses by time
-        if main_timer % 10 == 0 and len(bonuses) == 0:
-            bonus = objects.Bonus("Life")
-            bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
-            bonuses.append(bonus)
-            bonus = objects.Bonus("Coin")
-            bonus.rect.move_ip(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT))
-            bonuses.append(bonus)
-
         # hitting enemy
         for enemy in enemies:
             for bullet in bullets:
@@ -554,25 +570,23 @@ def boss_game_loop(window_surface, level_number, player):
 
         # hitting hero:
         for enemy in enemies:
-            if meow_hero.rect.colliderect(enemy.rect):
+            if meow_hero.rect.colliderect(enemy.rect) and not meow_hero.invulnerability:
                 meow_hero.life -= 1
-                meow_hero.invulnerability += 2
+                meow_hero.invulnerability += 1
                 damage_sound.play()
 
         # hitting hero by bullets
         for bullet in enemy_bullets:
-            if meow_hero.rect.colliderect(bullet.rect):
+            if meow_hero.rect.colliderect(bullet.rect) and not meow_hero.invulnerability:
                 meow_hero.life -= 1
                 enemy_bullets.remove(bullet)
+                meow_hero.invulnerability += 1
                 damage_sound.play()
 
         # collecting bonuses:
         for bonus in bonuses:
             if meow_hero.rect.colliderect(bonus.rect):
-                if bonus.bonus_type == "Life":
-                    meow_hero.life += 1
-                    health_sound.play()
-                elif bonus.bonus_type == "Coin":
+                if bonus.bonus_type == "Coin":
                     score += 1000
                     coin_sound.play()
                 bonuses.remove(bonus)

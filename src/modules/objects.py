@@ -34,8 +34,7 @@ class MeowHero(pygame.sprite.Sprite):
         self.weapon_power = 1
         self.move_rate = 8
 
-        # self.invulnerability = 16
-        self.invulnerability = 100000  # debug
+        self.invulnerability = 8
         self.three_directions_time = 0
 
         self.max_weapon_reload = 30
@@ -585,7 +584,7 @@ class OlegAlexeevich(Boss):
     def attack(self, pos):
         if self.reload >= self.reload_time:
             bullet = EnemyBullet(self.level, "Boss NoResize RandomSpeed", pos, self.rect.center)
-            bullet.rect.center = (random.randint(300, WINDOW_WIDTH-300), 0)
+            bullet.rect.center = (random.randint(100, WINDOW_WIDTH-100), 0)
             self.reload = 0
             return bullet
         else:
@@ -674,7 +673,7 @@ class EnemyBullet(pygame.sprite.Sprite):
 
 
 class Bonus(pygame.sprite.Sprite):
-    def __init__(self, bonus_type):
+    def __init__(self, bonus_type, level = 12):
         super().__init__()
 
         self.w = int(WINDOW_WIDTH / 24)
@@ -685,7 +684,7 @@ class Bonus(pygame.sprite.Sprite):
         if self.bonus_type == "Life":
             image = pygame.image.load('../drawable/other/health1.png')
         elif self.bonus_type == "Coin":
-            image = pygame.image.load('../drawable/other/coin1.png')
+            image = pygame.image.load('../drawable/other/coin' + str(level) + '.png')
         elif self.bonus_type == "Weapon":
             image = pygame.image.load('../drawable/other/weapon_levelup.png')
         elif self.bonus_type == "Shield":

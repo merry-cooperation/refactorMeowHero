@@ -192,7 +192,7 @@ def main_menu(window_surface):     # show the "Main menu" screen
 
 def main():
     while True:
-        window = init_window(False)  # True if fullscreen
+        window = init_window(True)  # True if fullscreen
         main_menu(window)
 
 

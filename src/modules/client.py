@@ -18,7 +18,7 @@ HOST = '0.0.0.0'
 PORT = 9027
 
 # magic
-FPS = 45
+FPS = 38
 TIMEOUT_TIME = 0.01
 ENEMY_MAX_COUNT = 16
 
@@ -74,9 +74,11 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
     # setup Meow Hero
     meow_hero1 = objects.MeowHero(8)
+    meow_hero1.move_rate = 12
     meow_hero1.rect.move_ip(int(WINDOW_WIDTH / 2)-100, 7 * int(WINDOW_HEIGHT / 8))
 
     meow_hero2 = objects.MeowHero(9)
+    meow_hero2.move_rate = 12
     meow_hero2.rect.move_ip(int(WINDOW_WIDTH / 2)+100, 7 * int(WINDOW_HEIGHT / 8))
 
     move_left1 = move_right1 = move_up1 = move_down1 = False
@@ -362,13 +364,13 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     enemy.life -= bullet.power
                     bullet.life -= 1
 
-        # # hitting enemy and player
-        # for enemy in enemies:
-        #     for meow in meow_heroes:
-        #         if meow.rect.colliderect(enemy.rect) and not meow.invulnerability:
-        #             meow.life -= 1
-        #             enemies.remove(enemy)
-        #             damage_sound.play()
+        # hitting enemy and player
+        for enemy in enemies:
+            for meow in meow_heroes:
+                if meow.rect.colliderect(enemy.rect) and not meow.invulnerability:
+                    meow.life -= 1
+                    enemies.remove(enemy)
+                    damage_sound.play()
 
         # hitting players by bullets
         for bullet in enemy_bullets:
@@ -470,7 +472,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         # check for ending:
         if meow_hero1.life <= 0 or meow_hero2.life <= 0:
             running = False
-        running = False
+
         pygame.display.update()
         main_clock.tick(FPS)
 
