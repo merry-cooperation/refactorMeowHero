@@ -24,7 +24,7 @@ COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
 COLOR_BRIGHT_GREY = (200, 200, 200)
 COLOR_RED = (255, 0, 0)
-
+COLOR_BLUE = (0, 0, 255)
 
 def terminate(player):
     # saving current state
@@ -453,6 +453,12 @@ def boss_game_loop(window_surface, level_number, player):
         enemy = objects.OlegAlexeevich("Oleg Alexeevich", level_number)
         enemies.append(enemy)
 
+    # define healthbar
+    health_bar = None
+    if len(enemies) == 1:
+        boss_life = enemies[0].life
+        health_bar = interface.TextView(font, COLOR_WHITE, 0, 0)
+
     # setting score
     score = 0
     handler = open("../stats/high_score.json", 'r')
@@ -596,6 +602,12 @@ def boss_game_loop(window_surface, level_number, player):
                 enemies.remove(enemy)
                 score += 100 * enemy.level
             enemy.draw(window_surface)
+
+        # draw healthbar
+        if health_bar is not None:
+            health_bar.rect.topleft = enemies[0].rect.center
+            health_bar.rect.move_ip(20, 80)
+            health_bar.draw_this(window_surface, str(enemies[0].life) + '/' + str(boss_life))
 
         # move and draw hero bullets
         for bullet in bullets:

@@ -434,7 +434,7 @@ class DedMoroz(Boss):
         self.w = int(WINDOW_WIDTH / 5)
         self.h = int(WINDOW_HEIGHT / 5)
 
-        self.life = 299
+        self.life = 399
 
         image = pygame.image.load('../drawable/sprites/enemy/bosses/ded_moroz/ded_moroz3.png')
 
@@ -511,7 +511,7 @@ class Teacher(Boss):
         self.move_up = False
         self.move_down = False
 
-        self.reload_time = 8
+        self.reload_time = random.randint(10, 18)
         self.reload = random.randint(0, 7)
 
     def attack(self, pos):
