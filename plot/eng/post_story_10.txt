@@ -6,4 +6,4 @@
 
  Interview!
 
- And I will be a real cat programmer!
+ And I will be a real cat-programmer!

@@ -45,7 +45,7 @@ def wait_for_player_to_press_key(player):
                 terminate(player)
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:  # pressing escape quits
-                    terminate(player)
+                    return
                 return
 
 
@@ -101,10 +101,7 @@ def story_loop(window_surface, level_number, prefix, player):
             # skip if escape
             for event in pygame.event.get():
                 if event.type == KEYUP:
-                    if event.key == K_ESCAPE:
-                        return
-                    else:
-                        skip = True
+                    skip = True
         buf = ""
         text_view.next_line(60)
 
