@@ -193,7 +193,7 @@ class Dog(CommonEnemy):
         self.speed = random.randint(1, 4)
         self.direction = random.randint(-2, 2)
 
-        self.life = random.randint(4, 7)
+        self.life = random.randint(5, 10)
 
         image = random_image_loader('../drawable/sprites/enemy/dog_enemy/dog_enemy', 12)
 
@@ -375,10 +375,9 @@ class EGE(Boss):
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
-        self.move_right = True
-        self.move_left = False
         self.speed = 3
         self.move_time = 150
+        self.life = 250
 
         self.reload_time = 2
 
