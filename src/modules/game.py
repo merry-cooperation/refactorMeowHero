@@ -178,7 +178,7 @@ def game_loop(window_surface, level_number, player):
     handler.close()
 
     # setting spawn probability and level time
-    enemy_spawn_proba = {2:1, 3:0.9, 8:0.5, 11:0.4}
+    enemy_spawn_proba = {2:1, 3:0.9, 8:0.42, 11:0.4}
     spawn_proba = enemy_spawn_proba[int(level_number)]
     # main_timer = 50
     main_timer = 20*level_number + 60
