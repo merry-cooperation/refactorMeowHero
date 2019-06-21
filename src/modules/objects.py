@@ -503,7 +503,7 @@ class Teacher(Boss):
     def __init__(self, name, level):
         super().__init__(name, level)
 
-        self.w = int(WINDOW_WIDTH / 10)
+        self.w = int(WINDOW_WIDTH / 14)
         self.h = int(WINDOW_HEIGHT / 8)
 
         try:
