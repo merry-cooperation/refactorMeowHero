@@ -303,6 +303,11 @@ def game_loop(window_surface, level_number, player):
                     coin_sound.play()
                 bonuses.remove(bonus)
 
+        # check if bullet is out of screen
+        for bullet in bullets:
+            if bullet.rect.bottom <= 0:
+                bullets.remove(bullet)
+
         # draw background
         window_surface.blit(background_image_in_game, [0, 0])
 
@@ -589,6 +594,11 @@ def boss_game_loop(window_surface, level_number, player):
                     score += 1000
                     coin_sound.play()
                 bonuses.remove(bonus)
+
+        # check if bullet is out of screen
+        for bullet in bullets:
+            if bullet.rect.bottom <= 0:
+                bullets.remove(bullet)
 
         # draw background
         window_surface.blit(background_image_in_game, [0, 0])
