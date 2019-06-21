@@ -4,6 +4,7 @@ import random
 
 import pygame
 from pygame.locals import *
+from time import sleep
 
 from . import interface
 
@@ -97,7 +98,7 @@ def stats_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         pygame.display.update()
 
 
-def victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
+def victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, boss, score, new_record):
 
     rect = pygame.Rect((0, 0), (2*WINDOW_WIDTH/3, 2*WINDOW_HEIGHT/3))
     rect_border = pygame.Rect((0, 0), (2*WINDOW_WIDTH/3+10, 2*WINDOW_HEIGHT/3+10))
@@ -105,15 +106,39 @@ def victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     rect_border.center = (WINDOW_WIDTH/2, WINDOW_HEIGHT/2)
 
     font0 = pygame.font.SysFont(None, 140)
-    text_victory = interface.TextView(font0, COLOR_BLACK, 150, 2*WINDOW_HEIGHT / 6, "Congratulations!")
-    text_victory.rect.center = (WINDOW_WIDTH/2, WINDOW_HEIGHT/2)
+    font1 = pygame.font.SysFont(None, 80)
+    font2 = pygame.font.SysFont(None, 60)
+
+    text_victory = interface.TextView(font0, COLOR_BLACK, 150, 2*WINDOW_HEIGHT / 6, "Level complete!")
+    text_victory.rect.center = (WINDOW_WIDTH/2, WINDOW_HEIGHT/4)
+
+    if boss:
+        text_formula = interface.TextView(font1, COLOR_BLACK, 150, 2*WINDOW_HEIGHT / 6, "Score = (score+life*1000)*100/time")
+    else:
+        text_formula = interface.TextView(font1, COLOR_BLACK, 150, 2*WINDOW_HEIGHT / 6, "Score = score + life*1000")
+
+    text_formula.rect.topleft = (WINDOW_WIDTH/4 - 70, WINDOW_HEIGHT/3 + 60)
+
+    text_press_esc = interface.TextView(font2, COLOR_WHITE, 150, 2 * WINDOW_HEIGHT / 6, "Press ESC to continue")
+    text_press_esc.rect.center = (4*WINDOW_WIDTH / 5, 8*WINDOW_HEIGHT / 9)
 
     pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
     pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY, rect)
 
     text_victory.draw(window_surface)
+    text_formula.draw(window_surface)
+    text_formula.next_line(90)
+    text_formula.draw_this(window_surface, "Your score is " + str(score))
 
-    # TODO: draw another information here
+    if new_record:
+        sleep(0.5)
+        new_top_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
+        new_top_sound.play()
+        text_formula.color = COLOR_RED
+        text_formula.next_line(200)
+        text_formula.draw_this(window_surface, "New level record!")
+
+    text_press_esc.draw(window_surface)
 
     pygame.display.update()
 
@@ -274,13 +299,13 @@ def future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     text_future.rect.center = (WINDOW_WIDTH / 5, WINDOW_HEIGHT / 3)
 
     text_future.next_line(82)
-    text_future.draw_this(window_surface, "Vlad Cepelev")
+    text_future.draw_this(window_surface, "Vladislav Cepelev (teamlead)")
     text_future.next_line(82)
-    text_future.draw_this(window_surface, "Alexander Zorkin")
+    text_future.draw_this(window_surface, "Alexander Zorkin (programmer)")
     text_future.next_line(82)
-    text_future.draw_this(window_surface, "Rufina Rafikova")
+    text_future.draw_this(window_surface, "Rufina Rafikova (programmer/storywriter)")
     text_future.next_line(82)
-    text_future.draw_this(window_surface, "Anastasia Politova")
+    text_future.draw_this(window_surface, "Anastasia Politova (game designer)")
 
     pygame.display.update()
 

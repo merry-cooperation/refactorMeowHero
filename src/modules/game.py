@@ -143,7 +143,6 @@ def game_loop(window_surface, level_number, player):
     victory_sound = pygame.mixer.Sound('../sound/short_tracks/victory.wav')
     coin_sound = pygame.mixer.Sound('../sound/short_tracks/coin.wav')
     health_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
-    new_top_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
     attack_sound = pygame.mixer.Sound('../sound/short_tracks/attack_1' + ".wav")
 
     try:
@@ -304,6 +303,11 @@ def game_loop(window_surface, level_number, player):
                     coin_sound.play()
                 bonuses.remove(bonus)
 
+        # check if bullet is out of screen
+        for bullet in bullets:
+            if bullet.rect.bottom <= 0:
+                bullets.remove(bullet)
+
         # draw background
         window_surface.blit(background_image_in_game, [0, 0])
 
@@ -313,7 +317,7 @@ def game_loop(window_surface, level_number, player):
         # draw text
         score_text.draw_this(window_surface, 'Score: %s' % (score), )
         top_score_text.draw_this(window_surface, 'Top Score: %s' % (top_score))
-        timer_text.draw_this(window_surface, "Time " + str(main_timer).rjust(3) if main_timer > 0 else 'NICE, NIGGA')
+        timer_text.draw_this(window_surface, "Time " + str(main_timer).rjust(3) if main_timer > 0 else 'GG')
 
         # draw hero
         meow_hero.draw(window_surface)
@@ -356,14 +360,10 @@ def game_loop(window_surface, level_number, player):
     pygame.mouse.set_visible(True)
 
     if victory:
+        score = score + meow_hero.life*1000
         # checking for new record
         victory_sound.play()
-        layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
-        victory_sound.stop()
-        if level_number+1 not in player.levels:
-            player.levels.append(int(level_number+1))
         if score > top_score:
-            new_top_sound.play()
             handler = open("../stats/high_score.json", 'r')
             data = json.load(handler)
             handler.close()
@@ -371,6 +371,12 @@ def game_loop(window_surface, level_number, player):
             handler = open("../stats/high_score.json", 'w')
             json.dump(data, handler)
             handler.close()
+            layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, False, score, True)
+        else:
+            layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, False, score, False)
+        victory_sound.stop()
+        if level_number+1 not in player.levels:
+            player.levels.append(int(level_number+1))
     else:
         game_over_sound.play()
         layouts.defeat_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -477,6 +483,7 @@ def boss_game_loop(window_surface, level_number, player):
     victory = True
     while running:  # the game loop runs while the game part is playing
         score += 1  # increase score
+        
         # event handling
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -588,6 +595,11 @@ def boss_game_loop(window_surface, level_number, player):
                     coin_sound.play()
                 bonuses.remove(bonus)
 
+        # check if bullet is out of screen
+        for bullet in bullets:
+            if bullet.rect.bottom <= 0:
+                bullets.remove(bullet)
+
         # draw background
         window_surface.blit(background_image_in_game, [0, 0])
 
@@ -648,13 +660,9 @@ def boss_game_loop(window_surface, level_number, player):
 
     if victory:
         # checking for new record
+        score = int((score + meow_hero.life*1000)*100/main_timer)
         victory_sound.play()
-        layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
-        victory_sound.stop()
-        if level_number + 1 not in player.levels:
-            player.levels.append(int(level_number + 1))
         if score > top_score:
-            new_top_sound.play()
             handler = open("../stats/high_score.json", 'r')
             data = json.load(handler)
             handler.close()
@@ -662,6 +670,10 @@ def boss_game_loop(window_surface, level_number, player):
             handler = open("../stats/high_score.json", 'w')
             json.dump(data, handler)
             handler.close()
+            layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, True, score, True)
+        else:
+            layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, True, score, False)
+        victory_sound.stop()
     else:
         game_over_sound.play()
         layouts.defeat_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)

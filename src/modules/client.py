@@ -434,19 +434,24 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     elif bonus.bonus_type == "Rate of fire":
                         rate_of_fire_sound.play()
                         meow.max_weapon_reload = 8
-                        meow.rate_of_fire_time_limit += 12
+                        meow.rate_of_fire_time_limit += 8 + available_enemy_level*2
                     elif bonus.bonus_type == "Freeze":
                         freeze_sound.play()
-                        freeze_bonus += 10 + available_enemy_level
+                        freeze_bonus += 8 + available_enemy_level
                     elif bonus.bonus_type == "Three Directions":
                         laser_sound.play()
-                        meow.three_directions_time += 40
+                        meow.three_directions_time += 8 + available_enemy_level*2
                     elif bonus.bonus_type == "x2":
                         coin_sound.play()
                         x2_time += 2*available_enemy_level
                         k = 2
 
                     bonuses.remove(bonus)
+
+        # check if bullet is out of screen
+        for bullet in bullets:
+            if bullet.rect.bottom <= 0:
+                bullets.remove(bullet)
 
         # draw background
         window_surface.blit(background_image_in_game, [0, 0])
