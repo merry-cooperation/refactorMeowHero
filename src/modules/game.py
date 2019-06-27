@@ -19,12 +19,15 @@ WINDOW_HEIGHT = 900
 FPS = 40
 ENEMY_MAX_COUNT = 40
 
+SKIN_LEVELS = [1, 6, 8, 9, 10, 12]
+
 # colors
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
 COLOR_BRIGHT_GREY = (200, 200, 200)
 COLOR_RED = (255, 0, 0)
 COLOR_BLUE = (0, 0, 255)
+
 
 def terminate(player):
     # saving current state
@@ -53,7 +56,7 @@ def story_loop(window_surface, level_number, prefix, player):
     pygame.mouse.set_visible(False)
 
     try:
-        handler = open("../plot/eng/" + prefix + "_story_" + str(level_number) + ".txt", 'r', encoding="utf8", errors='ignore')
+        handler = open("../plot/ru/" + prefix + "_story_" + str(level_number) + ".txt", 'r', errors='ignore')
     except FileNotFoundError:
         print("No plot for level")
         pygame.mouse.set_visible(True)
@@ -71,13 +74,13 @@ def story_loop(window_surface, level_number, prefix, player):
 
     window_surface.fill(COLOR_BLACK)
 
-    image = pygame.image.load('../drawable/sprites/cat_hero/cat' + str(1) + '.png')
+    image = pygame.image.load('../drawable/sprites/cat_hero/skins/cat' + str(player.current_skin) + '.png')
 
-    image_surface = pygame.transform.scale(image, (100, 200))
+    image_surface = pygame.transform.scale(image, (300, 700))
     rect = image_surface.get_rect()
 
     rect.move_ip(0, 150)
-    window_surface.blit(image, rect)
+    window_surface.blit(image_surface, rect)
 
     pygame.display.update()
 
@@ -156,7 +159,7 @@ def game_loop(window_surface, level_number, player):
     top_score_text = interface.TextView(font, COLOR_WHITE, 10, 40)
     timer_text = interface.TextView(font, COLOR_WHITE, 10*WINDOW_WIDTH/12, 10)
 
-    meow_hero = objects.MeowHero(1)
+    meow_hero = objects.MeowHero(player.current_skin)
     meow_hero.rect.move_ip(int(WINDOW_WIDTH/2), 7*int(WINDOW_HEIGHT/8))
 
     health_points = objects.Health(1, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
@@ -174,10 +177,10 @@ def game_loop(window_surface, level_number, player):
     handler.close()
 
     # setting spawn probability and level time
-    enemy_spawn_proba = {2:1, 3:0.9, 8:0.42, 11:0.4}
+    enemy_spawn_proba = {2:1, 3:0.9, 8:0.42, 11:0.20}
     spawn_proba = enemy_spawn_proba[int(level_number)]
     # main_timer = 50
-    main_timer = 20*level_number + 60
+    main_timer = 10*level_number + 60
 
     move_left = move_right = move_up = move_down = False
     pygame.mixer.music.play(-1, 0.0)
@@ -186,7 +189,6 @@ def game_loop(window_surface, level_number, player):
     victory = True
     while running:  # the game loop runs while the game part is playing
         score += 1  # increase score
-
         # event handling
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -363,6 +365,12 @@ def game_loop(window_surface, level_number, player):
         score = score + meow_hero.life*1000
         # checking for new record
         victory_sound.play()
+
+        new_skin = False
+        if level_number in SKIN_LEVELS and level_number not in player.skins:
+            new_skin = True
+            player.skins.append(level_number)
+
         if score > top_score:
             handler = open("../stats/high_score.json", 'r')
             data = json.load(handler)
@@ -371,9 +379,9 @@ def game_loop(window_surface, level_number, player):
             handler = open("../stats/high_score.json", 'w')
             json.dump(data, handler)
             handler.close()
-            layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, False, score, True)
+            layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, False, score, True, new_skin)
         else:
-            layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, False, score, False)
+            layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, False, score, False, new_skin)
         victory_sound.stop()
         if level_number+1 not in player.levels:
             player.levels.append(int(level_number+1))
@@ -421,7 +429,7 @@ def boss_game_loop(window_surface, level_number, player):
     top_score_text = interface.TextView(font, COLOR_WHITE, 10, 40)
     timer_text = interface.TextView(font, COLOR_WHITE, 10 * WINDOW_WIDTH / 12, 10)
 
-    meow_hero = objects.MeowHero(1)
+    meow_hero = objects.MeowHero(player.current_skin)
     meow_hero.rect.move_ip(int(WINDOW_WIDTH / 2), 7 * int(WINDOW_HEIGHT / 8))
 
     health_points = objects.Health(1, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
@@ -483,7 +491,7 @@ def boss_game_loop(window_surface, level_number, player):
     victory = True
     while running:  # the game loop runs while the game part is playing
         score += 1  # increase score
-        
+
         # event handling
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -662,6 +670,12 @@ def boss_game_loop(window_surface, level_number, player):
         # checking for new record
         score = int((score + meow_hero.life*1000)*100/main_timer)
         victory_sound.play()
+
+        new_skin = False
+        if level_number in SKIN_LEVELS and level_number not in player.skins:
+            new_skin = True
+            player.skins.append(level_number)
+
         if score > top_score:
             handler = open("../stats/high_score.json", 'r')
             data = json.load(handler)
@@ -670,10 +684,12 @@ def boss_game_loop(window_surface, level_number, player):
             handler = open("../stats/high_score.json", 'w')
             json.dump(data, handler)
             handler.close()
-            layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, True, score, True)
+            layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, True, score, True, new_skin)
         else:
-            layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, True, score, False)
+            layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, True, score, False, new_skin)
         victory_sound.stop()
+        if level_number+1 not in player.levels:
+            player.levels.append(int(level_number+1))
     else:
         game_over_sound.play()
         layouts.defeat_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
