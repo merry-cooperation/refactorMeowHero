@@ -56,7 +56,7 @@ def story_loop(window_surface, level_number, prefix, player):
     pygame.mouse.set_visible(False)
 
     try:
-        handler = open("../plot/ru/" + prefix + "_story_" + str(level_number) + ".txt", 'r', errors='ignore')
+        handler = open("../plot/eng/" + prefix + "_story_" + str(level_number) + ".txt", 'r', errors='ignore')
     except FileNotFoundError:
         print("No plot for level")
         pygame.mouse.set_visible(True)

@@ -34,8 +34,6 @@ def terminate():
     sys.exit(0)
 
 
-# TODO: add top score
-# TODO: add top time
 def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     # # setup socket and logger
     # PORT = layouts.giving_port_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -283,6 +281,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 if event.key == K_DOWN:
                     move_down2 = False
                 # TEST #
+	# were able with controller	
 
         # handling socket
         # data = []
@@ -389,6 +388,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     enemy.life -= bullet.power
                     bullet.life -= 1
 
+	# if enemy under screen, hit hero
         for enemy in enemies:
             if enemy.rect.top > WINDOW_HEIGHT:
                 for meow in meow_heroes:
