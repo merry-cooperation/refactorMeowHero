@@ -100,7 +100,6 @@ def levels_menu(window_surface, player):
             pygame.display.update()
 
 
-# TODO: смена скина
 def main_menu(window_surface):     # show the "Main menu" screen
     # preparing text
     font_0 = pygame.font.SysFont("rachana", 140)
@@ -176,7 +175,7 @@ def main_menu(window_surface):     # show the "Main menu" screen
                     layouts.stats_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
             elif button_skins.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    layouts.change_skin_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
+                    player = layouts.change_skin_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT)
             elif button_future.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # I don't know why I need this button

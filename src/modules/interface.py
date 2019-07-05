@@ -85,11 +85,12 @@ class TextView:
 
 
 class Player:
-    def __init__(self, player_name, score, levels, skins):
+    def __init__(self, player_name, score, levels, skins, current_skin):
         self.name = player_name
         self.score = score
         self.levels = levels
         self.skins = skins
+        self.current_skin = current_skin
 
     def save_current_state(self):
         data = dict()
@@ -97,6 +98,7 @@ class Player:
         data["score"] = self.score
         data["levels"] = self.levels
         data["skins"] = self.skins
+        data["current_skin"] = self.current_skin
         handler = open("../stats/players/" + self.name + ".json", 'w')
         json.dump(data, handler)
         handler.close()
@@ -252,13 +254,13 @@ if __name__ == '__main__':
 def load_player_by_path(path):
     handler = open(path, 'r')
     data = json.load(handler)
-    player = Player(data['name'], data['score'], data['levels'], data['skins'])
+    player = Player(data['name'], data['score'], data['levels'], data['skins'], data["current_skin"])
     handler.close()
     return player
 
 
 def create_empty_profile(nickname):
     handler = open("../stats/players/" + nickname + ".json", 'w')
-    data = {"name": nickname, "score": 0, "levels": [1], "skins": [1]}
+    data = {"name": nickname, "score": 0, "levels": [1], "skins": [1], "current_skin" : 1}
     json.dump(data, handler)
     handler.close()

@@ -19,6 +19,7 @@ COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
 COLOR_BRIGHT_GREY = (200, 200, 200)
 COLOR_RED = (255, 0, 0)
+COLOR_BLUE = (0, 0, 255)
 
 
 # return true if quit
@@ -98,7 +99,7 @@ def stats_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         pygame.display.update()
 
 
-def victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, boss, score, new_record):
+def victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, boss, score, new_record, new_skin):
 
     rect = pygame.Rect((0, 0), (2*WINDOW_WIDTH/3, 2*WINDOW_HEIGHT/3))
     rect_border = pygame.Rect((0, 0), (2*WINDOW_WIDTH/3+10, 2*WINDOW_HEIGHT/3+10))
@@ -135,8 +136,14 @@ def victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, boss, score, new
         new_top_sound = pygame.mixer.Sound('../sound/short_tracks/health.wav')
         new_top_sound.play()
         text_formula.color = COLOR_RED
-        text_formula.next_line(200)
+        text_formula.next_line(100)
         text_formula.draw_this(window_surface, "New level record!")
+
+    if new_skin:
+        sleep(0.5)
+        text_formula.color = COLOR_BLUE
+        text_formula.next_line(100)
+        text_formula.draw_this(window_surface, "New skin available!")
 
     text_press_esc.draw(window_surface)
 
@@ -253,30 +260,58 @@ def create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
     return player
 
 
-def change_skin_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
+# returning player
+def change_skin_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
     rect = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3))
     rect_border = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3 + 10, 2 * WINDOW_HEIGHT / 3 + 10))
     rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
     rect_border.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
 
-    font0 = pygame.font.SysFont(None, 100)
-    text_skins = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Will be able later")
-    text_skins.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
+    font0 = pygame.font.SysFont(None, 120)
 
-    pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
-    pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY, rect)
+    text_title = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Select skin")
+    text_title.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 4)
 
-    text_skins.draw(window_surface)
+    skin_levels = [1, 6, 8, 9, 10, 12]
+    buttons = list()
 
-    # TODO: icons here pls
+    for i, skin in enumerate(skin_levels):
+        if skin in player.skins:
+            button = interface.Button(WINDOW_WIDTH / 5 + (i % 3) * (WINDOW_WIDTH / 6 + 40) + 50,
+                                          WINDOW_HEIGHT / 3 + int(i / 3) * (WINDOW_HEIGHT / 8 + 70),
+                                          WINDOW_WIDTH / 8, WINDOW_HEIGHT / 6, str(skin))
+            button.font = pygame.font.SysFont(None, 64)
+        else:
+            button = interface.Button(WINDOW_WIDTH / 5 + (i % 3) * (WINDOW_WIDTH / 6 + 40) + 50,
+                                      WINDOW_HEIGHT / 3 + int(i / 3) * (WINDOW_HEIGHT / 8 + 70),
+                                      WINDOW_WIDTH / 8, WINDOW_HEIGHT / 6, str(skin), True)
+            button.font = pygame.font.SysFont(None, 64)
 
-    pygame.display.update()
+        buttons.append(button)
 
     while True:
+        mouse_pos = pygame.mouse.get_pos()  # gets mouse position
         for event in pygame.event.get():
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
-                    return
+                    return player
+
+        for button in buttons:
+            if button.is_over(mouse_pos):
+                if event.type == pygame.MOUSEBUTTONDOWN and not button.is_off:
+                    player.current_skin = int(button.text)
+                    print("Current skin is", player.current_skin)
+                    return player
+
+        pygame.draw.rect(window_surface, COLOR_BLACK, rect_border)
+        pygame.draw.rect(window_surface, COLOR_BRIGHT_GREY, rect)
+
+        text_title.draw(window_surface)
+
+        for button in buttons:
+            button.draw(window_surface)
+
+        pygame.display.update()
 
 
 def future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
@@ -312,8 +347,9 @@ def future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     while True:
         for event in pygame.event.get():
             if event.type == KEYUP:
-                if event.key == K_ESCAPE:
-                    return
+                return
+            if event.type == MOUSEBUTTONDOWN:
+                return
 
 
 def two_players_victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, score, time):

@@ -34,33 +34,31 @@ def terminate():
     sys.exit(0)
 
 
-# TODO: add top score
-# TODO: add top time
 def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
-    # setup socket and logger
-    PORT = layouts.giving_port_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
-
-    # socket.setdefaulttimeout(1)
-    sock = socket.socket()
-
-    sock.bind((HOST, PORT))
-    sock.listen(100)
-    sock.settimeout(TIMEOUT_TIME)
-
-    logger = logging.getLogger("Fucking Server")
-    logger.setLevel(logging.INFO)
-
-    fh = logging.FileHandler("server_info.log")
-
-    # pretty formatting
-    formatter = logging.Formatter('%(levelname)s - %(asctime)s - %(message)s')
-    fh.setFormatter(formatter)
-
-    # add handler to logger object
-    logger.addHandler(fh)
-
-    print("Serving on", PORT)
-    logger.info('Start serving on %s' % (PORT))
+    # # setup socket and logger
+    # PORT = layouts.giving_port_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
+    #
+    # # socket.setdefaulttimeout(1)
+    # sock = socket.socket()
+    #
+    # sock.bind((HOST, PORT))
+    # sock.listen(100)
+    # sock.settimeout(TIMEOUT_TIME)
+    #
+    # logger = logging.getLogger("Fucking Server")
+    # logger.setLevel(logging.INFO)
+    #
+    # fh = logging.FileHandler("server_info.log")
+    #
+    # # pretty formatting
+    # formatter = logging.Formatter('%(levelname)s - %(asctime)s - %(message)s')
+    # fh.setFormatter(formatter)
+    #
+    # # add handler to logger object
+    # logger.addHandler(fh)
+    #
+    # print("Serving on", PORT)
+    # logger.info('Start serving on %s' % (PORT))
 
     # setup game
     pygame.mouse.set_visible(False)
@@ -73,11 +71,11 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
     # setup Meow Hero
-    meow_hero1 = objects.MeowHero(8)
+    meow_hero1 = objects.MeowHero(6)
     meow_hero1.move_rate = 12
     meow_hero1.rect.move_ip(int(WINDOW_WIDTH / 2)-100, 7 * int(WINDOW_HEIGHT / 8))
 
-    meow_hero2 = objects.MeowHero(9)
+    meow_hero2 = objects.MeowHero(8)
     meow_hero2.move_rate = 12
     meow_hero2.rect.move_ip(int(WINDOW_WIDTH / 2)+100, 7 * int(WINDOW_HEIGHT / 8))
 
@@ -149,7 +147,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         for event in pygame.event.get():
             if event.type == QUIT:
                 print("Goodbye")
-                logger.info('Connection closed, game over')
+                # logger.info('Connection closed, game over')
                 terminate()
 
             if event.type == pygame.USEREVENT:  # time tick
@@ -283,63 +281,64 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 if event.key == K_DOWN:
                     move_down2 = False
                 # TEST #
+	# were able with controller	
 
         # handling socket
-        data = []
-        try:
-            conn, address = sock.accept()
-            data = conn.recv(1024).decode()
-            print(data)
-            logger.info("Income data: %s" % (data))
-            data = data.split()
-            conn.close()
-
-        except Exception:  # exception if timeout
-            pass
+        # data = []
+        # try:
+        #     conn, address = sock.accept()
+        #     data = conn.recv(1024).decode()
+        #     print(data)
+        #     logger.info("Income data: %s" % (data))
+        #     data = data.split()
+        #     conn.close()
+        #
+        # except Exception:  # exception if timeout
+        #     pass
 
         # handle data events
-        if data:
-            # handle first player
-            if "1" in data:
-                if "R" in data:
-                    move_left1 = False
-                    move_right1 = True
-                if "L" in data:
-                    move_left1 = True
-                    move_right1 = False
-                if "U" in data:
-                    move_down1 = False
-                    move_up1 = True
-                if "D" in data:
-                    move_down1 = True
-                    move_up1 = False
-                if "SH" in data:
-                    move_left1 = False
-                    move_right1 = False
-                if "SV" in data:
-                    move_down1 = False
-                    move_up1 = False
-
-            # handle second player
-            elif "2" in data:
-                if "R" in data:
-                    move_left2 = False
-                    move_right2 = True
-                if "L" in data:
-                    move_left2 = True
-                    move_right2 = False
-                if "U" in data:
-                    move_down2 = False
-                    move_up2 = True
-                if "D" in data:
-                    move_down2 = True
-                    move_up2 = False
-                if "SH" in data:
-                    move_left2 = False
-                    move_right2 = False
-                if "SV" in data:
-                    move_down2 = False
-                    move_up2 = False
+        # if data:
+        #     # handle first player
+        #     if "1" in data:
+        #         if "R" in data:
+        #             move_left1 = False
+        #             move_right1 = True
+        #         if "L" in data:
+        #             move_left1 = True
+        #             move_right1 = False
+        #         if "U" in data:
+        #             move_down1 = False
+        #             move_up1 = True
+        #         if "D" in data:
+        #             move_down1 = True
+        #             move_up1 = False
+        #         if "SH" in data:
+        #             move_left1 = False
+        #             move_right1 = False
+        #         if "SV" in data:
+        #             move_down1 = False
+        #             move_up1 = False
+        #
+        #     # handle second player
+        #     elif "2" in data:
+        #         if "R" in data:
+        #             move_left2 = False
+        #             move_right2 = True
+        #         if "L" in data:
+        #             move_left2 = True
+        #             move_right2 = False
+        #         if "U" in data:
+        #             move_down2 = False
+        #             move_up2 = True
+        #         if "D" in data:
+        #             move_down2 = True
+        #             move_up2 = False
+        #         if "SH" in data:
+        #             move_left2 = False
+        #             move_right2 = False
+        #         if "SV" in data:
+        #             move_down2 = False
+        #             move_up2 = False
 
         # move the first player around
         if move_left1 and meow_hero1.rect.left > 0:
@@ -388,6 +387,14 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 if enemy.rect.colliderect(bullet.rect):
                     enemy.life -= bullet.power
                     bullet.life -= 1
+
+	# if enemy under screen, hit hero
+        for enemy in enemies:
+            if enemy.rect.top > WINDOW_HEIGHT:
+                for meow in meow_heroes:
+                    meow.life -= 1
+                enemies.remove(enemy)
+                damage_sound.play()
 
         # hitting enemy and player
         for enemy in enemies:
@@ -464,7 +471,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         player1_text.draw(window_surface)
         player2_text.draw(window_surface)
         score_text.draw_this(window_surface, 'Score: %s' % (score))
-        timer_text.draw_this(window_surface, "Time " + str(main_timer).rjust(3) if main_timer <= 600 else 'NICE, NIGGA')
+        timer_text.draw_this(window_surface, "Time " + str(main_timer).rjust(3) if main_timer <= 1600 else 'NICE, NIGGA')
         player1_life_text.draw_this(window_surface, 'Life: x%s' % (meow_hero1.life))
         player2_life_text.draw_this(window_surface, 'Life: x%s' % (meow_hero2.life))
 
@@ -486,9 +493,9 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
             for bullet in enemy_bullets:
                 bullet.move()
 
-        # draw enemies
+        # draw and kill enemies
         for enemy in enemies:
-            if enemy.rect.top > WINDOW_HEIGHT or enemy.life <= 0:
+            if enemy.life <= 0:
                 enemies.remove(enemy)
                 score += 100 * enemy.level
             enemy.draw(window_surface)
@@ -506,7 +513,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         pygame.display.update()
         main_clock.tick(FPS)
 
-    logger.info('Connection closed, game over')
+    # logger.info('Connection closed, game over')
     pygame.mouse.set_visible(True)
     pygame.mouse.set_visible(True)
 
