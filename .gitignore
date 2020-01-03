@@ -4,3 +4,7 @@ src/client_info.log
 *.pyc
 stats/
 stats/players/
+/drawable/
+/plot/
+/sound/
+/stats/
