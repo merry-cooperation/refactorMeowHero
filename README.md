@@ -1,6 +1,20 @@
 # Meow refactor
 
-Refactoring task, original at [link](https://github.com/somnoynadno/meow_hero) 
+Refactoring task, original at [link](https://github.com/somnoynadno/meow_hero)
+
+## Set up environment
+
+Install Miniconda, then
+```
+conda env create -f environment.yml -n <env_name>
+conda activate <env_name>
+```
+
+## Run game
+
+```
+cd src && python main.py
+```
 
 > # Meow Hero
 > 
