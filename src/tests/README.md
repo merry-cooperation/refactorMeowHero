@@ -10,6 +10,7 @@ shotgun surgery|[#1][i1]| - | - | В силу того, что в недоста
 duplicate code|[#27][i27]|[link](test_objects.py#L7-L79)|12|Использованы mock'и
 long method|[#23][i23]|[link](test_layouts.py#L18-L63)|2|Использованы mock'и
 refused bequest|[#45][i45]|[link](test_objects.py#L82-88)|2|
+other|[#39][i39]|[link](test_interface.py#L46-L132)|10|Применено структурированное базисное тестирование, угадывание ошибок, анализ граничных условий
 
 [i1]: https://github.com/merry-cooperation/refactorMeowHero/issues/1
 [i7]: https://github.com/merry-cooperation/refactorMeowHero/issues/7
@@ -18,4 +19,5 @@ refused bequest|[#45][i45]|[link](test_objects.py#L82-88)|2|
 [i23]: https://github.com/merry-cooperation/refactorMeowHero/issues/23
 [i27]: https://github.com/merry-cooperation/refactorMeowHero/issues/27
 [i28]: https://github.com/merry-cooperation/refactorMeowHero/issues/28
+[i39]: https://github.com/merry-cooperation/refactorMeowHero/issues/39
 [i45]: https://github.com/merry-cooperation/refactorMeowHero/issues/45

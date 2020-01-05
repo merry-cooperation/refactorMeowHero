@@ -43,6 +43,94 @@ class TestButton(TestCase):
             with self.subTest(call_args=call_args):
                 self.assertEqual(call_args[0][1], (button.w, button.h))
 
+    def test_is_over_mouse_pos_inside_button(self, mock_sys_font, mock_image_load, mock_transform_scale):
+        button = Button(1, 2, 10, 20)
+
+        self.assertFalse(button.is_active)
+        mouse_is_over_button = button.is_over((5, 5))
+        self.assertTrue(mouse_is_over_button)
+        self.assertTrue(button.is_active)
+
+    def test_is_over_mouse_pos_outside_button(self, mock_sys_font, mock_image_load, mock_transform_scale):
+        button = Button(1, 2, 10, 20)
+
+        self.assertFalse(button.is_active)
+        mouse_is_over_button = button.is_over((0, 0))
+        self.assertFalse(mouse_is_over_button)
+        self.assertFalse(button.is_active)
+
+    def test_is_over_x_too_low(self, mock_sys_font, mock_image_load, mock_transform_scale):
+        # button rect top left (5,5) bottom right (15,15)
+        button = Button(5, 5, 10, 10)
+
+        self.assertFalse(button.is_active)
+        mouse_is_over_button = button.is_over((0, 10))
+        self.assertFalse(mouse_is_over_button)
+        self.assertFalse(button.is_active)
+
+    def test_is_over_x_too_high(self, mock_sys_font, mock_image_load, mock_transform_scale):
+        # button rect top left (5,5) bottom right (15,15)
+        button = Button(5, 5, 10, 10)
+
+        self.assertFalse(button.is_active)
+        mouse_is_over_button = button.is_over((20, 10))
+        self.assertFalse(mouse_is_over_button)
+        self.assertFalse(button.is_active)
+
+    def test_is_over_y_too_low(self, mock_sys_font, mock_image_load, mock_transform_scale):
+        # button rect top left (5,5) bottom right (15,15)
+        button = Button(5, 5, 10, 10)
+
+        self.assertFalse(button.is_active)
+        mouse_is_over_button = button.is_over((10, 0))
+        self.assertFalse(mouse_is_over_button)
+        self.assertFalse(button.is_active)
+
+    def test_is_over_y_too_high(self, mock_sys_font, mock_image_load, mock_transform_scale):
+        # button rect top left (5,5) bottom right (15,15)
+        button = Button(5, 5, 10, 10)
+
+        self.assertFalse(button.is_active)
+        mouse_is_over_button = button.is_over((10, 20))
+        self.assertFalse(mouse_is_over_button)
+        self.assertFalse(button.is_active)
+
+    def test_is_over_x_at_lower_edge_minus_one(self, mock_sys_font, mock_image_load, mock_transform_scale):
+        # button rect top left (5,5) bottom right (15,15)
+        button = Button(5, 5, 10, 10)
+
+        self.assertFalse(button.is_active)
+        mouse_is_over_button = button.is_over((5, 10))
+        self.assertFalse(mouse_is_over_button)
+        self.assertFalse(button.is_active)
+
+    def test_is_over_x_at_upper_edge_plus_one(self, mock_sys_font, mock_image_load, mock_transform_scale):
+        # button rect top left (5,5) bottom right (15,15)
+        button = Button(5, 5, 10, 10)
+
+        self.assertFalse(button.is_active)
+        mouse_is_over_button = button.is_over((15, 10))
+        self.assertFalse(mouse_is_over_button)
+        self.assertFalse(button.is_active)
+
+    def test_is_over_y_at_lower_edge_minus_one(self, mock_sys_font, mock_image_load, mock_transform_scale):
+        # button rect top left (5,5) bottom right (15,15)
+        button = Button(5, 5, 10, 10)
+
+        self.assertFalse(button.is_active)
+        mouse_is_over_button = button.is_over((10, 5))
+        self.assertFalse(mouse_is_over_button)
+        self.assertFalse(button.is_active)
+
+    def test_is_over_y_at_upper_edge_plus_one(self, mock_sys_font, mock_image_load, mock_transform_scale):
+        # button rect top left (5,5) bottom right (15,15)
+        button = Button(5, 5, 10, 10)
+
+        self.assertFalse(button.is_active)
+        mouse_is_over_button = button.is_over((10, 15))
+        self.assertFalse(mouse_is_over_button)
+        self.assertFalse(button.is_active)
+
 
 def main():
     unittest.main()
