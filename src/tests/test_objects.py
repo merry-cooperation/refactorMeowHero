@@ -1,6 +1,7 @@
 import unittest
 from unittest import TestCase
 from unittest.mock import patch, Mock
+import pygame
 from modules.objects import MeowHero, Health, Bullet
 
 
@@ -77,6 +78,14 @@ class TestBullet(TestCase):
 
         bullet = Bullet(1, "Multiplayer")
         mock_get_rect.assert_called_once()
+
+    def test_bullet_image_raises_attribute_error(self, mock_image_load, mock_transform_scale):
+        bullet = Bullet(1, "Simple")
+        self.assertRaises(AttributeError, getattr, bullet, 'image')
+
+    def test_bullet_isinstance_pygame_sprite(self, mock_image_load, mock_transform_scale):
+        bullet = Bullet(1, "Simple")
+        self.assertIsInstance(bullet, pygame.sprite.Sprite)
 
 
 def main():
