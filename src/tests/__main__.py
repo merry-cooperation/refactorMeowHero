@@ -1,6 +1,7 @@
 import unittest
 
 from tests.test_game import TestEnemySwitchByLevel
+from tests.test_interface import TestButton
 
 
 def main():
