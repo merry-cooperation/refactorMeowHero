@@ -2,6 +2,8 @@
 
 Refactoring task, original at [link](https://github.com/somnoynadno/meow_hero)
 
+Test summary [link](src/tests/README)
+
 ## Set up environment
 
 Install Miniconda, then
