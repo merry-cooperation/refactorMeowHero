@@ -4,7 +4,7 @@ from unittest.mock import patch
 from modules.interface import Button
 
 
-class TestButtonDataClump(TestCase):
+class TestButton(TestCase):
     @patch('modules.interface.pygame.transform.scale')
     @patch('modules.interface.pygame.image.load')
     @patch('modules.interface.pygame.font.SysFont')
