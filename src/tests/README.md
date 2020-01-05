@@ -12,6 +12,8 @@ long method|[#23][i23]|[link](test_layouts.py#L18-L63)|2|Использован�
 refused bequest|[#45][i45]|[link](test_objects.py#L82-88)|2|
 other|[#39][i39]|[link](test_interface.py#L46-L132)|10|Применено структурированное базисное тестирование, угадывание ошибок, анализ граничных условий
 
+Помимо этих, остались только недостатки типов `bad name`, `bad comment`, `speculative generality` 
+
 [i1]: https://github.com/merry-cooperation/refactorMeowHero/issues/1
 [i7]: https://github.com/merry-cooperation/refactorMeowHero/issues/7
 [i17]: https://github.com/merry-cooperation/refactorMeowHero/issues/17
