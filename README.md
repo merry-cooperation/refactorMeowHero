@@ -8,12 +8,24 @@ Install Miniconda, then
 ```
 conda env create -f environment.yml -n <env_name>
 conda activate <env_name>
+cd <project_root>/src
 ```
 
 ## Run game
 
 ```
-cd src && python main.py
+python main.py
+```
+
+## Run tests
+
+### Run all
+```
+python -m tests
+```
+### Run separately
+```
+python -m tests.<test_module>
 ```
 
 > # Meow Hero
