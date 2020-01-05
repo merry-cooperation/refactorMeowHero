@@ -1,3 +1,4 @@
+import unittest
 from unittest import TestCase
 from modules.game import enemy_switch_by_level
 from modules.objects import Children, Dog, DancingCat, CatBossEnemy
