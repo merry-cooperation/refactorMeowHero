@@ -1,4 +1,4 @@
-# Tests doc
+# Tests summary
 
 Code flaw type|Code flaw | Tests link | Tests num | Additional
 --- | --- | --- | --- | ---
