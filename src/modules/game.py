@@ -7,7 +7,7 @@ import pygame
 from pygame.locals import *
 
 from . import interface, objects, layouts
-
+from .config import ENEMY_CONFIG
 """
 Всё отвечающее за игру
 """
@@ -114,15 +114,11 @@ def story_loop(window_surface, level_number, prefix, player):
 
 
 def enemy_switch_by_level(level_number):
-    # set up enemies
-    if level_number == 2:
-        return objects.Children("Children", level_number)
-    elif level_number == 3:
-        return objects.Dog("Dog", level_number)
-    elif level_number == 8:
-        return objects.DancingCat("Dancing cat", level_number)
-    elif level_number == 11:
-        return objects.CatBossEnemy("Cat Boss", level_number)
+    try:
+        _, name, enemy_class = ENEMY_CONFIG[level_number]
+        return enemy_class(name, level_number)
+    except KeyError as e:
+        return None
 
 
 def game_loop(window_surface, level_number, player):
@@ -177,8 +173,10 @@ def game_loop(window_surface, level_number, player):
     handler.close()
 
     # setting spawn probability and level time
-    enemy_spawn_proba = {2: 1, 3: 0.9, 8: 0.42, 11: 0.20}
-    spawn_proba = enemy_spawn_proba[int(level_number)]
+    try:
+        spawn_proba, _, _ = ENEMY_CONFIG[int(level_number)]
+    except KeyError as e:
+        spawn_proba = 0
     # main_timer = 50
     main_timer = 10 * level_number + 60
 
