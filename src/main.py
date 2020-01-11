@@ -43,11 +43,10 @@ def draw_level_buttons(window_surface, player):
         w, h = WINDOW_WIDTH / 8, WINDOW_HEIGHT / 6
         if i + 1 in player.levels:
             button = interface.Button((x, y, w, h), str(i + 1))
-            button.font = pygame.font.SysFont(None, 64)
         else:
             button = interface.Button((x, y, w, h), str(i + 1), True)
-            button.font = pygame.font.SysFont(None, 64)
 
+        button.font = pygame.font.SysFont(None, 64)
         buttons.append(button)
 
     button_back = interface.Button((20, 20, WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10), "Back")
@@ -123,11 +122,11 @@ def main_menu(window_surface):  # show the "Main menu" screen
     not_you_text_button = interface.TextView(font_2, COLOR_RED, WINDOW_WIDTH / 5, 90, "Not you, dude?")
 
     button_single = interface.Button((WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 4,
-                                     WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8), "1 Player")
+                                      WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8), "1 Player")
     button_two = interface.Button((WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 2,
-                                  WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8), "2 Players")
+                                   WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8), "2 Players")
     button_quit = interface.Button((WINDOW_WIDTH / 2 + 100, 3 * WINDOW_HEIGHT / 4,
-                                   WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8), "Quit")
+                                    WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8), "Quit")
 
     button_stats = interface.Button((50, 140, WINDOW_WIDTH / 8, WINDOW_HEIGHT / 7), "Stats")
     button_skins = interface.Button((260, 140, WINDOW_WIDTH / 8, WINDOW_HEIGHT / 7), "Skins")
