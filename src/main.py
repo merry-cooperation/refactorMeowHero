@@ -38,16 +38,13 @@ def draw_level_buttons(window_surface, player):
     buttons = list()
 
     for i in range(12):
+        x = WINDOW_WIDTH / 2 + (i % 3) * (WINDOW_WIDTH / 8 + 40) + 50
+        y = WINDOW_HEIGHT / 12 + int(i / 3) * (WINDOW_HEIGHT / 8 + 70)
+        w, h = WINDOW_WIDTH / 8, WINDOW_HEIGHT / 6
         if i + 1 in player.levels:
-            x = WINDOW_WIDTH / 2 + (i % 3) * (WINDOW_WIDTH / 8 + 40) + 50
-            y = WINDOW_HEIGHT / 12 + int(i / 3) * (WINDOW_HEIGHT / 8 + 70)
-            w, h = WINDOW_WIDTH / 8, WINDOW_HEIGHT / 6
             button = interface.Button((x, y, w, h), str(i + 1))
             button.font = pygame.font.SysFont(None, 64)
         else:
-            x = WINDOW_WIDTH / 2 + (i % 3) * (WINDOW_WIDTH / 8 + 40) + 50
-            y = WINDOW_HEIGHT / 12 + int(i / 3) * (WINDOW_HEIGHT / 8 + 70)
-            w, h = WINDOW_WIDTH / 8, WINDOW_HEIGHT / 6
             button = interface.Button((x, y, w, h), str(i + 1), True)
             button.font = pygame.font.SysFont(None, 64)
 
