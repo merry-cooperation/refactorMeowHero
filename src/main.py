@@ -129,9 +129,13 @@ def main_menu(window_surface):  # show the "Main menu" screen
     button_two = interface.Button((x, y_two, w, h), "2 Players")
     button_quit = interface.Button((x, y_quit, w, h), "Quit")
 
-    button_stats = interface.Button((50, 140, WINDOW_WIDTH / 8, WINDOW_HEIGHT / 7), "Stats")
-    button_skins = interface.Button((260, 140, WINDOW_WIDTH / 8, WINDOW_HEIGHT / 7), "Skins")
-    button_future = interface.Button((470, 140, WINDOW_WIDTH / 8, WINDOW_HEIGHT / 7), "Info")
+    x_stats, x_skins, x_future = 50, 260, 470
+    y = 140
+    w, h = WINDOW_WIDTH / 8, WINDOW_HEIGHT / 7
+
+    button_stats = interface.Button((x_stats, y, w, h), "Stats")
+    button_skins = interface.Button((x_skins, y, w, h), "Skins")
+    button_future = interface.Button((x_future, y, w, h), "Info")
 
     drawable = list()
     drawable.append(greeting_text)
