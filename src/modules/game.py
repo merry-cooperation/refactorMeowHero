@@ -70,7 +70,7 @@ def story_loop(window_surface, level_number, prefix, player):
     handler.close()
 
     font = pygame.font.SysFont(None, 60)
-    text_view = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH/6+50, WINDOW_HEIGHT/10)
+    text_view = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH / 6 + 50, WINDOW_HEIGHT / 10)
 
     window_surface.fill(COLOR_BLACK)
 
@@ -157,12 +157,12 @@ def game_loop(window_surface, level_number, player):
     font = pygame.font.SysFont(None, 60)
     score_text = interface.TextView(font, COLOR_WHITE, 10, 0)
     top_score_text = interface.TextView(font, COLOR_WHITE, 10, 40)
-    timer_text = interface.TextView(font, COLOR_WHITE, 10*WINDOW_WIDTH/12, 10)
+    timer_text = interface.TextView(font, COLOR_WHITE, 10 * WINDOW_WIDTH / 12, 10)
 
     meow_hero = objects.MeowHero(player.current_skin)
-    meow_hero.rect.move_ip(int(WINDOW_WIDTH/2), 7*int(WINDOW_HEIGHT/8))
+    meow_hero.rect.move_ip(int(WINDOW_WIDTH / 2), 7 * int(WINDOW_HEIGHT / 8))
 
-    health_points = objects.Health(1, WINDOW_WIDTH/30, WINDOW_HEIGHT/30)
+    health_points = objects.Health(1, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
 
     bullets = []
     enemies = []
@@ -177,10 +177,10 @@ def game_loop(window_surface, level_number, player):
     handler.close()
 
     # setting spawn probability and level time
-    enemy_spawn_proba = {2:1, 3:0.9, 8:0.42, 11:0.20}
+    enemy_spawn_proba = {2: 1, 3: 0.9, 8: 0.42, 11: 0.20}
     spawn_proba = enemy_spawn_proba[int(level_number)]
     # main_timer = 50
-    main_timer = 10*level_number + 60
+    main_timer = 10 * level_number + 60
 
     move_left = move_right = move_up = move_down = False
     pygame.mixer.music.play(-1, 0.0)
@@ -362,7 +362,7 @@ def game_loop(window_surface, level_number, player):
     pygame.mouse.set_visible(True)
 
     if victory:
-        score = score + meow_hero.life*1000
+        score = score + meow_hero.life * 1000
         # checking for new record
         victory_sound.play()
 
@@ -383,8 +383,8 @@ def game_loop(window_surface, level_number, player):
         else:
             layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, False, score, False, new_skin)
         victory_sound.stop()
-        if level_number+1 not in player.levels:
-            player.levels.append(int(level_number+1))
+        if level_number + 1 not in player.levels:
+            player.levels.append(int(level_number + 1))
     else:
         game_over_sound.play()
         layouts.defeat_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -453,19 +453,19 @@ def boss_game_loop(window_surface, level_number, player):
         enemies.append(enemy)
     elif level_number == 6:
         for i in range(4):
-            enemy = objects.Teacher(str(i+1), level_number)
-            enemy.rect.move_ip(i*300, 0)
+            enemy = objects.Teacher(str(i + 1), level_number)
+            enemy.rect.move_ip(i * 300, 0)
             enemies.append(enemy)
     elif level_number == 7:
         enemy = objects.Ejudje("Ejudje", level_number)
         enemies.append(enemy)
     elif level_number == 9:
         enemy = objects.DedMoroz("Ded Moroz", level_number)
-        enemy.rect.move_ip(WINDOW_WIDTH/2, 0)
+        enemy.rect.move_ip(WINDOW_WIDTH / 2, 0)
         enemies.append(enemy)
     elif level_number == 10:
         enemy = objects.DiplomCommittee("Diplom Committee", level_number)
-        enemy.rect.move_ip(WINDOW_WIDTH/2, 0)
+        enemy.rect.move_ip(WINDOW_WIDTH / 2, 0)
         enemies.append(enemy)
     elif level_number == 12:
         enemy = objects.OlegAlexeevich("Oleg Alexeevich", level_number)
@@ -668,7 +668,7 @@ def boss_game_loop(window_surface, level_number, player):
 
     if victory:
         # checking for new record
-        score = int((score + meow_hero.life*1000)*100/main_timer)
+        score = int((score + meow_hero.life * 1000) * 100 / main_timer)
         victory_sound.play()
 
         new_skin = False
@@ -688,8 +688,8 @@ def boss_game_loop(window_surface, level_number, player):
         else:
             layouts.victory_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT, True, score, False, new_skin)
         victory_sound.stop()
-        if level_number+1 not in player.levels:
-            player.levels.append(int(level_number+1))
+        if level_number + 1 not in player.levels:
+            player.levels.append(int(level_number + 1))
     else:
         game_over_sound.play()
         layouts.defeat_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
