@@ -28,7 +28,7 @@ class Button:
 
     def draw(self, window, outline=None):
         if outline:
-            pygame.draw.rect(window, outline, (self.x-2, self.y-2, self.w+4, self.h+4), 0)
+            pygame.draw.rect(window, outline, (self.x - 2, self.y - 2, self.w + 4, self.h + 4), 0)
 
         if self.is_off:
             window.blit(self.image_off, [int(self.x), int(self.y)])
@@ -38,7 +38,7 @@ class Button:
             window.blit(self.image, [int(self.x), int(self.y)])
 
         text = self.font.render(self.text, 1, (0, 0, 0))
-        window.blit(text, (self.x+(self.w/2-text.get_width()/2), self.y+(self.h/2-text.get_height()/2)))
+        window.blit(text, (self.x + (self.w / 2 - text.get_width() / 2), self.y + (self.h / 2 - text.get_height() / 2)))
 
     def is_over(self, pos):  # pos is the mouse position or a tuple of (x,y) coordinates
         if pos[0] > self.x and pos[0] < self.x + self.w:
@@ -73,7 +73,7 @@ class TextView:
         window.blit(self.text_object, self.rect)
 
     def next_line(self, size):
-        self.rect.move_ip(0, size+2)
+        self.rect.move_ip(0, size + 2)
 
     def is_over(self, pos):  # pos is the mouse position or a tuple of (x,y) coordinates
         if pos[0] > self.rect.left and pos[0] < self.rect.right:
@@ -141,7 +141,7 @@ class InputBox:
 
     def update(self):
         # Resize the box if the text is too long.
-        width = max(200, self.txt_surface.get_width()+10)
+        width = max(200, self.txt_surface.get_width() + 10)
         self.rect.w = width
 
     def draw(self, window):
@@ -166,7 +166,7 @@ def main():
     screen = pygame.display.set_mode(size)
 
     image = pygame.image.load('../../drawable/buttons/red_button.png')
-    image = pygame.transform.scale(image, (int(WINDOW_WIDTH/3), int(WINDOW_HEIGHT/8)))
+    image = pygame.transform.scale(image, (int(WINDOW_WIDTH / 3), int(WINDOW_HEIGHT / 8)))
 
     button = Button(image, 50, 100, 50, 100, "test")
 
@@ -261,6 +261,6 @@ def load_player_by_path(path):
 
 def create_empty_profile(nickname):
     handler = open("../stats/players/" + nickname + ".json", 'w')
-    data = {"name": nickname, "score": 0, "levels": [1], "skins": [1], "current_skin" : 1}
+    data = {"name": nickname, "score": 0, "levels": [1], "skins": [1], "current_skin": 1}
     json.dump(data, handler)
     handler.close()
