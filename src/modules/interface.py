@@ -8,7 +8,8 @@ import pygame
 
 
 class Button:
-    def __init__(self, x, y, w, h, text='Hello', is_off=False):
+    def __init__(self, rect, text='Hello', is_off=False):
+        x, y, w, h = rect
         self.x = int(x)
         self.y = int(y)
         self.w = int(w)
@@ -105,7 +106,8 @@ class Player:
 
 
 class InputBox:
-    def __init__(self, x, y, w, h, text=''):
+    def __init__(self, rect, text=''):
+        x, y, w, h = rect
         self.COLOR_INACTIVE = (180, 0, 0)  # red colors
         self.COLOR_ACTIVE = (255, 0, 0)
         self.rect = pygame.Rect(x, y, w, h)

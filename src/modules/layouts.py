@@ -25,10 +25,10 @@ COLOR_BLUE = (0, 0, 255)
 # return true if quit
 def interruption_menu(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     pygame.mouse.set_visible(True)
-    button_continue = interface.Button(WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 4,
-                                     WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8, "Continue")
-    button_quit = interface.Button(WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 2,
-                                  WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8, "Quit")
+    button_continue = interface.Button((WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 4,
+                                     WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8), "Continue")
+    button_quit = interface.Button((WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 2,
+                                  WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8), "Quit")
 
     while True:
         for event in pygame.event.get():
@@ -72,8 +72,8 @@ def stats_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                                        data[str(i+1)][0] + "    " + str(data[str(i+1)][1]))
         drawable.append(text_view)
 
-    button_close = interface.Button(WINDOW_WIDTH / 2 - 260 + WINDOW_WIDTH / 3 - WINDOW_WIDTH / 20, WINDOW_HEIGHT / 5 - 50,
-                              WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20, "x")
+    button_close = interface.Button((WINDOW_WIDTH / 2 - 260 + WINDOW_WIDTH / 3 - WINDOW_WIDTH / 20, WINDOW_HEIGHT / 5 - 50,
+                              WINDOW_WIDTH / 20, WINDOW_HEIGHT / 20), "x")
 
     while True:
         for event in pygame.event.get():
@@ -185,7 +185,7 @@ def create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
     rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
     rect_border.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
 
-    input_box = interface.InputBox(WINDOW_WIDTH/4, 4*WINDOW_HEIGHT/8, 220, 80)
+    input_box = interface.InputBox((WINDOW_WIDTH / 4, 4 * WINDOW_HEIGHT / 8, 220, 80))
 
     font0 = pygame.font.SysFont(None, 100)
     font1 = pygame.font.SysFont(None, 78)
@@ -194,8 +194,8 @@ def create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
     text_write_name = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Write your name here")
     text_write_name.rect.center = (WINDOW_WIDTH / 2, 2*WINDOW_HEIGHT / 5)
 
-    button_done = interface.Button(2*WINDOW_WIDTH / 3, 4*WINDOW_HEIGHT / 8,
-                                   WINDOW_WIDTH / 15, WINDOW_HEIGHT / 10, "Done")
+    button_done = interface.Button((2*WINDOW_WIDTH / 3, 4*WINDOW_HEIGHT / 8,
+                                   WINDOW_WIDTH / 15, WINDOW_HEIGHT / 10), "Done")
     done = False
     while not done:
         for event in pygame.event.get():
@@ -277,14 +277,14 @@ def change_skin_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
 
     for i, skin in enumerate(skin_levels):
         if skin in player.skins:
-            button = interface.Button(WINDOW_WIDTH / 5 + (i % 3) * (WINDOW_WIDTH / 6 + 40) + 50,
+            button = interface.Button((WINDOW_WIDTH / 5 + (i % 3) * (WINDOW_WIDTH / 6 + 40) + 50,
                                           WINDOW_HEIGHT / 3 + int(i / 3) * (WINDOW_HEIGHT / 8 + 70),
-                                          WINDOW_WIDTH / 8, WINDOW_HEIGHT / 6, str(skin))
+                                          WINDOW_WIDTH / 8, WINDOW_HEIGHT / 6), str(skin))
             button.font = pygame.font.SysFont(None, 64)
         else:
-            button = interface.Button(WINDOW_WIDTH / 5 + (i % 3) * (WINDOW_WIDTH / 6 + 40) + 50,
+            button = interface.Button((WINDOW_WIDTH / 5 + (i % 3) * (WINDOW_WIDTH / 6 + 40) + 50,
                                       WINDOW_HEIGHT / 3 + int(i / 3) * (WINDOW_HEIGHT / 8 + 70),
-                                      WINDOW_WIDTH / 8, WINDOW_HEIGHT / 6, str(skin), True)
+                                      WINDOW_WIDTH / 8, WINDOW_HEIGHT / 6), str(skin), True)
             button.font = pygame.font.SysFont(None, 64)
 
         buttons.append(button)
@@ -432,8 +432,8 @@ def giving_port_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
     pygame.display.update()
 
-    button_done = interface.Button(2 * WINDOW_WIDTH / 3, 5 * WINDOW_HEIGHT / 8 + 60,
-                                   WINDOW_WIDTH / 6, WINDOW_HEIGHT / 8, "We are ready!")
+    button_done = interface.Button((2 * WINDOW_WIDTH / 3, 5 * WINDOW_HEIGHT / 8 + 60,
+                                   WINDOW_WIDTH / 6, WINDOW_HEIGHT / 8), "We are ready!")
 
     while True:
         for event in pygame.event.get():
