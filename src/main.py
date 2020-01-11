@@ -153,31 +153,25 @@ def main_menu(window_surface):  # show the "Main menu" screen
                 print("Goodbye")
                 game.terminate(player)
 
-            if event.type == KEYUP:
+            elif event.type == KEYUP:
                 if event.key == K_ESCAPE:
                     game.terminate(player)
 
-            if button_single.is_over(mouse_pos):
-                if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if button_single.is_over(mouse_pos):
                     levels_menu(window_surface, player)
-            elif button_two.is_over(mouse_pos):
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                elif button_two.is_over(mouse_pos):
                     client.two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
-            elif button_quit.is_over(mouse_pos):
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                elif button_quit.is_over(mouse_pos):
                     game.terminate(player)
-            elif not_you_text_button.is_over(mouse_pos):
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                elif not_you_text_button.is_over(mouse_pos):
                     player = layouts.create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT)
                     greeting_text.text = "Hello, " + player.name + "!"
-            elif button_stats.is_over(mouse_pos):
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                elif button_stats.is_over(mouse_pos):
                     layouts.stats_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
-            elif button_skins.is_over(mouse_pos):
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                elif button_skins.is_over(mouse_pos):
                     player = layouts.change_skin_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT)
-            elif button_future.is_over(mouse_pos):
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                elif button_future.is_over(mouse_pos):
                     # I don't know why I need this button
                     layouts.future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
 
