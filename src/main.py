@@ -16,9 +16,9 @@ background_image_levels = pygame.transform.scale(background_image_levels, (WINDO
 # colors
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
-COLOR_BRIGHT_GREY = (200, 200, 200) 
-COLOR_RED = (255, 0, 0)  
- 
+COLOR_BRIGHT_GREY = (200, 200, 200)
+COLOR_RED = (255, 0, 0)
+
 
 def init_window(full_screen=False):  # set up pygame, the window, and the mouse cursor
     pygame.init()
@@ -100,7 +100,7 @@ def levels_menu(window_surface, player):
             pygame.display.update()
 
 
-def main_menu(window_surface):     # show the "Main menu" screen
+def main_menu(window_surface):  # show the "Main menu" screen
     # preparing text
     font_0 = pygame.font.SysFont("rachana", 140)
 
@@ -120,19 +120,19 @@ def main_menu(window_surface):     # show the "Main menu" screen
 
     # creating text and buttons
     greeting_text = interface.TextView(font_1, COLOR_BLACK, 15, 15, "Hello, " + player_name + "!")
-    game_title_text = interface.TextView(font_0, COLOR_BLACK, WINDOW_WIDTH/2, 50, "MEOW HERO")
-    not_you_text_button = interface.TextView(font_2, COLOR_RED, WINDOW_WIDTH/5, 90, "Not you, dude?")
+    game_title_text = interface.TextView(font_0, COLOR_BLACK, WINDOW_WIDTH / 2, 50, "MEOW HERO")
+    not_you_text_button = interface.TextView(font_2, COLOR_RED, WINDOW_WIDTH / 5, 90, "Not you, dude?")
 
-    button_single = interface.Button(WINDOW_WIDTH/2+100, WINDOW_HEIGHT/4,
-                                   WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "1 Player")
-    button_two = interface.Button(WINDOW_WIDTH/2+100, WINDOW_HEIGHT/2,
-                                WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "2 Players")
-    button_quit = interface.Button(WINDOW_WIDTH/2+100, 3*WINDOW_HEIGHT/4,
-                                 WINDOW_WIDTH/3, WINDOW_HEIGHT/8, "Quit")
+    button_single = interface.Button(WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 4,
+                                     WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8, "1 Player")
+    button_two = interface.Button(WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 2,
+                                  WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8, "2 Players")
+    button_quit = interface.Button(WINDOW_WIDTH / 2 + 100, 3 * WINDOW_HEIGHT / 4,
+                                   WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8, "Quit")
 
-    button_stats = interface.Button(50, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Stats")
-    button_skins = interface.Button(260, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Skins")
-    button_future = interface.Button(470, 140, WINDOW_WIDTH/8, WINDOW_HEIGHT/7, "Info")
+    button_stats = interface.Button(50, 140, WINDOW_WIDTH / 8, WINDOW_HEIGHT / 7, "Stats")
+    button_skins = interface.Button(260, 140, WINDOW_WIDTH / 8, WINDOW_HEIGHT / 7, "Skins")
+    button_future = interface.Button(470, 140, WINDOW_WIDTH / 8, WINDOW_HEIGHT / 7, "Info")
 
     drawable = list()
     drawable.append(greeting_text)
