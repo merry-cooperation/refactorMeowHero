@@ -10,9 +10,13 @@ WINDOW_HEIGHT = 900
 """
 
 
-def random_image_loader(path, max_num):
+def random_image_path(path, max_num):
     number = random.randint(1, max_num)
-    return pygame.image.load(path + str(number) + '.png')
+    return path + str(number) + '.png'
+
+
+def random_image_loader(path, max_num):
+    return pygame.image.load(random_image_path(path, max_num))
 
 
 class MeowHero(pygame.sprite.Sprite):
@@ -52,7 +56,7 @@ class MeowHero(pygame.sprite.Sprite):
         window.blit(self.image_surface, self.rect)
 
     def move(self, x_d, y_d):
-        self.rect.move_ip(x_d*self.move_rate, y_d*self.move_rate)
+        self.rect.move_ip(x_d * self.move_rate, y_d * self.move_rate)
 
     def attack(self):
         pass
@@ -71,7 +75,7 @@ class Health(pygame.sprite.Sprite):
 
     def draw(self, window, count):
         for i in range(count):
-            window.blit(self.image_surface, [0+i*self.w, 80])
+            window.blit(self.image_surface, [0 + i * self.w, 80])
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -92,7 +96,7 @@ class Bullet(pygame.sprite.Sprite):
             self.life = 1
 
             self.x = 0
-            self.y = self.speed*(-1)
+            self.y = self.speed * (-1)
 
         if type == "Multiplayer":
             # TODO: different images here
@@ -174,7 +178,7 @@ class Children(CommonEnemy):
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
-        self.rect.move_ip(random.randint(50, WINDOW_WIDTH-50), 0)
+        self.rect.move_ip(random.randint(50, WINDOW_WIDTH - 50), 0)
 
     def attack(self, *args):
         pass
@@ -200,7 +204,7 @@ class Dog(CommonEnemy):
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
-        self.rect.move_ip(random.randint(50, WINDOW_WIDTH-50), 0)
+        self.rect.move_ip(random.randint(50, WINDOW_WIDTH - 50), 0)
 
     def attack(self, *args):
         pass
@@ -232,7 +236,7 @@ class DancingCat(CommonEnemy):
         self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
 
-        self.rect.move_ip(random.randint(50, WINDOW_WIDTH-50), 0)
+        self.rect.move_ip(random.randint(50, WINDOW_WIDTH - 50), 0)
 
     def attack(self, pos):
         if self.reload == self.reload_time:
@@ -299,7 +303,7 @@ class DogEnemyMultiplayer(Enemy):
 
     def attack(self, *args):
         if self.reload == self.reload_time:
-            bullet = EnemyBullet(self.level+12)
+            bullet = EnemyBullet(self.level + 12)
             bullet.rect.center = self.rect.center
             self.reload = 0
             return bullet
@@ -466,7 +470,6 @@ class DedMoroz(Boss):
         # draw damaged boss
         num = int(self.life / self.damage_life) + 1
 
-
         if num != self.cur_num:
             self.cur_num = num
             self.image = pygame.image.load('../drawable/sprites/enemy/bosses/ded_moroz/ded_moroz' + str(num) + '.png')
@@ -490,7 +493,6 @@ class Ejudje(Boss):
 
         self.damage_life = self.life / self.cur_num
         self.life -= 1
-
 
     def attack(self, pos):
         if self.reload == self.reload_time:
@@ -587,7 +589,7 @@ class Teacher(Boss):
 
             dice = random.random()
             if dice < 0.05:
-                self.move_time = random.randint(20, 120) 
+                self.move_time = random.randint(20, 120)
                 coin = random.randint(1, 4)
                 if coin == 1:
                     self.move_right = True
@@ -619,7 +621,7 @@ class OlegAlexeevich(Boss):
     def attack(self, pos):
         if self.reload >= self.reload_time:
             bullet = EnemyBullet(self.level, "Boss NoResize RandomSpeed", pos, self.rect.center)
-            bullet.rect.center = (random.randint(100, WINDOW_WIDTH-100), 0)
+            bullet.rect.center = (random.randint(100, WINDOW_WIDTH - 100), 0)
             self.reload = 0
             return bullet
         else:
@@ -678,12 +680,13 @@ class EnemyBullet(pygame.sprite.Sprite):
             image = random_image_loader('../drawable/weapons/questions/question', 15)
         elif level == 12:
             image = random_image_loader('../drawable/weapons/projects/project', 30)
-            image = pygame.transform.scale(image, (int(image.get_width()/2), int(image.get_height()/2)))
+            image = pygame.transform.scale(image, (int(image.get_width() / 2), int(image.get_height() / 2)))
         else:
             image = pygame.image.load('../drawable/weapons/enemy_bullets/enemy_bullet' + str(level) + '.png')
 
         if "NoResize" in self.bullet_type:
-            self.image_surface = pygame.transform.scale(image, (int(image.get_width()/2), int(image.get_height()/2)))
+            self.image_surface = pygame.transform.scale(image,
+                                                        (int(image.get_width() / 2), int(image.get_height() / 2)))
         else:
             self.image_surface = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image_surface.get_rect()
@@ -693,10 +696,10 @@ class EnemyBullet(pygame.sprite.Sprite):
             x0, y0 = args[1]
             x -= x0
             y -= y0
-            z = (x**2 + y**2)**(1/2)
-            coef = z/self.speed
-            self.x = int(x/coef)
-            self.y = int(y/coef)
+            z = (x ** 2 + y ** 2) ** (1 / 2)
+            coef = z / self.speed
+            self.x = int(x / coef)
+            self.y = int(y / coef)
         else:
             self.x = 0
             self.y = self.speed
@@ -709,7 +712,7 @@ class EnemyBullet(pygame.sprite.Sprite):
 
 
 class Bonus(pygame.sprite.Sprite):
-    def __init__(self, bonus_type, level = 12):
+    def __init__(self, bonus_type, level=12):
         super().__init__()
 
         self.w = int(WINDOW_WIDTH / 24)
