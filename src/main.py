@@ -121,12 +121,13 @@ def main_menu(window_surface):  # show the "Main menu" screen
     game_title_text = interface.TextView(font_0, COLOR_BLACK, WINDOW_WIDTH / 2, 50, "MEOW HERO")
     not_you_text_button = interface.TextView(font_2, COLOR_RED, WINDOW_WIDTH / 5, 90, "Not you, dude?")
 
-    button_single = interface.Button((WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 4,
-                                      WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8), "1 Player")
-    button_two = interface.Button((WINDOW_WIDTH / 2 + 100, WINDOW_HEIGHT / 2,
-                                   WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8), "2 Players")
-    button_quit = interface.Button((WINDOW_WIDTH / 2 + 100, 3 * WINDOW_HEIGHT / 4,
-                                    WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8), "Quit")
+    x = WINDOW_WIDTH / 2 + 100
+    y_single, y_two, y_quit = WINDOW_HEIGHT / 4, WINDOW_HEIGHT / 2, 3 * WINDOW_HEIGHT / 4
+    w, h = WINDOW_WIDTH / 3, WINDOW_HEIGHT / 8
+
+    button_single = interface.Button((x, y_single, w, h), "1 Player")
+    button_two = interface.Button((x, y_two, w, h), "2 Players")
+    button_quit = interface.Button((x, y_quit, w, h), "Quit")
 
     button_stats = interface.Button((50, 140, WINDOW_WIDTH / 8, WINDOW_HEIGHT / 7), "Stats")
     button_skins = interface.Button((260, 140, WINDOW_WIDTH / 8, WINDOW_HEIGHT / 7), "Skins")
