@@ -355,7 +355,7 @@ class EGE(Boss):
 
     # TODO: change this
     def attack(self, pos):
-        self.speed = random.randint(2, 7)
+        self.speed_x = random.randint(2, 7)
         if self.reload == self.reload_time:
             bullet = EnemyBullet(4, "Boss InHero", pos, self.rect.center)
             bullet.rect.center = self.rect.center
