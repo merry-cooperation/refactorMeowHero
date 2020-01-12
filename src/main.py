@@ -55,7 +55,7 @@ def levels_menu(window_surface, player):
 
             if event.type == QUIT:
                 print("Goodbye")
-                game.terminate(player)
+                game.save_and_exit(player)
 
             for button in buttons:
                 if button.is_over(mouse_pos):
@@ -140,11 +140,11 @@ def main_menu(window_surface, background_image_main):  # show the "Main menu" sc
 
             if event.type == QUIT:
                 print("Goodbye")
-                game.terminate(player)
+                game.save_and_exit(player)
 
             elif event.type == KEYUP:
                 if event.key == K_ESCAPE:
-                    game.terminate(player)
+                    game.save_and_exit(player)
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if button_single.is_over(mouse_pos):
@@ -152,7 +152,7 @@ def main_menu(window_surface, background_image_main):  # show the "Main menu" sc
                 elif button_two.is_over(mouse_pos):
                     client.two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
                 elif button_quit.is_over(mouse_pos):
-                    game.terminate(player)
+                    game.save_and_exit(player)
                 elif not_you_text_button.is_over(mouse_pos):
                     player = layouts.create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT)
                     greeting_text.text = "Hello, " + player.name + "!"

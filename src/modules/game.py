@@ -20,14 +20,16 @@ ENEMY_MAX_COUNT = 40
 SKIN_LEVELS = [1, 6, 8, 9, 10, 12]
 
 
-def terminate(player):
-    # saving current state
+def save_player_state(player):
     print("Levels:", player.levels)
     handler = open("../stats/last_player.txt", 'w')
     handler.write(player.name)
     handler.close()
     player.save_current_state()
 
+
+def save_and_exit(player):
+    save_player_state(player)
     pygame.quit()
     sys.exit()
 
@@ -36,7 +38,7 @@ def wait_for_player_to_press_key(player):
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
-                terminate(player)
+                save_and_exit(player)
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:  # pressing escape quits
                     return
@@ -181,7 +183,7 @@ def game_loop(window_surface, level_number, player):
         # event handling
         for event in pygame.event.get():
             if event.type == QUIT:
-                terminate(player)
+                save_and_exit(player)
 
             if event.type == pygame.USEREVENT:
                 main_timer -= 1
@@ -484,7 +486,7 @@ def boss_game_loop(window_surface, level_number, player):
         # event handling
         for event in pygame.event.get():
             if event.type == QUIT:
-                terminate(player)
+                save_and_exit(player)
 
             if event.type == pygame.USEREVENT:
                 main_timer += 1
