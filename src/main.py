@@ -1,11 +1,7 @@
 import pygame
-
-from modules import interface, layouts, client, game
 from pygame.locals import *
-
-# constants
-WINDOW_WIDTH = 1600
-WINDOW_HEIGHT = 900
+from modules import interface, layouts, client, game
+from modules.display_config import WINDOW_WIDTH, WINDOW_HEIGHT
 
 # constant BG
 background_image_main = pygame.image.load("../drawable/backgrounds/main_menu5.jpg")

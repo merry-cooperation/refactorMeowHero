@@ -1,9 +1,7 @@
 import os
 import random
 import pygame
-
-WINDOW_WIDTH = 1600
-WINDOW_HEIGHT = 900
+from .display_config import WINDOW_WIDTH, WINDOW_HEIGHT
 
 """
 Основные объекты, появляющиеся в игре

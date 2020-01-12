@@ -7,14 +7,12 @@ import pygame
 from pygame.locals import *
 
 from . import interface, objects, layouts
-from .config import ENEMY_CONFIG
+from .game_config import ENEMY_CONFIG
+from .display_config import WINDOW_WIDTH, WINDOW_HEIGHT
+
 """
 Всё отвечающее за игру
 """
-
-# magic
-WINDOW_WIDTH = 1600
-WINDOW_HEIGHT = 900
 
 FPS = 40
 ENEMY_MAX_COUNT = 40

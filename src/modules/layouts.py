@@ -1,7 +1,6 @@
 import json
 import os
 import random
-
 import pygame
 from pygame.locals import *
 from time import sleep
