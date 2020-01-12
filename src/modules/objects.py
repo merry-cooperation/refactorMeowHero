@@ -34,8 +34,8 @@ class GameObject(pygame.sprite.Sprite):
 
 
 class MovingGameObject(GameObject):
-    def __init__(self, w, h, tag, img_path, speed_x, speed_y):
-        super().__init__(w, h, tag, img_path)
+    def __init__(self, speed_x, speed_y, **kwargs):
+        super().__init__(**kwargs)
         self.speed_x = speed_x
         self.speed_y = speed_y
 
@@ -46,11 +46,11 @@ class MovingGameObject(GameObject):
 class MeowHero(MovingGameObject):
     def __init__(self, skin_type):
         super().__init__(
-            int(WINDOW_WIDTH / 15),
-            int(WINDOW_HEIGHT / 8),
-            'MeowHero',
-            '../drawable/sprites/cat_hero/skins/cat' + str(skin_type) + '.png',
-            8, 8
+            8, 8,
+            w=int(WINDOW_WIDTH / 15),
+            h=int(WINDOW_HEIGHT / 8),
+            name='MeowHero',
+            img_path='../drawable/sprites/cat_hero/skins/cat' + str(skin_type) + '.png'
         )
 
         self.life = 9
@@ -101,11 +101,11 @@ class Bullet(MovingGameObject):
             speed_y = -(14 + self.power * 2)
 
         super().__init__(
-            int(WINDOW_WIDTH / 22),
-            int(WINDOW_WIDTH / 22),
-            'Bullet',
-            '../drawable/weapons/bullets/bullet' + str(level) + '.png',
-            0, speed_y
+            0, speed_y,
+            w=int(WINDOW_WIDTH / 22),
+            h=int(WINDOW_WIDTH / 22),
+            name='Bullet',
+            img_path='../drawable/weapons/bullets/bullet' + str(level) + '.png'
         )
 
 
@@ -116,7 +116,7 @@ class Enemy(MovingGameObject):
                  img_path='../drawable/sprites/enemy/enemy_3.png',
                  speed_x=0, speed_y=1):
 
-        super().__init__(w, h, name, img_path, speed_x, speed_y)
+        super().__init__(speed_x, speed_y, w=w, h=h, name=name, img_path=img_path)
 
         self.level = level
 
@@ -629,7 +629,7 @@ class EnemyBullet(MovingGameObject):
             speed_x = 0
             speed_y = speed
 
-        super().__init__(w, h, 'EnemyBullet', img_path, speed_x, speed_y)
+        super().__init__(speed_x, speed_y, w=w, h=h, name='EnemyBullet', img_path=img_path)
 
 
 class Bonus(GameObject):
