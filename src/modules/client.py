@@ -7,6 +7,7 @@ import pygame
 from pygame.locals import *
 
 from . import objects, layouts, interface
+from modules.display_config import WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_WHITE
 
 """
 Game loop для двух игроков.
@@ -21,12 +22,6 @@ PORT = 9027
 FPS = 38
 TIMEOUT_TIME = 0.01
 ENEMY_MAX_COUNT = 16
-
-# colors
-COLOR_WHITE = (255, 255, 255)
-COLOR_BLACK = (0, 0, 0)
-COLOR_BRIGHT_GREY = (200, 200, 200)
-COLOR_RED = (255, 0, 0)
 
 
 def terminate():

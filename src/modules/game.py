@@ -8,7 +8,7 @@ from pygame.locals import *
 
 from . import interface, objects, layouts
 from .game_config import ENEMY_CONFIG
-from .display_config import WINDOW_WIDTH, WINDOW_HEIGHT
+from modules.display_config import WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BLACK, COLOR_WHITE
 
 """
 Всё отвечающее за игру
@@ -18,13 +18,6 @@ FPS = 40
 ENEMY_MAX_COUNT = 40
 
 SKIN_LEVELS = [1, 6, 8, 9, 10, 12]
-
-# colors
-COLOR_WHITE = (255, 255, 255)
-COLOR_BLACK = (0, 0, 0)
-COLOR_BRIGHT_GREY = (200, 200, 200)
-COLOR_RED = (255, 0, 0)
-COLOR_BLUE = (0, 0, 255)
 
 
 def terminate(player):

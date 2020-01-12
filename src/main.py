@@ -1,13 +1,7 @@
 import pygame
 from pygame.locals import *
 from modules import interface, layouts, client, game
-from modules.display_config import WINDOW_WIDTH, WINDOW_HEIGHT
-
-# colors
-COLOR_WHITE = (255, 255, 255)
-COLOR_BLACK = (0, 0, 0)
-COLOR_BRIGHT_GREY = (200, 200, 200)
-COLOR_RED = (255, 0, 0)
+from modules.display_config import WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BLACK, COLOR_RED
 
 
 def init_window(background_image_main, full_screen=False):  # set up pygame, the window, and the mouse cursor
