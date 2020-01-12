@@ -313,7 +313,7 @@ def change_skin_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
         pygame.display.update()
 
 
-def future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
+def credits_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     rect = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3, 2 * WINDOW_HEIGHT / 3))
     rect_border = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3 + 10, 2 * WINDOW_HEIGHT / 3 + 10))
     rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)

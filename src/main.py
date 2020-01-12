@@ -162,7 +162,7 @@ def main_menu(window_surface, background_image_main):  # show the "Main menu" sc
                     player = layouts.change_skin_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT)
                 elif button_future.is_over(mouse_pos):
                     # I don't know why I need this button
-                    layouts.future_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
+                    layouts.credits_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT)
 
         # drawing objects
         window_surface.blit(background_image_main, [0, 0])
