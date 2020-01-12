@@ -644,7 +644,7 @@ class EnemyBullet(DamagebleMixin, MoveMixin, GameObject):
         super().__init__(life=life, speed_x=speed_x, speed_y=speed_y, w=w, h=h, name='EnemyBullet', img_path=img_path)
 
 
-class Bonus(GameObject):
+class Bonus(DamagebleMixin, GameObject):
     def __init__(self, bonus_type, level=12, lifetime=22):
 
         # switching bonus type
@@ -668,16 +668,9 @@ class Bonus(GameObject):
             img_path = '../drawable/other/x2.png'
 
         super().__init__(
-            int(WINDOW_WIDTH / 24),
-            int(WINDOW_WIDTH / 24),
-            bonus_type,
-            img_path
+            life=lifetime,
+            w=int(WINDOW_WIDTH / 24),
+            h=int(WINDOW_WIDTH / 24),
+            name=bonus_type,
+            img_path=img_path
         )
-
-        self.lifetime = lifetime
-
-    def is_alive(self):
-        return self.lifetime > 0
-
-    def decay(self):
-        self.lifetime -= 1

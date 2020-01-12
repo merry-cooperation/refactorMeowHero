@@ -172,7 +172,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
                 # bonus lifetime
                 for bonus in bonuses:
-                    bonus.decay()
+                    bonus.take_damage()
                     if not bonus.is_alive():
                         bonuses.remove(bonus)
 

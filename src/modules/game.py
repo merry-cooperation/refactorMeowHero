@@ -216,7 +216,7 @@ def game_loop(window_surface, level_number, player):
 
                 # bonus lifetime
                 for bonus in bonuses:
-                    bonus.decay()
+                    bonus.take_damage()
                     if not bonus.is_alive():
                         bonuses.remove(bonus)
 
@@ -515,7 +515,7 @@ def boss_game_loop(window_surface, level_number, player):
 
                 # bonus lifetime
                 for bonus in bonuses:
-                    bonus.decay()
+                    bonus.take_damage()
                     if not bonus.is_alive():
                         bonuses.remove(bonus)
 
