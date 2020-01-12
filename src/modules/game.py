@@ -688,4 +688,4 @@ def boss_game_loop(window_surface, level_number, player):
 
     pygame.display.update()
 
-    return True if victory else False
+    return victory
