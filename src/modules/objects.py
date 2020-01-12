@@ -582,7 +582,6 @@ class EnemyBullet(MovingGameObject):
     def __init__(self, level, bullet_type="Simple", *args):
 
         bullet_type = bullet_type.split()
-        self.level = level
 
         if "Boss" in bullet_type:
             w = 100
