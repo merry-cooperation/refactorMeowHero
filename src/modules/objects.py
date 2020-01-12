@@ -140,12 +140,7 @@ class Enemy(GameObject):
             self.reload += 1
 
 
-class CommonEnemy(Enemy):
-    def __init__(self, name, level, w, h, img_path):
-        super().__init__(name, level, w, h, img_path)
-
-
-class Children(CommonEnemy):
+class Children(Enemy):
     def __init__(self, name, level):
         super().__init__(
             name,
@@ -169,7 +164,7 @@ class Children(CommonEnemy):
         self.rect.move_ip(self.direction, self.speed)
 
 
-class Dog(CommonEnemy):
+class Dog(Enemy):
     def __init__(self, name, level):
         super().__init__(
             name,
@@ -194,7 +189,7 @@ class Dog(CommonEnemy):
         self.rect.move_ip(self.direction, self.speed)
 
 
-class DancingCat(CommonEnemy):
+class DancingCat(Enemy):
     def __init__(self, name, level):
         super().__init__(
             name,
@@ -234,7 +229,7 @@ class DancingCat(CommonEnemy):
         self.rect.move_ip(self.direction, self.speed)
 
 
-class CatBossEnemy(CommonEnemy):
+class CatBossEnemy(Enemy):
     def __init__(self, name, level):
         super().__init__(
             name,
