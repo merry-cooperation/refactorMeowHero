@@ -452,7 +452,6 @@ class Ejudje(Boss):
         if self.reload == self.reload_time:
             bullet = EnemyBullet(self.level, "Boss InHero RandomSpeed", pos, self.rect.center)
             bullet.rect.center = self.rect.center
-            bullet.speed += 2
             self.reload = 0
             return bullet
         else:
