@@ -18,7 +18,7 @@ def init_window(background_image_main, full_screen=False):  # set up pygame, the
     return window_surface
 
 
-def draw_level_buttons(window_surface, player):
+def create_level_buttons(window_surface, player):
     buttons = list()
 
     for i in range(12):
@@ -42,7 +42,7 @@ def draw_level_buttons(window_surface, player):
 def levels_menu(window_surface, player):
     background_image_levels = pygame.image.load("../drawable/backgrounds/main_menu5.jpg")
     background_image_levels = pygame.transform.scale(background_image_levels, (WINDOW_WIDTH, WINDOW_HEIGHT))
-    buttons = draw_level_buttons(window_surface, player)
+    buttons = create_level_buttons(window_surface, player)
 
     boss_levels = [1, 4, 5, 6, 7, 9, 10, 12]
 
@@ -74,7 +74,7 @@ def levels_menu(window_surface, player):
                         # print post-story
                         if victory:
                             game.story_loop(window_surface, int(button.text), "post", player)
-                            buttons = draw_level_buttons(window_surface, player)
+                            buttons = create_level_buttons(window_surface, player)
 
             window_surface.blit(background_image_levels, [0, 0])
 
