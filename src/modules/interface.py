@@ -42,11 +42,12 @@ class Button:
         window.blit(text, (self.x + (self.w / 2 - text.get_width() / 2), self.y + (self.h / 2 - text.get_height() / 2)))
 
     def is_over(self, pos):  # pos is the mouse position or a tuple of (x,y) coordinates
-        if pos[0] > self.x and pos[0] < self.x + self.w:
-            if pos[1] > self.y and pos[1] < self.y + self.h:
-                self.is_active = True
-                return True
-        self.is_active = False
+        self.is_active = self.check_pos_in_rect(*pos)
+        return self.is_active
+
+    def check_pos_in_rect(self, x, y):
+        if self.x < x < self.x + self.w and self.y < y < self.y + self.h:
+            return True
         return False
 
 
