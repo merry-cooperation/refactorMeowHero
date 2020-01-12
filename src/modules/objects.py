@@ -43,9 +43,22 @@ class MoveMixin:
         self.rect.move_ip(self.speed_x, self.speed_y)
 
 
-class MeowHero(MoveMixin, GameObject):
+class DamagebleMixin:
+    def __init__(self, life, **kwargs):
+        super().__init__(**kwargs)
+        self.life = life
+
+    def is_alive(self):
+        return self.life > 0
+
+    def take_damage(self, val=1):
+        self.life -= val
+
+
+class MeowHero(DamagebleMixin, MoveMixin, GameObject):
     def __init__(self, skin_type):
         super().__init__(
+            life=9,
             speed_x=8, speed_y=8,
             w=int(WINDOW_WIDTH / 15),
             h=int(WINDOW_HEIGHT / 8),
@@ -53,7 +66,6 @@ class MeowHero(MoveMixin, GameObject):
             img_path='../drawable/sprites/cat_hero/skins/cat' + str(skin_type) + '.png'
         )
 
-        self.life = 9
         self.weapon_power = 1
 
         self.invulnerability = 8
@@ -89,18 +101,19 @@ class Health(GameObject):
             window.blit(self.image_surface, [0 + i * self.w, 80])
 
 
-class Bullet(MoveMixin, GameObject):
+class Bullet(DamagebleMixin, MoveMixin, GameObject):
     def __init__(self, level, type="Simple"):
         if type == 'Simple':
             self.power = 1
-            self.life = 1
+            life = 1
             speed_y = -10
         elif type == 'Multiplayer':
             self.power = level
-            self.life = 1
+            life = 1
             speed_y = -(14 + self.power * 2)
 
         super().__init__(
+            life=life,
             speed_x=0, speed_y=speed_y,
             w=int(WINDOW_WIDTH / 22),
             h=int(WINDOW_WIDTH / 22),
@@ -109,18 +122,17 @@ class Bullet(MoveMixin, GameObject):
         )
 
 
-class Enemy(MoveMixin, GameObject):
+class Enemy(DamagebleMixin, MoveMixin, GameObject):
     def __init__(self, name, level,
                  w=WINDOW_WIDTH / 14,
                  h=WINDOW_HEIGHT / 14,
                  img_path='../drawable/sprites/enemy/enemy_3.png',
                  speed_x=0, speed_y=1):
 
-        super().__init__(speed_x=speed_x, speed_y=speed_y, w=w, h=h, name=name, img_path=img_path)
+        super().__init__(life=level, speed_x=speed_x, speed_y=speed_y, w=w, h=h, name=name, img_path=img_path)
 
         self.level = level
 
-        self.life = level
         self.reload = 0
         self.reload_time = 14 - level
 
@@ -578,7 +590,7 @@ class DiplomCommittee(Teacher):
         self.speed_x = random.randint(3, 7)
 
 
-class EnemyBullet(MoveMixin, GameObject):
+class EnemyBullet(DamagebleMixin, MoveMixin, GameObject):
     def __init__(self, level, bullet_type="Simple", *args):
 
         bullet_type = bullet_type.split()
@@ -587,12 +599,12 @@ class EnemyBullet(MoveMixin, GameObject):
             w = 100
             h = 100
             speed = 8
-            self.life = 10
+            life = 10
         else:
             w = 40
             h = 40
             speed = 5
-            self.life = 1
+            life = 1
 
         if "RandomSpeed" in bullet_type:
             speed = random.randint(2, 9)
@@ -629,7 +641,7 @@ class EnemyBullet(MoveMixin, GameObject):
             speed_x = 0
             speed_y = speed
 
-        super().__init__(speed_x=speed_x, speed_y=speed_y, w=w, h=h, name='EnemyBullet', img_path=img_path)
+        super().__init__(life=life, speed_x=speed_x, speed_y=speed_y, w=w, h=h, name='EnemyBullet', img_path=img_path)
 
 
 class Bonus(GameObject):

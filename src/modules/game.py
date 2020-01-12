@@ -275,14 +275,14 @@ def game_loop(window_surface, level_number, player):
         for enemy in enemies:
             for bullet in bullets:
                 if enemy.rect.colliderect(bullet.rect):
-                    enemy.life -= bullet.power
-                    bullet.life -= 1
+                    enemy.take_damage(bullet.power)
+                    bullet.take_damage()
                     attack_sound.play()
 
         # hitting hero:
         for enemy in enemies:
             if meow_hero.rect.colliderect(enemy.rect) and not meow_hero.invulnerability:
-                meow_hero.life -= 1
+                meow_hero.take_damage()
                 meow_hero.invulnerability += 1
                 enemies.remove(enemy)
                 damage_sound.play()
@@ -290,7 +290,7 @@ def game_loop(window_surface, level_number, player):
         # hitting hero by bullets
         for bullet in enemy_bullets:
             if meow_hero.rect.colliderect(bullet.rect) and not meow_hero.invulnerability:
-                meow_hero.life -= 1
+                meow_hero.take_damage()
                 enemy_bullets.remove(bullet)
                 meow_hero.invulnerability += 1
                 damage_sound.play()
@@ -329,7 +329,7 @@ def game_loop(window_surface, level_number, player):
         # draw enemies
         for enemy in enemies:
             enemy.move()
-            if enemy.rect.top > WINDOW_HEIGHT or enemy.rect.right < 0 or enemy.rect.left > WINDOW_WIDTH or enemy.life <= 0:
+            if enemy.rect.top > WINDOW_HEIGHT or enemy.rect.right < 0 or enemy.rect.left > WINDOW_WIDTH or not enemy.is_alive():
                 enemies.remove(enemy)
                 score += 100 * enemy.level
             enemy.draw(window_surface)
@@ -337,19 +337,19 @@ def game_loop(window_surface, level_number, player):
         # move and draw hero bullets
         for bullet in bullets:
             bullet.move()
-            if bullet.rect.top > WINDOW_HEIGHT or bullet.life <= 0:
+            if bullet.rect.top > WINDOW_HEIGHT or not bullet.is_alive():
                 bullets.remove(bullet)
             bullet.draw(window_surface)
 
         # move and draw enemy bullets
         for bullet in enemy_bullets:
             bullet.move()
-            if bullet.rect.top > WINDOW_HEIGHT or bullet.life <= 0:
+            if bullet.rect.top > WINDOW_HEIGHT or not bullet.is_alive():
                 enemy_bullets.remove(bullet)
             bullet.draw(window_surface)
 
         # check for ending:
-        if meow_hero.life <= 0:
+        if not meow_hero.is_alive():
             running = False
             victory = False
 
@@ -574,21 +574,21 @@ def boss_game_loop(window_surface, level_number, player):
         for enemy in enemies:
             for bullet in bullets:
                 if enemy.rect.colliderect(bullet.rect):
-                    enemy.life -= bullet.power
-                    bullet.life -= 1
+                    enemy.take_damage(bullet.power)
+                    bullet.take_damage()
                     attack_sound.play()
 
         # hitting hero:
         for enemy in enemies:
             if meow_hero.rect.colliderect(enemy.rect) and not meow_hero.invulnerability:
-                meow_hero.life -= 1
+                meow_hero.take_damage()
                 meow_hero.invulnerability += 1
                 damage_sound.play()
 
         # hitting hero by bullets
         for bullet in enemy_bullets:
             if meow_hero.rect.colliderect(bullet.rect) and not meow_hero.invulnerability:
-                meow_hero.life -= 1
+                meow_hero.take_damage()
                 enemy_bullets.remove(bullet)
                 meow_hero.invulnerability += 1
                 damage_sound.play()
@@ -627,7 +627,7 @@ def boss_game_loop(window_surface, level_number, player):
         # draw enemies
         for enemy in enemies:
             enemy.move()
-            if enemy.rect.top > WINDOW_HEIGHT or enemy.life <= 0:
+            if enemy.rect.top > WINDOW_HEIGHT or not enemy.is_alive():
                 enemies.remove(enemy)
                 score += 100 * enemy.level
             enemy.draw(window_surface)
@@ -642,19 +642,19 @@ def boss_game_loop(window_surface, level_number, player):
         # move and draw hero bullets
         for bullet in bullets:
             bullet.move()
-            if bullet.rect.top > WINDOW_HEIGHT or bullet.life <= 0:
+            if bullet.rect.top > WINDOW_HEIGHT or not bullet.is_alive():
                 bullets.remove(bullet)
             bullet.draw(window_surface)
 
         # move and draw enemy bullets
         for bullet in enemy_bullets:
             bullet.move()
-            if bullet.rect.top > WINDOW_HEIGHT or bullet.life <= 0:
+            if bullet.rect.top > WINDOW_HEIGHT or not bullet.is_alive():
                 enemy_bullets.remove(bullet)
             bullet.draw(window_surface)
 
         # check for ending:
-        if meow_hero.life <= 0:
+        if not meow_hero.is_alive():
             running = False
             victory = False
 

@@ -386,14 +386,14 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         for enemy in enemies:
             for bullet in bullets:
                 if enemy.rect.colliderect(bullet.rect):
-                    enemy.life -= bullet.power
-                    bullet.life -= 1
+                    enemy.take_damage(bullet.power)
+                    bullet.take_damage()
 
         # if enemy under screen, hit hero
         for enemy in enemies:
             if enemy.rect.top > WINDOW_HEIGHT:
                 for meow in meow_heroes:
-                    meow.life -= 1
+                    meow.take_damage()
                 enemies.remove(enemy)
                 damage_sound.play()
 
@@ -401,7 +401,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         for enemy in enemies:
             for meow in meow_heroes:
                 if meow.rect.colliderect(enemy.rect) and not meow.invulnerability:
-                    meow.life -= 1
+                    meow.take_damage()
                     enemies.remove(enemy)
                     damage_sound.play()
 
@@ -409,7 +409,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         for bullet in enemy_bullets:
             for meow in meow_heroes:
                 if meow.rect.colliderect(bullet.rect) and not meow.invulnerability:
-                    meow.life -= 1
+                    meow.take_damage()
                     meow.invulnerability += 2
                     if meow.weapon_power > 1:
                         meow.weapon_power -= 1
@@ -438,7 +438,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     elif bonus.name == "Mass Attack":
                         boom_sound.play()
                         for enemy in enemies:
-                            enemy.life -= meow.weapon_power
+                            enemy.take_damage(meow.weapon_power)
                     elif bonus.name == "Rate of fire":
                         rate_of_fire_sound.play()
                         meow.max_weapon_reload = 8
@@ -484,7 +484,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         # move and draw hero bullets
         for bullet in bullets:
             bullet.move()
-            if bullet.rect.top > WINDOW_HEIGHT or bullet.life <= 0:
+            if bullet.rect.top > WINDOW_HEIGHT or not bullet.is_alive():
                 bullets.remove(bullet)
             bullet.draw(window_surface)
 
@@ -497,19 +497,19 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
         # draw and kill enemies
         for enemy in enemies:
-            if enemy.life <= 0:
+            if not enemy.is_alive():
                 enemies.remove(enemy)
                 score += 100 * enemy.level
             enemy.draw(window_surface)
 
         # draw enemy bullets
         for bullet in enemy_bullets:
-            if bullet.rect.top > WINDOW_HEIGHT or bullet.life <= 0:
+            if bullet.rect.top > WINDOW_HEIGHT or not bullet.is_alive():
                 enemy_bullets.remove(bullet)
             bullet.draw(window_surface)
 
         # check for ending:
-        if meow_hero1.life <= 0 or meow_hero2.life <= 0:
+        if not meow_hero1.is_alive() or not meow_hero2.is_alive():
             running = False
 
         pygame.display.update()
