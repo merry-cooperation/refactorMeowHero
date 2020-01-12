@@ -298,7 +298,7 @@ def game_loop(window_surface, level_number, player):
         # collecting bonuses:
         for bonus in bonuses:
             if meow_hero.rect.colliderect(bonus.rect):
-                if bonus.bonus_type == "Coin":
+                if bonus.name == "Coin":
                     score += 1000
                     coin_sound.play()
                 bonuses.remove(bonus)
@@ -596,7 +596,7 @@ def boss_game_loop(window_surface, level_number, player):
         # collecting bonuses:
         for bonus in bonuses:
             if meow_hero.rect.colliderect(bonus.rect):
-                if bonus.bonus_type == "Coin":
+                if bonus.name == "Coin":
                     score += 1000
                     coin_sound.play()
                 bonuses.remove(bonus)

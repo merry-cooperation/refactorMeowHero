@@ -635,32 +635,31 @@ class EnemyBullet(MovingGameObject):
 
 class Bonus(GameObject):
     def __init__(self, bonus_type, level=12):
-        self.bonus_type = bonus_type
 
         # switching bonus type
-        if self.bonus_type == "Life":
+        if bonus_type == "Life":
             img_path = '../drawable/other/health1.png'
-        elif self.bonus_type == "Coin":
+        elif bonus_type == "Coin":
             img_path = '../drawable/other/coin' + str(level) + '.png'
-        elif self.bonus_type == "Weapon":
+        elif bonus_type == "Weapon":
             img_path = '../drawable/other/weapon_levelup.png'
-        elif self.bonus_type == "Shield":
+        elif bonus_type == "Shield":
             img_path = '../drawable/other/shield.png'
-        elif self.bonus_type == "Mass Attack":
+        elif bonus_type == "Mass Attack":
             img_path = '../drawable/other/mass_attack.png'
-        elif self.bonus_type == "Rate of fire":
+        elif bonus_type == "Rate of fire":
             img_path = '../drawable/other/rate_of_fire.png'
-        elif self.bonus_type == "Three Directions":
+        elif bonus_type == "Three Directions":
             img_path = '../drawable/other/three_directions.png'
-        elif self.bonus_type == "Freeze":
+        elif bonus_type == "Freeze":
             img_path = '../drawable/other/freeze.png'
-        elif self.bonus_type == "x2":
+        elif bonus_type == "x2":
             img_path = '../drawable/other/x2.png'
 
         super().__init__(
             int(WINDOW_WIDTH / 24),
             int(WINDOW_WIDTH / 24),
-            'Bonus',
+            bonus_type,
             img_path
         )
 

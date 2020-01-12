@@ -419,36 +419,36 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         for bonus in bonuses:
             for meow in meow_heroes:
                 if meow.rect.colliderect(bonus.rect):
-                    if bonus.bonus_type == "Life":
+                    if bonus.name == "Life":
                         meow.life += 1
                         health_sound.play()
-                    elif bonus.bonus_type == "Coin":
+                    elif bonus.name == "Coin":
                         score += 800*available_enemy_level*k
                         coin_sound.play()
-                    elif bonus.bonus_type == "Weapon":
+                    elif bonus.name == "Weapon":
                         reload_sound.play()
                         if meow.weapon_power < 7:
                             meow.weapon_power += 1
                         else:
                             score += 10000*k
-                    elif bonus.bonus_type == "Shield":
+                    elif bonus.name == "Shield":
                         meow.invulnerability += 10
                         shield_sound.play()
-                    elif bonus.bonus_type == "Mass Attack":
+                    elif bonus.name == "Mass Attack":
                         boom_sound.play()
                         for enemy in enemies:
                             enemy.life -= meow.weapon_power
-                    elif bonus.bonus_type == "Rate of fire":
+                    elif bonus.name == "Rate of fire":
                         rate_of_fire_sound.play()
                         meow.max_weapon_reload = 8
                         meow.rate_of_fire_time_limit += 8 + available_enemy_level*2
-                    elif bonus.bonus_type == "Freeze":
+                    elif bonus.name == "Freeze":
                         freeze_sound.play()
                         freeze_bonus += 8 + available_enemy_level
-                    elif bonus.bonus_type == "Three Directions":
+                    elif bonus.name == "Three Directions":
                         laser_sound.play()
                         meow.three_directions_time += 8 + available_enemy_level*2
-                    elif bonus.bonus_type == "x2":
+                    elif bonus.name == "x2":
                         coin_sound.play()
                         x2_time += 2*available_enemy_level
                         k = 2
