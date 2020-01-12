@@ -33,7 +33,7 @@ class GameObject(pygame.sprite.Sprite):
         window.blit(self.image_surface, self.rect)
 
 
-class MovingGameObject(GameObject):
+class MoveMixin:
     def __init__(self, speed_x, speed_y, **kwargs):
         super().__init__(**kwargs)
         self.speed_x = speed_x
@@ -43,10 +43,10 @@ class MovingGameObject(GameObject):
         self.rect.move_ip(self.speed_x, self.speed_y)
 
 
-class MeowHero(MovingGameObject):
+class MeowHero(MoveMixin, GameObject):
     def __init__(self, skin_type):
         super().__init__(
-            8, 8,
+            speed_x=8, speed_y=8,
             w=int(WINDOW_WIDTH / 15),
             h=int(WINDOW_HEIGHT / 8),
             name='MeowHero',
@@ -89,7 +89,7 @@ class Health(GameObject):
             window.blit(self.image_surface, [0 + i * self.w, 80])
 
 
-class Bullet(MovingGameObject):
+class Bullet(MoveMixin, GameObject):
     def __init__(self, level, type="Simple"):
         if type == 'Simple':
             self.power = 1
@@ -101,7 +101,7 @@ class Bullet(MovingGameObject):
             speed_y = -(14 + self.power * 2)
 
         super().__init__(
-            0, speed_y,
+            speed_x=0, speed_y=speed_y,
             w=int(WINDOW_WIDTH / 22),
             h=int(WINDOW_WIDTH / 22),
             name='Bullet',
@@ -109,14 +109,14 @@ class Bullet(MovingGameObject):
         )
 
 
-class Enemy(MovingGameObject):
+class Enemy(MoveMixin, GameObject):
     def __init__(self, name, level,
                  w=WINDOW_WIDTH / 14,
                  h=WINDOW_HEIGHT / 14,
                  img_path='../drawable/sprites/enemy/enemy_3.png',
                  speed_x=0, speed_y=1):
 
-        super().__init__(speed_x, speed_y, w=w, h=h, name=name, img_path=img_path)
+        super().__init__(speed_x=speed_x, speed_y=speed_y, w=w, h=h, name=name, img_path=img_path)
 
         self.level = level
 
@@ -578,7 +578,7 @@ class DiplomCommittee(Teacher):
         self.speed_x = random.randint(3, 7)
 
 
-class EnemyBullet(MovingGameObject):
+class EnemyBullet(MoveMixin, GameObject):
     def __init__(self, level, bullet_type="Simple", *args):
 
         bullet_type = bullet_type.split()
@@ -629,7 +629,7 @@ class EnemyBullet(MovingGameObject):
             speed_x = 0
             speed_y = speed
 
-        super().__init__(speed_x, speed_y, w=w, h=h, name='EnemyBullet', img_path=img_path)
+        super().__init__(speed_x=speed_x, speed_y=speed_y, w=w, h=h, name='EnemyBullet', img_path=img_path)
 
 
 class Bonus(GameObject):
