@@ -81,7 +81,7 @@ class TestBullet(TestCase):
 
     def test_bullet_image_raises_attribute_error(self, mock_image_load, mock_transform_scale):
         bullet = Bullet(1, "Simple")
-        self.assertRaises(AttributeError, getattr, bullet, 'image')
+        self.assertTrue(hasattr(bullet, 'image'))
 
     def test_bullet_isinstance_pygame_sprite(self, mock_image_load, mock_transform_scale):
         bullet = Bullet(1, "Simple")
