@@ -196,27 +196,35 @@ def process_input_finish(input_box, player):
     return done, player
 
 
-# returning player
-def create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
-    player.save_current_state()
-    clock = pygame.time.Clock()
+def create_profile_interface_elements(win_w, win_h):
+    rect = pygame.Rect((0, 0), (2 * win_w / 3, win_h / 3))
+    rect_border = pygame.Rect((0, 0), (2 * win_w / 3 + 10, win_h / 3 + 10))
+    rect.center = (win_w / 2, win_h / 2)
+    rect_border.center = (win_w / 2, win_h / 2)
 
-    rect = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3, WINDOW_HEIGHT / 3))
-    rect_border = pygame.Rect((0, 0), (2 * WINDOW_WIDTH / 3 + 10, WINDOW_HEIGHT / 3 + 10))
-    rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
-    rect_border.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
-
-    input_box = interface.InputBox((WINDOW_WIDTH / 4, 4 * WINDOW_HEIGHT / 8, 220, 80))
+    input_box = interface.InputBox((win_w / 4, 4 * win_h / 8, 220, 80))
 
     font0 = pygame.font.SysFont(None, 100)
     font1 = pygame.font.SysFont(None, 78)
     input_box.font = font1
 
-    text_write_name = interface.TextView(font0, COLOR_BLACK, 150, 2 * WINDOW_HEIGHT / 6, "Write your name here")
-    text_write_name.rect.center = (WINDOW_WIDTH / 2, 2 * WINDOW_HEIGHT / 5)
+    text_write_name = interface.TextView(font0, COLOR_BLACK, 150, 2 * win_h / 6, "Write your name here")
+    text_write_name.rect.center = (win_w / 2, 2 * win_h / 5)
 
-    button_done = interface.Button((2 * WINDOW_WIDTH / 3, 4 * WINDOW_HEIGHT / 8,
-                                    WINDOW_WIDTH / 15, WINDOW_HEIGHT / 10), "Done")
+    button_done = interface.Button((2 * win_w / 3, 4 * win_h / 8,
+                                    win_w / 15, win_h / 10), "Done")
+
+    return rect, rect_border, input_box, text_write_name, button_done
+
+
+# returning player
+def create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
+    player.save_current_state()
+    clock = pygame.time.Clock()
+
+    rect, rect_border, input_box, text_write_name, button_done = create_profile_interface_elements(WINDOW_WIDTH,
+                                                                                                   WINDOW_HEIGHT)
+
     done = False
     while not done:
         for event in pygame.event.get():
