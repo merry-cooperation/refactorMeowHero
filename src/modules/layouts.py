@@ -177,20 +177,24 @@ def defeat_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     return
 
 
+def get_player_record(name):
+    path = '../stats/players/' + name + '.json'
+    if os.path.isfile(path):
+        print("Exist")
+        return interface.load_player_by_path(path)
+    else:
+        print("Not exist")
+        interface.create_empty_profile(name)
+        return interface.load_player_by_path(path)
+
+
 def process_input_finish(input_box, player):
     print(input_box.text)
     name = input_box.text.strip()
     if not name:
         done = True
         return done, player
-    path = '../stats/players/' + name + '.json'
-    if os.path.isfile(path):
-        print("Exist")
-        player = interface.load_player_by_path(path)
-    else:
-        print("Not exist")
-        interface.create_empty_profile(name)
-        player = interface.load_player_by_path(path)
+    player = get_player_record(name)
     input_box.text = ''
     done = True
     return done, player
