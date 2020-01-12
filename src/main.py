@@ -175,9 +175,8 @@ def main_menu(window_surface, background_image_main):  # show the "Main menu" sc
 def main():
     background_image_main = pygame.image.load("../drawable/backgrounds/main_menu5.jpg")
     background_image_main = pygame.transform.scale(background_image_main, (WINDOW_WIDTH, WINDOW_HEIGHT))
-    while True:
-        window = init_window(background_image_main, True)  # True if fullscreen
-        main_menu(window, background_image_main)
+    window = init_window(background_image_main, True)  # True if fullscreen
+    main_menu(window, background_image_main)
 
 
 if __name__ == "__main__":
