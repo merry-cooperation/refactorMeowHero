@@ -3,12 +3,6 @@ from pygame.locals import *
 from modules import interface, layouts, client, game
 from modules.display_config import WINDOW_WIDTH, WINDOW_HEIGHT
 
-# constant BG
-background_image_main = pygame.image.load("../drawable/backgrounds/main_menu5.jpg")
-background_image_main = pygame.transform.scale(background_image_main, (WINDOW_WIDTH, WINDOW_HEIGHT))
-background_image_levels = pygame.image.load("../drawable/backgrounds/main_menu5.jpg")
-background_image_levels = pygame.transform.scale(background_image_levels, (WINDOW_WIDTH, WINDOW_HEIGHT))
-
 # colors
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
@@ -16,7 +10,7 @@ COLOR_BRIGHT_GREY = (200, 200, 200)
 COLOR_RED = (255, 0, 0)
 
 
-def init_window(full_screen=False):  # set up pygame, the window, and the mouse cursor
+def init_window(background_image_main, full_screen=False):  # set up pygame, the window, and the mouse cursor
     pygame.init()
 
     if full_screen:
@@ -52,6 +46,8 @@ def draw_level_buttons(window_surface, player):
 
 
 def levels_menu(window_surface, player):
+    background_image_levels = pygame.image.load("../drawable/backgrounds/main_menu5.jpg")
+    background_image_levels = pygame.transform.scale(background_image_levels, (WINDOW_WIDTH, WINDOW_HEIGHT))
     buttons = draw_level_buttons(window_surface, player)
 
     boss_levels = [1, 4, 5, 6, 7, 9, 10, 12]
@@ -94,7 +90,7 @@ def levels_menu(window_surface, player):
             pygame.display.update()
 
 
-def main_menu(window_surface):  # show the "Main menu" screen
+def main_menu(window_surface, background_image_main):  # show the "Main menu" screen
     # preparing text
     font_0 = pygame.font.SysFont("rachana", 140)
 
@@ -183,9 +179,11 @@ def main_menu(window_surface):  # show the "Main menu" screen
 
 
 def main():
+    background_image_main = pygame.image.load("../drawable/backgrounds/main_menu5.jpg")
+    background_image_main = pygame.transform.scale(background_image_main, (WINDOW_WIDTH, WINDOW_HEIGHT))
     while True:
-        window = init_window(True)  # True if fullscreen
-        main_menu(window)
+        window = init_window(background_image_main, True)  # True if fullscreen
+        main_menu(window, background_image_main)
 
 
 if __name__ == "__main__":
