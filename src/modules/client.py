@@ -67,17 +67,18 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     pygame.time.set_timer(pygame.USEREVENT, 500)
 
     # setup bg
-    background_image_in_game = pygame.image.load("../drawable/backgrounds/abstract_background" + str(random.randint(1, 16)) + '.jpg')
+    background_image_in_game = pygame.image.load(
+        "../drawable/backgrounds/abstract_background" + str(random.randint(1, 16)) + '.jpg')
     background_image_in_game = pygame.transform.scale(background_image_in_game, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
     # setup Meow Hero
     meow_hero1 = objects.MeowHero(6)
     meow_hero1.move_rate = 12
-    meow_hero1.rect.move_ip(int(WINDOW_WIDTH / 2)-100, 7 * int(WINDOW_HEIGHT / 8))
+    meow_hero1.rect.move_ip(int(WINDOW_WIDTH / 2) - 100, 7 * int(WINDOW_HEIGHT / 8))
 
     meow_hero2 = objects.MeowHero(8)
     meow_hero2.move_rate = 12
-    meow_hero2.rect.move_ip(int(WINDOW_WIDTH / 2)+100, 7 * int(WINDOW_HEIGHT / 8))
+    meow_hero2.rect.move_ip(int(WINDOW_WIDTH / 2) + 100, 7 * int(WINDOW_HEIGHT / 8))
 
     move_left1 = move_right1 = move_up1 = move_down1 = False
     move_left2 = move_right2 = move_up2 = move_down2 = False
@@ -105,12 +106,12 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
     font = pygame.font.SysFont(None, 78)
     player1_text = interface.TextView(font, COLOR_WHITE, 10, 10, "Player 1")
     player1_life_text = interface.TextView(font, COLOR_WHITE, 10, 80)
-    player2_text = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH*10/12, 10, "Player 2")
-    player2_life_text = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH*10/12, 80)
+    player2_text = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH * 10 / 12, 10, "Player 2")
+    player2_life_text = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH * 10 / 12, 80)
     score_text = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH / 2, 72)
-    score_text.rect.center = (WINDOW_WIDTH/2-120, 30)
+    score_text.rect.center = (WINDOW_WIDTH / 2 - 120, 30)
     timer_text = interface.TextView(font, COLOR_WHITE, WINDOW_WIDTH / 2, 10)
-    timer_text.rect.center = (WINDOW_WIDTH/2-120, 96)
+    timer_text.rect.center = (WINDOW_WIDTH / 2 - 120, 96)
 
     # spawn enemy by time
     available_enemy_level = 1
@@ -143,7 +144,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
 
     running = True
     while running:  # the game loop runs while the game part is playing
-        score += 1*k  # increase score
+        score += 1 * k  # increase score
         for event in pygame.event.get():
             if event.type == QUIT:
                 print("Goodbye")
@@ -281,7 +282,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 if event.key == K_DOWN:
                     move_down2 = False
                 # TEST #
-	# were able with controller	
+        # were able with controller
 
         # handling socket
         # data = []
@@ -371,12 +372,12 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                 if meow.three_directions_time > 0:
                     bullet = objects.Bullet(meow.weapon_power, "Multiplayer")
                     bullet.rect.move_ip(meow.rect.left, meow.rect.top)
-                    bullet.x = int(bullet.speed/3)
+                    bullet.x = int(bullet.speed / 3)
                     bullets.append(bullet)
 
                     bullet = objects.Bullet(meow.weapon_power, "Multiplayer")
                     bullet.rect.move_ip(meow.rect.left, meow.rect.top)
-                    bullet.x = int(bullet.speed/3)*(-1)
+                    bullet.x = int(bullet.speed / 3) * (-1)
                     bullets.append(bullet)
 
                 # attack_sound.play()
@@ -388,7 +389,7 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     enemy.life -= bullet.power
                     bullet.life -= 1
 
-	# if enemy under screen, hit hero
+        # if enemy under screen, hit hero
         for enemy in enemies:
             if enemy.rect.top > WINDOW_HEIGHT:
                 for meow in meow_heroes:
@@ -423,14 +424,14 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                         meow.life += 1
                         health_sound.play()
                     elif bonus.name == "Coin":
-                        score += 800*available_enemy_level*k
+                        score += 800 * available_enemy_level * k
                         coin_sound.play()
                     elif bonus.name == "Weapon":
                         reload_sound.play()
                         if meow.weapon_power < 7:
                             meow.weapon_power += 1
                         else:
-                            score += 10000*k
+                            score += 10000 * k
                     elif bonus.name == "Shield":
                         meow.invulnerability += 10
                         shield_sound.play()
@@ -441,16 +442,16 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     elif bonus.name == "Rate of fire":
                         rate_of_fire_sound.play()
                         meow.max_weapon_reload = 8
-                        meow.rate_of_fire_time_limit += 8 + available_enemy_level*2
+                        meow.rate_of_fire_time_limit += 8 + available_enemy_level * 2
                     elif bonus.name == "Freeze":
                         freeze_sound.play()
                         freeze_bonus += 8 + available_enemy_level
                     elif bonus.name == "Three Directions":
                         laser_sound.play()
-                        meow.three_directions_time += 8 + available_enemy_level*2
+                        meow.three_directions_time += 8 + available_enemy_level * 2
                     elif bonus.name == "x2":
                         coin_sound.play()
-                        x2_time += 2*available_enemy_level
+                        x2_time += 2 * available_enemy_level
                         k = 2
 
                     bonuses.remove(bonus)
@@ -471,7 +472,8 @@ def two_players_mode(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
         player1_text.draw(window_surface)
         player2_text.draw(window_surface)
         score_text.draw_this(window_surface, 'Score: %s' % (score))
-        timer_text.draw_this(window_surface, "Time " + str(main_timer).rjust(3) if main_timer <= 1600 else 'NICE, NIGGA')
+        timer_text.draw_this(window_surface,
+                             "Time " + str(main_timer).rjust(3) if main_timer <= 1600 else 'NICE, NIGGA')
         player1_life_text.draw_this(window_surface, 'Life: x%s' % (meow_hero1.life))
         player2_life_text.draw_this(window_surface, 'Life: x%s' % (meow_hero2.life))
 
