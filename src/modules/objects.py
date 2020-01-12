@@ -33,18 +33,28 @@ class GameObject(pygame.sprite.Sprite):
         window.blit(self.image_surface, self.rect)
 
 
-class MeowHero(GameObject):
+class MovingGameObject(GameObject):
+    def __init__(self, w, h, tag, img_path, speed_x, speed_y):
+        super().__init__(w, h, tag, img_path)
+        self.speed_x = speed_x
+        self.speed_y = speed_y
+
+    def move(self):
+        self.rect.move_ip(self.speed_x, self.speed_y)
+
+
+class MeowHero(MovingGameObject):
     def __init__(self, skin_type):
         super().__init__(
             int(WINDOW_WIDTH / 15),
             int(WINDOW_HEIGHT / 8),
             'MeowHero',
-            '../drawable/sprites/cat_hero/skins/cat' + str(skin_type) + '.png'
+            '../drawable/sprites/cat_hero/skins/cat' + str(skin_type) + '.png',
+            8, 8
         )
 
         self.life = 9
         self.weapon_power = 1
-        self.move_rate = 8
 
         self.invulnerability = 8
         self.three_directions_time = 0
@@ -61,7 +71,7 @@ class MeowHero(GameObject):
         window.blit(self.image_surface, self.rect)
 
     def move(self, x_d, y_d):
-        self.rect.move_ip(x_d * self.move_rate, y_d * self.move_rate)
+        self.rect.move_ip(x_d * self.speed_x, y_d * self.speed_y)
         self.shield.rect = self.rect.copy()
 
 
@@ -79,56 +89,40 @@ class Health(GameObject):
             window.blit(self.image_surface, [0 + i * self.w, 80])
 
 
-class Bullet(GameObject):
+class Bullet(MovingGameObject):
     def __init__(self, level, type="Simple"):
+        if type == 'Simple':
+            self.power = 1
+            self.life = 1
+            speed_y = -10
+        elif type == 'Multiplayer':
+            self.power = level
+            self.life = 1
+            speed_y = -(14 + self.power * 2)
+
         super().__init__(
             int(WINDOW_WIDTH / 22),
             int(WINDOW_WIDTH / 22),
             'Bullet',
-            '../drawable/weapons/bullets/bullet' + str(level) + '.png'
+            '../drawable/weapons/bullets/bullet' + str(level) + '.png',
+            0, speed_y
         )
 
-        if type == "Simple":
-            self.level = level
-            self.power = 1
-            self.speed = 10
-            self.life = 1
 
-            self.x = 0
-            self.y = self.speed * (-1)
-
-        if type == "Multiplayer":
-            # TODO: different images here
-            self.level = level
-            self.power = self.level
-            self.speed = 14 + self.power * 2
-            self.life = 1
-
-        # move direction
-        self.x = 0
-        self.y = self.speed * (-1)
-
-    def move(self):
-        self.rect.move_ip(self.x, self.y)
-
-
-class Enemy(GameObject):
+class Enemy(MovingGameObject):
     def __init__(self, name, level,
                  w=WINDOW_WIDTH / 14,
                  h=WINDOW_HEIGHT / 14,
-                 img_path='../drawable/sprites/enemy/enemy_3.png'):
+                 img_path='../drawable/sprites/enemy/enemy_3.png',
+                 speed_x=0, speed_y=1):
 
-        super().__init__(w, h, name, img_path)
+        super().__init__(w, h, name, img_path, speed_x, speed_y)
 
         self.level = level
 
         self.life = level
-        self.speed = 1
         self.reload = 0
         self.reload_time = 14 - level
-
-    def move(self):
-        self.rect.move_ip(0, self.speed)
 
     def attack(self, *args):
         if self.reload == self.reload_time:
@@ -147,11 +141,9 @@ class Children(Enemy):
             level,
             int(WINDOW_WIDTH / 12),
             int(WINDOW_HEIGHT / 8),
-            random_image_path('../drawable/sprites/enemy/children/children', 6)
+            random_image_path('../drawable/sprites/enemy/children/children', 6),
+            random.randint(-4, 4), random.randint(2, 7)
         )
-
-        self.speed = random.randint(2, 7)
-        self.direction = random.randint(-4, 4)
 
         self.life = 4
 
@@ -159,9 +151,6 @@ class Children(Enemy):
 
     def attack(self, *args):
         pass
-
-    def move(self):
-        self.rect.move_ip(self.direction, self.speed)
 
 
 class Dog(Enemy):
@@ -171,11 +160,9 @@ class Dog(Enemy):
             level,
             int(WINDOW_WIDTH / 12),
             int(WINDOW_HEIGHT / 12),
-            random_image_path('../drawable/sprites/enemy/dog_enemy/dog_enemy', 12)
+            random_image_path('../drawable/sprites/enemy/dog_enemy/dog_enemy', 12),
+            random.randint(-2, 2), random.randint(1, 4)
         )
-
-        self.speed = random.randint(1, 4)
-        self.direction = random.randint(-2, 2)
 
         self.life = random.randint(5, 10)
 
@@ -183,10 +170,6 @@ class Dog(Enemy):
 
     def attack(self, *args):
         pass
-
-    # TODO: change it pls
-    def move(self):
-        self.rect.move_ip(self.direction, self.speed)
 
 
 class DancingCat(Enemy):
@@ -196,11 +179,9 @@ class DancingCat(Enemy):
             level,
             int(WINDOW_WIDTH / 12),
             int(WINDOW_HEIGHT / 12),
-            random_image_path('../drawable/sprites/enemy/dancing_cats/dancing_cat', 4)
+            random_image_path('../drawable/sprites/enemy/dancing_cats/dancing_cat', 4),
+            random.randint(-3, 3), random.randint(1, 3)
         )
-
-        self.speed = random.randint(1, 3)
-        self.direction = random.randint(-3, 3)
 
         self.change_direction_time = random.randint(10, 70)
 
@@ -224,9 +205,9 @@ class DancingCat(Enemy):
     def move(self):
         self.change_direction_time -= 1
         if self.change_direction_time == 0:
-            self.direction = -self.direction
+            self.speed_x = -self.speed_x
 
-        self.rect.move_ip(self.direction, self.speed)
+        super().move()
 
 
 class CatBossEnemy(Enemy):
@@ -236,7 +217,7 @@ class CatBossEnemy(Enemy):
             level,
             int(WINDOW_WIDTH / 10),
             int(WINDOW_HEIGHT / 6),
-            random_image_path('../drawable/sprites/enemy/cat_boss/cat_boss', 8)
+            random_image_path('../drawable/sprites/enemy/cat_boss/cat_boss', 8),
         )
 
         self.rect.move_ip(random.randint(50, WINDOW_WIDTH - 50), 0)
@@ -247,7 +228,9 @@ class CatBossEnemy(Enemy):
         self.life = 24
 
     def move(self):
-        self.rect.move_ip(random.randint(-5, 5), random.randint(-1, 3))
+        self.speed_x = random.randint(-5, 5)
+        self.speed_y = random.randint(-1, 3)
+        super().move()
 
     def attack(self, pos):
         if self.reload == self.reload_time:
@@ -282,8 +265,9 @@ class DogEnemyMultiplayer(Enemy):
 
 
 class Boss(Enemy):
-    def __init__(self, name, level, w=int(WINDOW_WIDTH / 5), h=int(WINDOW_HEIGHT / 6), img_path=None):
-        super().__init__(name, level, w, h, img_path)
+    def __init__(self, name, level, w=int(WINDOW_WIDTH / 5), h=int(WINDOW_HEIGHT / 6),
+                 img_path=None, speed_x=3, speed_y=0):
+        super().__init__(name, level, w, h, img_path, speed_x, speed_y)
 
         # and stronger
         self.life *= 25
@@ -291,7 +275,6 @@ class Boss(Enemy):
         # movement
         self.move_right = True
         self.move_left = False
-        self.speed = 3
         self.move_time = 120
 
         self.reload_time = 1
@@ -305,10 +288,10 @@ class Boss(Enemy):
                 self.move_left = True
                 self.move_right = False
             if self.move_right:
-                self.rect.move_ip(self.speed, 0)
+                self.rect.move_ip(self.speed_x, 0)
                 self.move_time -= 1
             elif self.move_left:
-                self.rect.move_ip(-self.speed, 0)
+                self.rect.move_ip(-self.speed_x, 0)
                 self.move_time -= 1
         else:
             self.move_left = False
@@ -349,10 +332,10 @@ class EGE(Boss):
             level,
             int(WINDOW_WIDTH / 3),
             int(WINDOW_HEIGHT / 5),
-            '../drawable/sprites/enemy/bosses/ege.png'
+            '../drawable/sprites/enemy/bosses/ege.png',
+            3, 0
         )
 
-        self.speed = 3
         self.move_time = 150
         # self.life = 250
 
@@ -406,9 +389,9 @@ class DedMoroz(Boss):
             level,
             int(WINDOW_WIDTH / 5),
             int(WINDOW_HEIGHT / 5),
-            '../drawable/sprites/enemy/bosses/ded_moroz/ded_moroz4.png'
+            '../drawable/sprites/enemy/bosses/ded_moroz/ded_moroz4.png',
+            2, 0
         )
-        self.speed = 2
 
         self.cur_num = 4
 
@@ -433,7 +416,7 @@ class DedMoroz(Boss):
             self.cur_num = num
             self.image = pygame.image.load('../drawable/sprites/enemy/bosses/ded_moroz/ded_moroz' + str(num) + '.png')
             self.image_surface = pygame.transform.scale(self.image, (self.w, self.h))
-            self.speed += 2
+            self.speed_x += 2
 
         window.blit(self.image_surface, self.rect)
 
@@ -486,9 +469,7 @@ class Teacher(Boss):
             img_path = '../drawable/sprites/enemy/bosses/komissia2.png'
             self.life = 220
 
-        super().__init__(name, level, w, h, img_path)
-
-        self.speed = 4
+        super().__init__(name, level, w, h, img_path, 4, 4)
 
         self.move_up = False
         self.move_down = False
@@ -522,16 +503,16 @@ class Teacher(Boss):
                 self.move_down = False
             # move enemy
             if self.move_right:
-                self.rect.move_ip(self.speed, 0)
+                self.rect.move_ip(self.speed_x, 0)
                 self.move_time -= 1
             elif self.move_left:
-                self.rect.move_ip(-self.speed, 0)
+                self.rect.move_ip(-self.speed_x, 0)
                 self.move_time -= 1
             elif self.move_up:
-                self.rect.move_ip(0, -self.speed)
+                self.rect.move_ip(0, -self.speed_y)
                 self.move_time -= 1
             elif self.move_down:
-                self.rect.move_ip(0, self.speed)
+                self.rect.move_ip(0, self.speed_y)
                 self.move_time -= 1
         else:
             self.move_left = False
@@ -560,12 +541,12 @@ class OlegAlexeevich(Boss):
             level,
             int(WINDOW_WIDTH / 3),
             int(WINDOW_HEIGHT / 5),
-            '../drawable/sprites/enemy/bosses/teachers/teachers6.png'
+            '../drawable/sprites/enemy/bosses/teachers/teachers6.png',
+            5, 0
         )
 
         # self.life = 300
 
-        self.speed = 5
         self.move_time = 300
 
     def attack(self, pos):
@@ -594,10 +575,10 @@ class DiplomCommittee(Teacher):
         else:
             self.reload += 1
 
-        self.speed = random.randint(3, 7)
+        self.speed_x = random.randint(3, 7)
 
 
-class EnemyBullet(GameObject):
+class EnemyBullet(MovingGameObject):
     def __init__(self, level, bullet_type="Simple", *args):
 
         self.bullet_type = bullet_type.split()
@@ -606,16 +587,16 @@ class EnemyBullet(GameObject):
         if "Boss" in self.bullet_type:
             w = 100
             h = 100
-            self.speed = 8
+            speed = 8
             self.life = 10
         else:
             w = 40
             h = 40
-            self.speed = 5
+            speed = 5
             self.life = 1
 
         if "RandomSpeed" in self.bullet_type:
-            self.speed = random.randint(2, 9)
+            speed = random.randint(2, 9)
 
         if level == 5:
             img_path = random_image_path('../drawable/weapons/faculty/faculty', 18)
@@ -636,23 +617,20 @@ class EnemyBullet(GameObject):
         if "NoResize" in self.bullet_type:
             w, h = int(image.get_width() / 2), int(image.get_height() / 2)
 
-        super().__init__(w, h, 'EnemyBullet', img_path)
-
         if "InHero" in self.bullet_type:  # calculate direction
             x, y = args[0]
             x0, y0 = args[1]
             x -= x0
             y -= y0
             z = (x ** 2 + y ** 2) ** (1 / 2)
-            coef = z / self.speed
-            self.x = int(x / coef)
-            self.y = int(y / coef)
+            coef = z / speed
+            speed_x = int(x / coef)
+            speed_y = int(y / coef)
         else:
-            self.x = 0
-            self.y = self.speed
+            speed_x = 0
+            speed_y = speed
 
-    def move(self):
-        self.rect.move_ip(self.x, self.y)
+        super().__init__(w, h, 'EnemyBullet', img_path, speed_x, speed_y)
 
 
 class Bonus(GameObject):
