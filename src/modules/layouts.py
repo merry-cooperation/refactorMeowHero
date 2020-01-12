@@ -177,6 +177,25 @@ def defeat_layout(window_surface, WINDOW_WIDTH, WINDOW_HEIGHT):
                     return
 
 
+def process_input_finish(input_box, player):
+    print(input_box.text)
+    name = input_box.text.strip()
+    if not name:
+        done = True
+        return done, player
+    path = '../stats/players/' + name + '.json'
+    if os.path.isfile(path):
+        print("Exist")
+        player = interface.load_player_by_path(path)
+    else:
+        print("Not exist")
+        interface.create_empty_profile(name)
+        player = interface.load_player_by_path(path)
+    input_box.text = ''
+    done = True
+    return done, player
+
+
 # returning player
 def create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
     player.save_current_state()
@@ -208,41 +227,13 @@ def create_profile_layout(window_surface, player, WINDOW_WIDTH, WINDOW_HEIGHT):
 
             if button_done.is_over(mouse_pos):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    print(input_box.text)
-                    name = input_box.text.strip()
-                    if not name:
-                        done = True
-                        continue
-                    path = '../stats/players/' + name + '.json'
-                    if os.path.isfile(path):
-                        print("Exist")
-                        player = interface.load_player_by_path(path)
-                    else:
-                        print("Not exist")
-                        interface.create_empty_profile(name)
-                        player = interface.load_player_by_path(path)
-                    input_box.text = ''
-                    done = True
+                    done, player = process_input_finish(input_box, player)
 
             if event.type == KEYUP:
                 if event.key == K_ESCAPE:
                     done = True
                 elif event.key == pygame.K_RETURN:  # if enter
-                    print(input_box.text)
-                    name = input_box.text.strip()
-                    if not name:
-                        done = True
-                        continue
-                    path = '../stats/players/' + name + '.json'
-                    if os.path.isfile(path):
-                        print("Exist")
-                        player = interface.load_player_by_path(path)
-                    else:
-                        print("Not exist")
-                        interface.create_empty_profile(name)
-                        player = interface.load_player_by_path(path)
-                    input_box.text = ''
-                    done = True
+                    done, player = process_input_finish(input_box, player)
 
             input_box.handle_event(event)
 
