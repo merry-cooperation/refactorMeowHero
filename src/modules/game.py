@@ -386,35 +386,30 @@ def game_loop(window_surface, level_number, player):
     return victory
 
 
-def setup_boss_enemy(enemies, level_number):
+def setup_boss_enemy(level_number):
+    enemies = []
     if level_number == 1:
-        enemy = objects.ZloyMuzhic("Zloy muzhic", level_number)
-        enemies.append(enemy)
+        enemies.append(objects.ZloyMuzhic("Zloy muzhic", level_number))
     elif level_number == 4:
-        enemy = objects.EGE("EGE", level_number)
-        enemies.append(enemy)
+        enemies.append(objects.EGE("EGE", level_number))
     elif level_number == 5:
-        enemy = objects.Committee("Committee", level_number)
-        enemies.append(enemy)
+        enemies.append(objects.Committee("Committee", level_number))
     elif level_number == 6:
         for i in range(4):
-            enemy = objects.Teacher(str(i + 1), level_number)
-            enemy.rect.move_ip(i * 300, 0)
-            enemies.append(enemy)
+            enemies.append(objects.Teacher(str(i + 1), level_number))
+            enemies[-1].rect.move_ip(i * 300, 0)
     elif level_number == 7:
-        enemy = objects.Ejudje("Ejudje", level_number)
-        enemies.append(enemy)
+        enemies.append(objects.Ejudje("Ejudje", level_number))
     elif level_number == 9:
-        enemy = objects.DedMoroz("Ded Moroz", level_number)
+        enemies.append(objects.DedMoroz("Ded Moroz", level_number))
         enemy.rect.move_ip(WINDOW_WIDTH / 2, 0)
-        enemies.append(enemy)
     elif level_number == 10:
-        enemy = objects.DiplomCommittee("Diplom Committee", level_number)
-        enemy.rect.move_ip(WINDOW_WIDTH / 2, 0)
-        enemies.append(enemy)
+        enemies.append(objects.DiplomCommittee("Diplom Committee", level_number))
+        enemies[-1].rect.move_ip(WINDOW_WIDTH / 2, 0)
     elif level_number == 12:
-        enemy = objects.OlegAlexeevich("Oleg Alexeevich", level_number)
-        enemies.append(enemy)
+        enemies.append(objects.OlegAlexeevich("Oleg Alexeevich", level_number))
+
+    return enemies
 
 
 def boss_game_loop(window_surface, level_number, player):
@@ -457,13 +452,11 @@ def boss_game_loop(window_surface, level_number, player):
     health_points = objects.Health(1, WINDOW_WIDTH / 30, WINDOW_HEIGHT / 30)
 
     bullets = []
-    enemies = []
+    enemies = setup_boss_enemy(level_number)
     bonuses = []
     enemy_bullets = []
 
     main_timer = 0
-
-    setup_boss_enemy(enemies, level_number)
 
     # define healthbar
     health_bar = None
