@@ -581,10 +581,10 @@ class DiplomCommittee(Teacher):
 class EnemyBullet(MovingGameObject):
     def __init__(self, level, bullet_type="Simple", *args):
 
-        self.bullet_type = bullet_type.split()
+        bullet_type = bullet_type.split()
         self.level = level
 
-        if "Boss" in self.bullet_type:
+        if "Boss" in bullet_type:
             w = 100
             h = 100
             speed = 8
@@ -595,7 +595,7 @@ class EnemyBullet(MovingGameObject):
             speed = 5
             self.life = 1
 
-        if "RandomSpeed" in self.bullet_type:
+        if "RandomSpeed" in bullet_type:
             speed = random.randint(2, 9)
 
         if level == 5:
@@ -614,10 +614,10 @@ class EnemyBullet(MovingGameObject):
         else:
             img_path = '../drawable/weapons/enemy_bullets/enemy_bullet' + str(level) + '.png'
 
-        if "NoResize" in self.bullet_type:
+        if "NoResize" in bullet_type:
             w, h = int(image.get_width() / 2), int(image.get_height() / 2)
 
-        if "InHero" in self.bullet_type:  # calculate direction
+        if "InHero" in bullet_type:  # calculate direction
             x, y = args[0]
             x0, y0 = args[1]
             x -= x0
