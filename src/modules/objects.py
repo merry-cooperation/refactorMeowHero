@@ -26,11 +26,11 @@ class GameObject(pygame.sprite.Sprite):
         self.name = name
 
         image = pygame.image.load(img_path)
-        self.image_surface = pygame.transform.scale(image, (self.w, self.h))
-        self.rect = self.image_surface.get_rect()
+        self.image = pygame.transform.scale(image, (self.w, self.h))
+        self.rect = self.image.get_rect()
 
     def draw(self, window):
-        window.blit(self.image_surface, self.rect)
+        window.blit(self.image, self.rect)
 
 
 class MoveMixin:
@@ -80,7 +80,7 @@ class MeowHero(DamagebleMixin, MoveMixin, GameObject):
     def draw(self, window):
         if self.invulnerability:
             self.shield.draw(window)
-        window.blit(self.image_surface, self.rect)
+        window.blit(self.image, self.rect)
 
     def move(self, x_d, y_d):
         self.rect.move_ip(x_d * self.speed_x, y_d * self.speed_y)
@@ -98,7 +98,7 @@ class Health(GameObject):
 
     def draw(self, window, count):
         for i in range(count):
-            window.blit(self.image_surface, [0 + i * self.w, 80])
+            window.blit(self.image, [0 + i * self.w, 80])
 
 
 class Bullet(DamagebleMixin, MoveMixin, GameObject):
@@ -426,11 +426,11 @@ class DedMoroz(Boss):
 
         if num != self.cur_num:
             self.cur_num = num
-            self.image = pygame.image.load('../drawable/sprites/enemy/bosses/ded_moroz/ded_moroz' + str(num) + '.png')
-            self.image_surface = pygame.transform.scale(self.image, (self.w, self.h))
+            image = pygame.image.load('../drawable/sprites/enemy/bosses/ded_moroz/ded_moroz' + str(num) + '.png')
+            self.image = pygame.transform.scale(image, (self.w, self.h))
             self.speed_x += 2
 
-        window.blit(self.image_surface, self.rect)
+        window.blit(self.image, self.rect)
 
 
 class Ejudje(Boss):
@@ -464,10 +464,10 @@ class Ejudje(Boss):
 
         if num != self.cur_num:
             self.cur_num = num
-            self.image = pygame.image.load('../drawable/sprites/enemy/bosses/ejudje/ejudje' + str(num) + '.png')
-            self.image_surface = pygame.transform.scale(self.image, (self.w, self.h))
+            image = pygame.image.load('../drawable/sprites/enemy/bosses/ejudje/ejudje' + str(num) + '.png')
+            self.image = pygame.transform.scale(image, (self.w, self.h))
 
-        window.blit(self.image_surface, self.rect)
+        window.blit(self.image, self.rect)
 
 
 class Teacher(Boss):
