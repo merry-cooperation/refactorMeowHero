@@ -8,7 +8,7 @@ from pygame.locals import *
 
 from . import interface, objects, layouts
 from .game_config import ENEMY_CONFIG
-from modules.display_config import WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BLACK, COLOR_WHITE
+from modules.display_config import WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BLACK, COLOR_WHITE, CAT_IMG_RESIZE
 
 """
 Всё отвечающее за игру
@@ -69,7 +69,7 @@ def story_loop(window_surface, level_number, prefix, player):
 
     image = pygame.image.load('../drawable/sprites/cat_hero/skins/cat' + str(player.current_skin) + '.png')
 
-    image_surface = pygame.transform.scale(image, (300, 700))
+    image_surface = pygame.transform.scale(image, CAT_IMG_RESIZE)
     rect = image_surface.get_rect()
 
     rect.move_ip(0, 150)
