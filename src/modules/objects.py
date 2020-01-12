@@ -634,7 +634,7 @@ class EnemyBullet(MovingGameObject):
 
 
 class Bonus(GameObject):
-    def __init__(self, bonus_type, level=12):
+    def __init__(self, bonus_type, level=12, lifetime=22):
 
         # switching bonus type
         if bonus_type == "Life":
@@ -663,4 +663,10 @@ class Bonus(GameObject):
             img_path
         )
 
-        self.lifetime = 22
+        self.lifetime = lifetime
+
+    def is_alive(self):
+        return self.lifetime > 0
+
+    def decay(self):
+        self.lifetime -= 1
